@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 1 · Ground School · Jira Flight School</title>
+<meta name="description" content="Level 1 Ground School: getting to know Jira. Spaces, navigation, work items, boards, everyday tasks and Rovo 101, with hands-on missions in a live sandbox.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<style>
+  .hero .wrap { position: relative; z-index: 2; }
+  .bad-good { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 14px; margin: 14px 0 20px; }
+  @media (max-width: 700px) { .bad-good { grid-template-columns: minmax(0,1fr); } }
+  .bad-good > div { border-radius: 12px; padding: 14px 16px; border: 1px solid var(--line); background: var(--white); }
+  .bad-good .bad { border-left: 5px solid var(--alert); }
+  .bad-good .good { border-left: 5px solid var(--go); }
+  .bad-good h4 { margin-bottom: 6px; }
+  .bad-good .bad h4 { color: var(--alert); }
+  .bad-good .good h4 { color: var(--go); }
+  .hier { display: grid; gap: 8px; margin: 14px 0 22px; }
+  .hier .lvl { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px; background: var(--white); border: 1px solid var(--line); }
+  .hier .lvl b { font-family: var(--font-display); font-size: 1.1rem; color: var(--navy-900); min-width: 120px; }
+  .hier .lvl span { color: var(--ink-2); font-size: .95rem; }
+  .hier .l0 { margin-left: 0; border-left: 5px solid var(--navy-900); }
+  .hier .l1 { margin-left: 22px; border-left: 5px solid var(--blue-600); }
+  .hier .l2 { margin-left: 44px; border-left: 5px solid var(--sky-400); }
+  .hier .l3 { margin-left: 66px; border-left: 5px solid var(--sky-300); }
+  @media (max-width: 520px) { .hier .l1 { margin-left: 10px; } .hier .l2 { margin-left: 20px; } .hier .l3 { margin-left: 30px; } .hier .lvl { flex-direction: column; align-items: flex-start; gap: 2px; } }
+  .kbd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin: 12px 0 20px; }
+  .kbd-grid div { background: var(--white); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; display: flex; gap: 10px; align-items: center; }
+  .kbd-grid kbd { font-size: .95rem; }
+  .next-flight { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; background: linear-gradient(90deg, var(--navy-900), var(--navy-700)); color: #dbe6f7; border-radius: var(--radius); padding: 26px 28px; margin-top: 30px; }
+  .next-flight h3 { color: var(--white); margin: 0 0 4px; }
+</style>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+
+<section class="hero compact">
+  <div class="clouds" aria-hidden="true">
+    <div class="cloud" style="top:18%;width:190px;height:42px;animation-duration:70s"></div>
+    <div class="cloud" style="top:58%;width:260px;height:54px;animation-duration:95s;animation-delay:-40s"></div>
+    <div class="cloud" style="top:34%;width:140px;height:30px;animation-duration:60s;animation-delay:-20s"></div>
+  </div>
+  <div class="wrap">
+    <span class="eyebrow">Level 1 · Beginner</span>
+    <h1>Ground School: Getting to Know Jira</h1>
+    <p class="lede">Every pilot starts on the ground. In this level you learn how Jira is laid out, how to find and update work without getting lost, how to read a board, and how to fly with <strong>Rovo</strong>, Atlassian's AI assistant. Pass the checkride at the end and you're cleared for Rovo.</p>
+    <div class="meta-row" style="margin-top:18px">
+      <span class="chip gold">⏱ ~3.5 hrs live + 1 hr self-paced</span>
+      <span class="chip">🎓 Blended: live + on-demand</span>
+      <span class="chip green">✈ 4 missions · 1 checkride</span>
+      <span class="chip navy">Prereq: a Jira account</span>
+    </div>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="wrap layout">
+    <aside class="toc" aria-label="On this page">
+      <h4>Flight plan</h4>
+      <ol>
+        <li><a href="#gs-1">GS-1 Welcome aboard</a></li>
+        <li><a href="#gs-2">GS-2 Anatomy of a work item</a></li>
+        <li><a href="#gs-3">GS-3 Everyday flying</a></li>
+        <li><a href="#gs-4">GS-4 Boards &amp; backlogs</a></li>
+        <li><a href="#gs-5">GS-5 Rovo 101</a></li>
+        <li><a href="#gs-6">GS-6 Golden Template preview</a></li>
+      </ol>
+      <h4 style="margin-top:16px">Missions</h4>
+      <ol>
+        <li><a href="#gs-m1">GS-M1 Find your gate</a></li>
+        <li><a href="#gs-m2">GS-M2 Write it right</a></li>
+        <li><a href="#gs-m3">GS-M3 Read the board</a></li>
+        <li><a href="#gs-m4">GS-M4 Rovo co-pilot</a></li>
+      </ol>
+      <h4 style="margin-top:16px">Finish</h4>
+      <ol>
+        <li><a href="#checkride">Rovo readiness checkride</a></li>
+      </ol>
+    </aside>
+
+    <div>
+      <div class="callout captain">
+        <strong>From the flight deck</strong>
+        <p>Good morning, and welcome aboard. Today's flight takes you from “What's a space?” to working with confidence in your team's board. There's no need to memorize anything. Know where things are, know what the words mean, and know when to ask Rovo for help. Seatbacks up, laptops open. Let's go.</p>
+      </div>
+
+      <h4>Before you board</h4>
+      <ul class="checklist" data-id="gs-preflight">
+        <li><input type="checkbox" id="gs-pf1"><label for="gs-pf1">I can sign in to the training Jira site and see the space <strong>Flight Deck Digital (Training)</strong>, key <code>FLY</code>.</label></li>
+        <li><input type="checkbox" id="gs-pf2"><label for="gs-pf2">I know my two-letter initials for missions (for example <code>AK</code>). Everything I create in the sandbox starts with them.</label></li>
+        <li><input type="checkbox" id="gs-pf3"><label for="gs-pf3">I've bookmarked this page. My miles are saved in this browser.</label></li>
+        <li><input type="checkbox" id="gs-pf4"><label for="gs-pf4">I agree to sandbox etiquette: I only edit items I created or that a mission tells me to touch, and I never delete other people's work.</label></li>
+      </ul>
+
+      <!-- ================= GS-1 ================= -->
+      <article class="lesson" id="gs-1">
+        <h2><span class="lesson-code">GS-1</span> Welcome aboard: spaces &amp; navigation</h2>
+        <div class="meta-row"><span class="chip">⏱ 30 min</span><span class="chip">🖥 Live demo + follow-along</span></div>
+        <div class="objectives">
+          <h4>After this lesson you can</h4>
+          <ul>
+            <li>Explain what a <strong>space</strong> is and find the spaces you work in.</li>
+            <li>Use <em>For you</em>, <em>Recent</em> and <em>Starred</em> to get back to work fast.</li>
+            <li>Move between a space's views: Summary, Timeline, Backlog, Board, List, Reports.</li>
+            <li>Find any work item with search and a handful of keyboard shortcuts.</li>
+          </ul>
+        </div>
+
+        <p>A <strong>space</strong> (older Jira screens and docs say <em>project</em>) is the hangar where a team's work lives. Each space has a short <strong>key</strong>, and every work item in it is numbered with that key. Our training space is <strong>Flight Deck Digital (Training)</strong>, key <code>FLY</code>, so its work items are <code>FLY-1</code>, <code>FLY-2</code> and so on. If you know the key, you know where the work lives.</p>
+
+        <figure class="shot">
+          <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>varoonsahgaltraining.atlassian.net/jira/software/c/projects/FLY/boards/3</span></div>
+          <img src="assets/img/nav-sidebar-board.jpg" alt="Jira with the left sidebar open showing For you, Recent, Starred, Plans, Spaces with Flight Deck Digital (Training) and its two boards, and the Jetstream Sprint Board on the right" loading="lazy"></div>
+          <figcaption>The sidebar is your departures hall: <em>For you</em>, <em>Recent</em>, <em>Starred</em>, <em>Spaces</em>, then <em>Filters</em> and <em>Dashboards</em>. Inside a space, the tabs across the top (Summary, Timeline, Backlog, Active sprints…) are different views of the same work.</figcaption>
+        </figure>
+
+        <h3>Your four ways home</h3>
+        <div class="grid g2">
+          <div class="card"><div class="icon-badge">🧭</div><h3>For you</h3><p>Your personal dashboard. It shows work assigned to you, items you've recently viewed and boards you visit. Start your day here.</p></div>
+          <div class="card"><div class="icon-badge">🕘</div><h3>Recent</h3><p>Spaces, boards and items you opened lately. It's the quickest way back to “that ticket I was just looking at”.</p></div>
+          <div class="card"><div class="icon-badge">⭐</div><h3>Starred</h3><p>Pin the spaces, boards, filters and dashboards you use every day. Click the star next to a name, and it appears under <em>Starred</em> in the sidebar.</p></div>
+          <div class="card"><div class="icon-badge">🔎</div><h3>Search</h3><p>The search bar at the top finds work items, spaces and more. Type a key such as <code>FLY-25</code> to jump straight to it, or a few words to search summaries.</p></div>
+        </div>
+
+        <h3>Inside a space: the tabs</h3>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Tab</th><th>What it's for</th><th>When you'll use it</th></tr></thead>
+          <tbody>
+            <tr><td><b>Summary</b></td><td>Health at a glance: status breakdown, recent activity, workload.</td><td>Getting your bearings in a space you don't know.</td></tr>
+            <tr><td><b>Timeline</b></td><td>Epics on a calendar, with releases and sprints across the top.</td><td>“When is this landing?” conversations.</td></tr>
+            <tr><td><b>Backlog</b></td><td>Ordered list of upcoming work plus sprints (Scrum boards).</td><td>Refinement and sprint planning.</td></tr>
+            <tr><td><b>Active sprints / Board</b></td><td>Cards moving across columns.</td><td>Daily standup, updating your own work.</td></tr>
+            <tr><td><b>List</b></td><td>Spreadsheet-style list with inline editing.</td><td>Bulk-ish edits and quick scans.</td></tr>
+            <tr><td><b>Reports</b></td><td>Velocity, sprint report, burndown, cumulative flow and more.</td><td>Retros and planning (covered in Level 2).</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>Shortcuts that make you look like a frequent flyer</h3>
+        <p>Click on an empty part of the page first, so you're not typing in a text box, then try these:</p>
+        <div class="kbd-grid">
+          <div><kbd>/</kbd><span>Jump to search</span></div>
+          <div><kbd>c</kbd><span>Create a work item</span></div>
+          <div><kbd>?</kbd><span>Show every shortcut on your site</span></div>
+          <div><kbd>g</kbd> then <kbd>d</kbd><span>Go to dashboards</span></div>
+          <div><kbd>m</kbd><span>Add a comment (on a work item)</span></div>
+          <div><kbd>i</kbd><span>Assign to me (on a work item)</span></div>
+        </div>
+        <div class="callout tip">
+          <strong>Pro tip</strong>
+          <p>Press <kbd>?</kbd> once and skim the list. Shortcuts change now and then, and the <kbd>?</kbd> panel is always right for your site. Learn three and you'll save minutes every day.</p>
+        </div>
+      </article>
+
+      <!-- ================= GS-2 ================= -->
+      <article class="lesson" id="gs-2">
+        <h2><span class="lesson-code">GS-2</span> Anatomy of a work item</h2>
+        <div class="meta-row"><span class="chip">⏱ 30 min</span><span class="chip">🖥 Live + discussion</span></div>
+        <div class="objectives">
+          <h4>After this lesson you can</h4>
+          <ul>
+            <li>Describe the work hierarchy, from Initiative down to Sub-task.</li>
+            <li>Pick the right <strong>work type</strong>: Story, Task, Bug, Spike or Risk.</li>
+            <li>Read the key fields on any item and explain what each one does.</li>
+            <li>Explain the three status categories and why they matter for reports.</li>
+          </ul>
+        </div>
+
+        <p>Think of the hierarchy as a flight schedule. An <strong>Initiative</strong> is the route network. An <strong>Epic</strong> is a single route. <strong>Stories, Tasks, Bugs and Spikes</strong> are the flights. <strong>Sub-tasks</strong> are the pre-flight checklist items.</p>
+
+        <div class="hier" role="list">
+          <div class="lvl l0" role="listitem"><b>Initiative</b><span>A big business goal spanning many epics and often several teams. Example: “Self-service during disruptions”.</span></div>
+          <div class="lvl l1" role="listitem"><b>Epic</b><span>A large body of work that takes several sprints. Example: <code>FLY-4</code> IROPS Self-Service Rebooking.</span></div>
+          <div class="lvl l2" role="listitem"><b>Story · Task · Bug · Spike · Risk</b><span>Sprint-sized work. Example: <code>FLY-36</code> “As a traveler on a canceled flight, I see rebooking options in-app”.</span></div>
+          <div class="lvl l3" role="listitem"><b>Sub-task</b><span>A small step inside one item. Example: <code>FLY-53</code> “Localize alert copy” under <code>FLY-21</code>.</span></div>
+        </div>
+
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Work type</th><th>Use it when…</th><th>Sandbox example</th></tr></thead>
+          <tbody>
+            <tr><td><b>Story</b></td><td>You're delivering value a user can notice. Written as “As a…, I can…”.</td><td><code>FLY-15</code> Add boarding pass to Apple Wallet</td></tr>
+            <tr><td><b>Task</b></td><td>The work is needed but isn't user-facing: setup, upgrades, chores.</td><td><code>FLY-29</code> Upgrade Node runtime to v22</td></tr>
+            <tr><td><b>Bug</b></td><td>Something is broken compared with what was expected. Always use the Bug type, not a Task with a “defect” label.</td><td><code>FLY-25</code> Duplicate gate change alerts</td></tr>
+            <tr><td><b>Spike</b></td><td>Time-boxed research to reduce uncertainty before committing.</td><td><code>FLY-33</code> Assess bag scan event latency</td></tr>
+            <tr><td><b>Risk</b></td><td>Something that <em>might</em> hurt delivery and needs an owner and a mitigation.</td><td><code>FLY-46</code> Partner contracts not signed before Q1 pilot</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="callout warn">
+          <strong>Spot the anti-pattern</strong>
+          <p><code>FLY-44</code> “Defect: login spinner never stops on slow 3G” was logged as a <em>Task</em> with a <code>defect</code> label. That hides it from every report and filter that looks for Bugs. The standard is simple: if it's broken, it's a <strong>Bug</strong>.</p>
+        </div>
+
+        <h3>The fields that matter most</h3>
+        <div class="grid g3">
+          <div class="card"><h4>Summary</h4><p>The one-line title. Make it searchable and specific.</p></div>
+          <div class="card"><h4>Description</h4><p>Context, plus <strong>acceptance criteria</strong> that say how we'll know it's done.</p></div>
+          <div class="card"><h4>Status</h4><p>Where the item is in the workflow, for example <em>Development</em> or <em>PO Review</em>.</p></div>
+          <div class="card"><h4>Assignee / Reporter</h4><p>Who's doing it, and who raised it.</p></div>
+          <div class="card"><h4>Parent</h4><p>The epic (or item) this rolls up to. Items with no parent are “orphans”.</p></div>
+          <div class="card"><h4>Story Points</h4><p>Relative size estimate used for planning and velocity.</p></div>
+          <div class="card"><h4>Sprint</h4><p>The time-box the item is planned into, for example <code>JET-2026.q4.3</code>.</p></div>
+          <div class="card"><h4>Components &amp; Labels</h4><p>Tags. Components are a governed list; labels are free-form.</p></div>
+          <div class="card"><h4>Fix versions</h4><p>The release the work ships in, for example <em>Mobile 5.3</em>.</p></div>
+        </div>
+
+        <h3>Status categories: the three colors</h3>
+        <p>Teams can have many statuses, but Jira groups every status into one of three <strong>categories</strong>. Reports, filters and progress bars all rely on these.</p>
+        <div class="flow" aria-label="Status categories">
+          <span class="st todo">To Do (grey)</span><span class="arr">→</span>
+          <span class="st prog">In Progress (blue)</span><span class="arr">→</span>
+          <span class="st done">Done (green)</span>
+        </div>
+        <p>In our sandbox, <em>New Idea, Product Refinement, Team Refinement, Ready</em> and <em>To Do</em> are grey. <em>Development, Ready for eQE, eQE Testing, PO Review</em> and <em>Ready for Release</em> are blue. <em>Done</em> is green.</p>
+      </article>
+
+      <!-- ================= GS-3 ================= -->
+      <article class="lesson" id="gs-3">
+        <h2><span class="lesson-code">GS-3</span> Everyday flying: find, create, update</h2>
+        <div class="meta-row"><span class="chip">⏱ 45 min</span><span class="chip">🛠 Hands-on</span></div>
+        <div class="objectives">
+          <h4>After this lesson you can</h4>
+          <ul>
+            <li>Create a work item that a teammate can pick up without asking questions.</li>
+            <li>Comment, @mention, watch, link and flag work correctly.</li>
+            <li>Move an item through its workflow and know what each move signals.</li>
+          </ul>
+        </div>
+
+        <h3>Create: write it right the first time</h3>
+        <p>Press <kbd>c</kbd> or click <strong>+ Create</strong>. Choose the space, the work type and a summary, then fill in the description. The test of a good item: <em>could someone pick this up tomorrow without messaging you?</em></p>
+
+        <div class="bad-good">
+          <div class="bad"><h4>✗ Turbulent</h4>
+            <p><strong>Summary:</strong> seat map fix</p>
+            <p><strong>Description:</strong> doesn't work with screen reader, pls fix asap</p>
+            <p class="muted">No user, no outcome, no way to test it. Which screen reader? What should happen instead?</p>
+          </div>
+          <div class="good"><h4>✓ Smooth air</h4>
+            <p><strong>Summary:</strong> As a screen-reader user, seat map seats announce row, letter and price</p>
+            <p><strong>Description:</strong> VoiceOver and TalkBack currently read “button” for every seat.</p>
+            <p><strong>Acceptance criteria</strong></p>
+            <ul><li>Each seat announces row, letter, type and price</li><li>Unavailable seats are announced as unavailable</li><li>Tested with VoiceOver and TalkBack</li></ul>
+          </div>
+        </div>
+
+        <div class="callout captain">
+          <strong>From the flight deck: the INVEST check</strong>
+          <p>A good story is <b>I</b>ndependent, <b>N</b>egotiable, <b>V</b>aluable, <b>E</b>stimable, <b>S</b>mall and <b>T</b>estable. Acceptance criteria take care of the “Testable” part. If you can't write them, the story isn't ready.</p>
+        </div>
+
+        <h3>Update: the six everyday moves</h3>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Move</th><th>How</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td><b>Comment</b></td><td>Press <kbd>m</kbd> or click <em>Add a comment</em>.</td><td>Decisions belong on the ticket, not in a chat thread that disappears.</td></tr>
+            <tr><td><b>@mention</b></td><td>Type <code>@</code> and a name inside a comment or description.</td><td>Notifies that person directly. Use it when you need something from them.</td></tr>
+            <tr><td><b>Watch</b></td><td>Click the eye icon at the top right of the item.</td><td>You get updates without being the assignee.</td></tr>
+            <tr><td><b>Link</b></td><td>Use the <em>Link work item</em> action and choose a type such as <em>blocks</em>, <em>relates to</em> or <em>duplicates</em>.</td><td>Shows dependencies. <code>FLY-24</code> <em>blocks</em> <code>FLY-22</code>.</td></tr>
+            <tr><td><b>Flag</b></td><td>Use <em>Add flag</em> from the item's actions (or right-click a card on the board).</td><td>Turns the card yellow and raises an impediment. <code>FLY-22</code> is flagged.</td></tr>
+            <tr><td><b>Transition</b></td><td>Click the status button and pick the next status, or drag the card on the board.</td><td>The board, the reports and your teammates all rely on accurate status.</td></tr>
+          </tbody>
+        </table></div>
+
+        <figure class="shot">
+          <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>varoonsahgaltraining.atlassian.net/browse/FLY-25</span></div>
+          <img src="assets/img/item-comments.jpg" alt="Work item FLY-25 in PO Review status showing a comment thread where eQE failed the fix, development reworked it, and eQE passed all 14 scenarios" loading="lazy"></div>
+          <figcaption>A healthy comment trail on <code>FLY-25</code>: eQE failed it with a precise reason, development explained the fix, and eQE passed it. Anyone can follow the story, including Rovo when it summarizes the item.</figcaption>
+        </figure>
+
+        <h3>Find: three ways to search</h3>
+        <ol>
+          <li><strong>Quick search</strong> (<kbd>/</kbd>): type a key or keywords.</li>
+          <li><strong>Basic filters</strong> on the search page: pick space, type, status and assignee from dropdowns.</li>
+          <li><strong>JQL</strong>, Jira Query Language, for precise questions. You'll get a taste here and the full course in Level 2.</li>
+        </ol>
+        <pre data-jql data-label="Your first JQL: my open work in FLY">-- everything assigned to me in FLY that isn't finished
+project = FLY AND assignee = currentUser() AND statusCategory != Done
+ORDER BY priority DESC</pre>
+        <div class="callout tip">
+          <strong>No JQL yet? No problem.</strong>
+          <p>On the search page, the <em>Ask AI</em> button lets you type a question in plain English. Rovo writes the JQL for you. You'll try it in GS-5 and Mission GS-M4.</p>
+        </div>
+      </article>
+
+      <!-- ================= GS-4 ================= -->
+      <article class="lesson" id="gs-4">
+        <h2><span class="lesson-code">GS-4</span> Reading boards &amp; backlogs</h2>
+        <div class="meta-row"><span class="chip">⏱ 30 min</span><span class="chip">🖥 Live demo</span></div>
+        <div class="objectives">
+          <h4>After this lesson you can</h4>
+          <ul>
+            <li>Tell a Scrum board from a Kanban board, and say when each fits.</li>
+            <li>Explain how columns map to statuses.</li>
+            <li>Use quick filters and swimlanes to cut the noise.</li>
+            <li>Diagnose the classic problem: “my ticket disappeared from the board”.</li>
+          </ul>
+        </div>
+
+        <div class="split">
+          <div class="vs"><h4>🏃 Scrum board</h4><p>Work is planned into fixed-length <strong>sprints</strong>, usually two weeks. The board shows only the active sprint. Planning happens in the Backlog.</p><p class="muted">Best for: delivery teams with a regular cadence. Example: <em>Jetstream - Sprint Board</em>.</p></div>
+          <div class="vs"><h4>🌊 Kanban board</h4><p>Work <strong>flows</strong> continuously with no sprints. Column limits (WIP limits) stop too much piling up in one stage.</p><p class="muted">Best for: refinement pipelines, support and ops. Example: <em>Jetstream - Backlog Readiness</em>.</p></div>
+        </div>
+
+        <figure class="shot">
+          <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/projects/FLY/boards/3 · Active sprints</span></div>
+          <img src="assets/img/board-sprint.jpg" alt="Jetstream Sprint Board with columns To Do, Development, Ready for eQE, eQE Testing, PO Review, Ready for Release and Done for sprint JET-2026.q4.3" loading="lazy"></div>
+          <figcaption>Each column is one or more statuses. The yellow card (<code>FLY-22</code>) is flagged. The sprint name, <code>JET-2026.q4.3</code>, appears at the top right.</figcaption>
+        </figure>
+
+        <h3>How to read a card</h3>
+        <ul>
+          <li><b>Summary</b> at the top, then labels (e.g. <code>Blocked</code>, <code>accessibility</code>).</li>
+          <li>The <b>parent epic</b> chip in the epic's color.</li>
+          <li>The <b>work type icon</b> and <b>key</b>, the <b>story points</b> bubble, a <b>priority</b> arrow and the <b>assignee</b> avatar.</li>
+          <li>A red <b>flag</b> icon and yellow background mean there's an impediment.</li>
+        </ul>
+
+        <h3>Noise-cancelling headphones: quick filters &amp; swimlanes</h3>
+        <p><strong>Quick filters</strong> (or <em>Custom filters</em>) are one-click views such as “only my items” or “only bugs”. Clicking your avatar at the top of the board does the same for one person. <strong>Swimlanes</strong> (the <em>Group</em> button) split the board horizontally, for example by epic or by assignee. Standups go faster when you group by assignee.</p>
+
+        <figure class="shot">
+          <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/projects/FLY/boards/3/backlog</span></div>
+          <img src="assets/img/backlog.jpg" alt="Backlog view of sprint JET-2026.q4.3 with sprint goal and eleven work items showing status, epic, release, points and assignee" loading="lazy"></div>
+          <figcaption>The Backlog shows the sprint goal (“Gate change push alerts end-to-end in staging”), each item's epic and release, and point totals by status category (the grey, blue and green bubbles).</figcaption>
+        </figure>
+
+        <div class="callout danger">
+          <strong>“My ticket vanished from the board!”</strong>
+          <p>Nine times out of ten it's one of these:</p>
+          <ol>
+            <li><b>Unmapped status.</b> The item's status isn't in any board column, so it's hidden. On our Sprint Board, items in <em>Team Refinement</em> don't show, by design. They live on the Backlog Readiness board.</li>
+            <li><b>Board filter.</b> The board's saved filter excludes it. For example, the Sprint Board excludes the <em>Risk</em> type.</li>
+            <li><b>Not in the active sprint.</b> Scrum boards only show the current sprint. Check the Backlog.</li>
+            <li><b>A quick filter is on.</b> Look for a highlighted filter or avatar.</li>
+          </ol>
+        </div>
+      </article>
+
+      <!-- ================= GS-5 ================= -->
+      <article class="lesson" id="gs-5">
+        <h2><span class="lesson-code">GS-5</span> Rovo 101: your AI co-pilot</h2>
+        <div class="meta-row"><span class="chip">⏱ 45 min</span><span class="chip">🖥 Live + hands-on</span><span class="chip gold">Unlocks Rovo access</span></div>
+        <div class="objectives">
+          <h4>After this lesson you can</h4>
+          <ul>
+            <li>Explain the three ways to use Rovo: <strong>Search</strong>, <strong>Chat</strong> and <strong>Agents</strong>.</li>
+            <li>Choose between chat and an agent for a given job.</li>
+            <li>Use Rovo inside Jira to summarize, improve and search work.</li>
+            <li>Verify AI output before you rely on it, every time.</li>
+          </ul>
+        </div>
+
+        <div class="callout rovo">
+          <strong>Why this lesson matters</strong>
+          <p>Rovo is one of the most under-used tools in our Atlassian stack. Passing this level's checkride is the gate for turning Rovo on for you. Treat it like a type rating: learn what it does well, where it can go wrong, and how to check its work.</p>
+        </div>
+
+        <h3>The three cockpit instruments</h3>
+        <div class="grid g3">
+          <div class="card"><div class="icon-badge">🔍</div><h3>Search</h3><p>Finds content across Jira, Confluence and connected apps, and only shows you what you already have permission to see.</p></div>
+          <div class="card"><div class="icon-badge">💬</div><h3>Chat</h3><p>A conversation. Ask questions, summarize, draft and brainstorm. You steer every turn, and nothing changes unless you act on it.</p></div>
+          <div class="card"><div class="icon-badge">🤖</div><h3>Agents</h3><p>Specialists with a set job, instructions and sometimes actions. They do a <em>repeatable</em> task the same way each time.</p></div>
+        </div>
+
+        <h3>Chat or agent? Quick rule</h3>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>If your job is…</th><th>Use</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>A one-off question or draft</td><td><b>Chat</b></td><td>“Summarize the discussion on FLY-36 for my manager.”</td></tr>
+            <tr><td>Exploring or brainstorming</td><td><b>Chat</b></td><td>“What questions should we ask before estimating the IROPS epic?”</td></tr>
+            <tr><td>The same task again and again, which should run the same way every time</td><td><b>Agent</b></td><td>A “Definition of Ready checker” that reviews new stories for acceptance criteria.</td></tr>
+            <tr><td>Work triggered by an event (a new ticket, a status change)</td><td><b>Agent + automation</b></td><td>Draft release notes whenever a version is released.</td></tr>
+          </tbody>
+        </table></div>
+        <p>See the full decision guide in the <a href="rovo.html#rv-2">Rovo Flight Manual</a>.</p>
+
+        <div class="callout united">
+          <strong>How agents work at our organization</strong>
+          <p>Anyone with Rovo can <em>use</em> available agents. <em>Creating</em> agents is limited to a small group of builders today. If you have an idea for an agent, write it up and send it through your team's agent request process. Mission <a href="rovo.html#rv-m4">RV-M4</a> shows you how to write a strong request.</p>
+        </div>
+
+        <h3>Rovo inside Jira: three moves to know on day one</h3>
+        <div class="grid g3">
+          <div class="card"><h4>1 · Summarize</h4><p>On a work item, click <em>Summarize work item</em>. You get a briefing built from the description, comments and history.</p></div>
+          <div class="card"><h4>2 · Improve</h4><p>The <em>Improve Story</em> or <em>Improve Bug</em> button suggests a clearer description and acceptance criteria. Review it before you accept.</p></div>
+          <div class="card"><h4>3 · Ask AI</h4><p>On the search page, describe what you want in plain English. Rovo writes the JQL and runs it.</p></div>
+        </div>
+
+        <figure class="shot">
+          <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/browse/FLY-36 · Summarize work item</span></div>
+          <img src="assets/img/rovo-summary.jpg" alt="Rovo summary of FLY-36 showing status Team Refinement, priority Highest, next steps to split the work, the risk that the rebooking API takes 8 to 12 seconds, and a Uses AI Verify results note" loading="lazy"></div>
+          <figcaption>Rovo read the comment thread on <code>FLY-36</code> and pulled out the next step (split the story in Team Refinement) and the key risk (the rebooking engine API takes 8–12 s under load). Note the footer: <em>Uses AI. Verify results.</em></figcaption>
+        </figure>
+
+        <figure class="shot">
+          <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/issues · Ask AI</span></div>
+          <img src="assets/img/rovo-nl-jql-ready.jpg" alt="Ask AI converting the question stories in FLY that are in Ready status but have no story points into JQL and returning FLY-43" loading="lazy"></div>
+          <figcaption>Plain English in, JQL out: <code>project = "FLY" AND issuetype = "Story" AND status = "Ready" AND cf[10036] IS EMPTY</code>. The result is <code>FLY-43</code>, a story marked Ready that nobody has estimated.</figcaption>
+        </figure>
+
+        <h3>What Rovo is great at, and where it slips</h3>
+        <div class="split">
+          <div class="vs"><h4>✅ Strong</h4><ul><li>Summarizing long threads and history</li><li>First drafts of stories, acceptance criteria and release notes</li><li>Turning questions into searches</li><li>Finding related or duplicate work</li><li>Explaining unfamiliar terms in your docs</li></ul></div>
+          <div class="vs"><h4>⚠️ Watch out</h4><ul><li>It can sound confident and still be wrong</li><li>It can't see what <em>you</em> can't see (permissions apply)</li><li>Generated JQL may include extra conditions or miss edge cases</li><li>It doesn't know team decisions that were never written down</li><li>It's not a substitute for the team agreeing on estimates</li></ul></div>
+        </div>
+
+        <div class="callout captain">
+          <strong>From the flight deck: trust, but cross-check</strong>
+          <p>Pilots trust their autopilot, and they still cross-check the instruments. Do the same with Rovo. Read the generated JQL before using the results, open two or three items to confirm the summary matches reality, and never paste passwords, keys or customer personal data into a prompt.</p>
+        </div>
+      </article>
+
+      <!-- ================= GS-6 ================= -->
+      <article class="lesson" id="gs-6">
+        <h2><span class="lesson-code">GS-6</span> Golden Template preview</h2>
+        <div class="meta-row"><span class="chip">⏱ 15 min</span><span class="chip">📖 Vocabulary</span><span class="chip navy">Deep dive in Level 2</span></div>
+        <div class="objectives">
+          <h4>After this lesson you can</h4>
+          <ul>
+            <li>Recognize the two-board model in your organization's standard template.</li>
+            <li>Name the statuses work moves through, from idea to production.</li>
+            <li>Decode a sprint name like <code>JET-2026.q4.3</code>.</li>
+          </ul>
+        </div>
+
+        <p>Your organization's standard template, which we call <strong>the Golden Template</strong>, gives every team the same structure. When you move teams, the board looks familiar and the reports mean the same thing. Today we only learn the words. Level 2 teaches you to run it.</p>
+
+        <h3>Two boards, one space</h3>
+        <div class="split">
+          <div class="vs"><h4>🧪 Backlog Readiness (Kanban)</h4><p>Ideas are refined until they're <em>Ready</em>. No sprint is needed. The goal is to always have <strong>2–3 sprints of Ready work</strong> waiting.</p>
+            <div class="flow"><span class="st todo">New Idea</span><span class="arr">→</span><span class="st todo">Product Refinement</span><span class="arr">→</span><span class="st todo">Team Refinement</span><span class="arr">→</span><span class="st todo">Ready</span></div></div>
+          <div class="vs"><h4>🚀 Sprint Execution (Scrum)</h4><p>Committed work is delivered inside the active sprint.</p>
+            <div class="flow"><span class="st todo">To Do</span><span class="arr">→</span><span class="st prog">Development</span><span class="arr">→</span><span class="st prog">Ready for eQE</span><span class="arr">→</span><span class="st prog">eQE Testing</span><span class="arr">→</span><span class="st prog">PO Review</span><span class="arr">→</span><span class="st prog">Ready for Release</span><span class="arr">→</span><span class="st done">Done</span></div></div>
+        </div>
+
+        <figure class="shot">
+          <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/projects/FLY/boards/4 · Kanban board</span></div>
+          <img src="assets/img/board-readiness.jpg" alt="Jetstream Backlog Readiness Kanban board with columns New Idea, Product Refinement, Team Refinement, Ready and Done" loading="lazy"></div>
+          <figcaption>The Backlog Readiness board. Product Refinement and Team Refinement have WIP limits so refinement doesn't become a parking lot.</figcaption>
+        </figure>
+
+        <h3>Decode a sprint name</h3>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Part</th><th>JET-2026.q4.3</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>TeamCode</td><td><b>JET</b></td><td>The team (here, Jetstream)</td></tr>
+            <tr><td>Year</td><td><b>2026</b></td><td>The (fiscal) year</td></tr>
+            <tr><td>Quarter</td><td><b>q4</b></td><td>The (fiscal) quarter</td></tr>
+            <tr><td>Sprint</td><td><b>3</b></td><td>The third sprint of that quarter</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout tip">
+          <strong>Why bother with a naming standard?</strong>
+          <p>Because <code>sprint = "JET-2026.q4.3"</code> sorts, filters and reports cleanly across every team. “Sprint 7 (the good one)” doesn't.</p>
+        </div>
+        <p class="muted">eQE = engineering quality engineering, the testing stage. PO = product owner.</p>
+      </article>
+
+      <hr>
+      <h2 id="missions">Missions</h2>
+      <p class="lede">Time to fly the real thing. Each mission runs in the live sandbox. Mark it complete to earn miles. Several classmates work in the same space, so start anything you create with your initials, and only change items a mission tells you to.</p>
+
+      <!-- ================= GS-M1 ================= -->
+      <article class="mission" id="gs-m1" data-miles="250">
+        <div class="mission-head"><div><span class="mcode">MISSION GS-M1</span><h3>Find your gate</h3></div><span class="turb">Turbulence <i class="on"></i><i></i><i></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> · A navigation scavenger hunt. Find each answer in the sandbox using only the sidebar, the space tabs and search. Write down your answers before you open the debrief.</div>
+          <ol class="steps">
+            <li>Open the space <strong>Flight Deck Digital (Training)</strong>. What is its <strong>key</strong>?</li>
+            <li>Open <strong>Jetstream - Sprint Board</strong> and <strong>star</strong> it. Confirm it now appears under <em>Starred</em> in the sidebar.</li>
+            <li>What's the name of the <strong>active sprint</strong>, and what's its <strong>sprint goal</strong>? (Hint: look in the Backlog.)</li>
+            <li>Press <kbd>/</kbd> and search for <em>apostrophe</em>. Which bug is about passenger names crashing the boarding pass?</li>
+            <li>Open <code>FLY-25</code>. Which <strong>epic</strong> is its parent, and which <strong>release</strong> (fix version) is it in?</li>
+            <li>On the Sprint Board, find the yellow card. What's its key, and what is <em>blocking</em> it?</li>
+            <li>Open the <strong>Timeline</strong> tab. Which epic starts the latest?</li>
+          </ol>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <ol>
+              <li><code>FLY</code></li>
+              <li>The board should appear under <em>Starred</em>. Starred items are the fastest way back.</li>
+              <li><code>JET-2026.q4.3</code>: “Gate change push alerts end-to-end in staging”.</li>
+              <li><code>FLY-50</code>, “Boarding pass crashes when passenger name contains an apostrophe”. You may also have spotted <code>FLY-51</code>, which is a duplicate of it. Keep that in mind for Rovo later.</li>
+              <li>Parent <code>FLY-2</code> Real-time Gate Change Alerts; fix version <em>Mobile 5.3</em>.</li>
+              <li><code>FLY-22</code> (gate agent alert delivery). It's flagged and blocked by <code>FLY-24</code>, the push notification provider integration.</li>
+              <li><code>FLY-4</code> IROPS Self-Service Rebooking, starting January 2027.</li>
+            </ol>
+            <p class="muted">The sandbox is shared, so if a classmate has moved something, trust what you see and tell the instructor.</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+250 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- ================= GS-M2 ================= -->
+      <article class="mission" id="gs-m2" data-miles="350">
+        <div class="mission-head"><div><span class="mcode">MISSION GS-M2</span><h3>Write it right</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> · The accessibility epic <code>FLY-6</code> needs another story. Create one that a developer and a tester could pick up tomorrow without asking you a single question.</div>
+          <ol class="steps">
+            <li>Press <kbd>c</kbd>. Space: <strong>FLY</strong>. Work type: <strong>Story</strong>.</li>
+            <li>Summary: start with your initials in square brackets, then use the user-story format. Example: <code>[AK] As a keyboard-only user, I can select a seat using Tab and Enter</code>.</li>
+            <li>Description: one or two sentences of context, then an <strong>Acceptance criteria</strong> heading with at least three testable bullets.</li>
+            <li>Set <strong>Parent</strong> = <code>FLY-6</code> Seat Map Accessibility, <strong>Component</strong> = Mobile App, and add a <strong>label</strong> with your initials in lowercase (e.g. <code>ak</code>).</li>
+            <li>Leave Story Points empty. Estimating is a team activity.</li>
+            <li>Create it. Then add a comment that @mentions a classmate and asks them to review the acceptance criteria.</li>
+            <li>Swap with that classmate. Score their story against INVEST, and reply in a comment with one improvement.</li>
+          </ol>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <p>A strong answer looks like this:</p>
+            <ul>
+              <li><b>Summary:</b> [AK] As a keyboard-only user, I can select a seat using Tab and Enter</li>
+              <li><b>Context:</b> Travelers who can't use a pointer currently can't choose seats (WCAG 2.1.1 Keyboard).</li>
+              <li><b>AC:</b> Tab moves through seats row by row · Enter selects the focused seat · Focus is always visible · Unavailable seats are skipped or announced as unavailable</li>
+            </ul>
+            <p>Check your own: does every AC bullet describe something a tester can observe? “Works well” and “is fast” are not testable. “Selects within 1 second” is.</p>
+            <p>Find your work later with this query:</p>
+            <pre data-jql data-label="Find my mission stories">project = FLY AND reporter = currentUser() ORDER BY created DESC</pre>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+350 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- ================= GS-M3 ================= -->
+      <article class="mission" id="gs-m3" data-miles="300">
+        <div class="mission-head"><div><span class="mcode">MISSION GS-M3</span><h3>Read the board like a pilot reads the instruments</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> · It's 9:00 and standup starts in five minutes. Open <strong>Jetstream - Sprint Board</strong>, or use the screenshot in GS-4, and answer these the way you'd report them to the team.</div>
+          <ol class="steps">
+            <li>Which item is being tested right now (<em>eQE Testing</em>), and how many story points is it?</li>
+            <li>Which item is waiting for the product owner (<em>PO Review</em>)? Is it a story or a bug?</li>
+            <li>Which item is flagged, and why can't it move? (Open it and look at its links.)</li>
+            <li>What's sitting in <em>Ready for Release</em>?</li>
+            <li>Click <strong>Group</strong> and group by assignee. Which items in the sprint have <em>no assignee</em>? Is that a problem mid-sprint?</li>
+            <li>Find the item that was carried over from an earlier sprint. (Hint: open each Development card and check its <em>Sprint</em> field for more than one sprint.)</li>
+          </ol>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <ol>
+              <li><code>FLY-21</code> “As a traveler, I get a push notification when my gate changes”, 8 points.</li>
+              <li><code>FLY-25</code>, a <strong>Bug</strong> (duplicate gate change alerts).</li>
+              <li><code>FLY-22</code>, blocked by <code>FLY-24</code> (push provider integration in staging). The comment explains that delivery receipts are needed first.</li>
+              <li><code>FLY-27</code> Boarding pass brightness bug, for <em>Mobile 5.3</em>.</li>
+              <li>Several To Do and Development items are unassigned, for example <code>FLY-22</code>, <code>FLY-26</code> and <code>FLY-29</code>. A blocked, unassigned item is the one most at risk of being forgotten. Call it out at standup.</li>
+              <li><code>FLY-20</code> (pairing rest-rule warning) is in JET-2026.q4.2 and JET-2026.q4.3. Carry-over is a signal worth discussing at retro. In Level 2 you'll find these with one query.</li>
+            </ol>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+300 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- ================= GS-M4 ================= -->
+      <article class="mission" id="gs-m4" data-miles="400">
+        <div class="mission-head"><div><span class="mcode">MISSION GS-M4</span><h3>Rovo co-pilot</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> · Fly three legs with Rovo and cross-check every one. You're graded on how well you <em>verify</em>, not on how fast Rovo answers.</div>
+          <ol class="steps">
+            <li><b>Leg 1: Summarize.</b> Open <code>FLY-36</code> and click <em>Summarize work item</em>. Then read the three comments yourself. Did the summary catch the <strong>38% of IROPS calls</strong> figure from the product owner's comment? What did it leave out?</li>
+            <li><b>Leg 2: Ask AI.</b> On the search page, click <em>Ask AI</em> and type: <em>stories in FLY that are in Ready status but have no story points</em>. Before you look at the results, read the JQL it generated. Is each condition what you asked for?</li>
+            <li>Now ask: <em>FLY stories in Ready that have no acceptance criteria</em>. Can Rovo answer this one with JQL? Why or why not?</li>
+            <li><b>Leg 3: Improve.</b> Open the story you created in GS-M2 and click <em>Improve Story</em>. Accept only the suggestions you agree with, and edit the rest.</li>
+            <li>Write one sentence in a comment on your story: “Rovo suggested X; I kept / changed it because Y.”</li>
+          </ol>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <ul>
+              <li><b>Leg 1:</b> Summaries are good at the gist (next step: split the story; risk: slow rebooking API) but can drop specific numbers and who said what. If the number matters for your decision, read the source.</li>
+              <li><b>Leg 2:</b> Expected JQL is roughly <code>project = "FLY" AND issuetype = "Story" AND status = "Ready" AND "Story Points" IS EMPTY</code> (Rovo may show the field as <code>cf[10036]</code>). The answer is <code>FLY-43</code>.</li>
+              <li><b>Leg 3 (the trick question):</b> JQL can't reliably tell whether a description <em>contains acceptance criteria</em>. That's a judgement about the text. Rovo Chat can read and assess items (it should point to <code>FLY-42</code>, the gate change audit log story, which is Ready with no AC), but treat that as a lead to check, not a fact. Knowing which questions are search questions and which are reading questions is a key Rovo skill.</li>
+              <li><b>Improve:</b> Good suggestions add missing AC and clarify the user. Weak ones add generic AC (“should be user-friendly”). Delete those.</li>
+            </ul>
+            <pre data-jql data-label="Leg 2: the expected query">project = FLY AND issuetype = Story AND status = Ready AND "Story Points" IS EMPTY</pre>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+400 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- ================= Checkride ================= -->
+      <hr>
+      <h2 id="checkride">Rovo readiness checkride</h2>
+      <p class="lede">Ten questions. Score 80% or higher to pass Ground School. Passing is the gate for getting Rovo turned on for your account.</p>
+
+      <div class="quiz" data-id="gs" data-pass="80" data-miles="600">
+        <div class="q">
+          <p class="prompt">1. In the key <code>FLY-25</code>, what does <code>FLY</code> tell you?</p>
+          <div class="opts">
+            <button class="opt" type="button">The work type</button>
+            <button class="opt" data-right type="button">The space the work item belongs to</button>
+            <button class="opt" type="button">The sprint it's planned in</button>
+            <button class="opt" type="button">The team that created it</button>
+          </div>
+          <div class="why">The prefix is the space key. Every item in the Flight Deck Digital (Training) space starts with <code>FLY-</code>.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">2. The app crashes when a name has an apostrophe. Which work type should you use?</p>
+          <div class="opts">
+            <button class="opt" type="button">Task with a “defect” label</button>
+            <button class="opt" type="button">Story</button>
+            <button class="opt" data-right type="button">Bug</button>
+            <button class="opt" type="button">Spike</button>
+          </div>
+          <div class="why">Broken behavior is a Bug. A Task with a “defect” label (like <code>FLY-44</code>) doesn't show up in bug reports or filters.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">3. A teammate says their story “disappeared from the sprint board”. What's the most likely cause?</p>
+          <div class="opts">
+            <button class="opt" type="button">Jira deleted it automatically</button>
+            <button class="opt" data-right type="button">Its status isn't mapped to a board column, or the board filter excludes it</button>
+            <button class="opt" type="button">It was assigned to someone else</button>
+            <button class="opt" type="button">It has too many story points</button>
+          </div>
+          <div class="why">Unmapped statuses, the board filter, not being in the active sprint, or an active quick filter explain almost every “vanished” ticket.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">4. Which belongs in a good story's acceptance criteria?</p>
+          <div class="opts">
+            <button class="opt" type="button">“The feature should be user-friendly”</button>
+            <button class="opt" data-right type="button">“Each seat announces row, letter, type and price”</button>
+            <button class="opt" type="button">“Fix ASAP”</button>
+            <button class="opt" type="button">“See Slack thread”</button>
+          </div>
+          <div class="why">Acceptance criteria must be observable and testable. The other options are opinions, urgency or links that will rot.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">5. You need the same check run on every new story, with the same instructions every time. What's the best fit?</p>
+          <div class="opts">
+            <button class="opt" type="button">Ask Rovo Chat each time and paste the instructions again</button>
+            <button class="opt" data-right type="button">A Rovo agent built for that job</button>
+            <button class="opt" type="button">Rovo Search</button>
+            <button class="opt" type="button">A dashboard gadget</button>
+          </div>
+          <div class="why">Repeatable work with fixed instructions is agent territory. Chat is best for one-off questions and exploration.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">6. Ask AI turned your question into JQL. What should you do before you share the results?</p>
+          <div class="opts">
+            <button class="opt" type="button">Nothing. The AI is always right about JQL.</button>
+            <button class="opt" data-right type="button">Read the generated JQL and check each condition matches what you meant</button>
+            <button class="opt" type="button">Re-run it three times to be sure</button>
+            <button class="opt" type="button">Convert it to Basic mode</button>
+          </div>
+          <div class="why">Generated JQL can add or drop conditions. In our sandbox, Rovo once quietly added an unused “In Progress” status to a query. Always read it.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">7. Can Rovo show you a Confluence page you don't have permission to view?</p>
+          <div class="opts">
+            <button class="opt" type="button">Yes, AI has admin access</button>
+            <button class="opt" data-right type="button">No. Rovo respects your existing permissions</button>
+            <button class="opt" type="button">Only if you ask politely</button>
+            <button class="opt" type="button">Only in Rovo Chat</button>
+          </div>
+          <div class="why">Rovo only uses content you can already access. That's also why its answers may differ from a teammate's.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">8. Which should you never put in a Rovo prompt?</p>
+          <div class="opts">
+            <button class="opt" type="button">A work item key like FLY-36</button>
+            <button class="opt" type="button">The name of a release</button>
+            <button class="opt" data-right type="button">A password, API token or customer's personal data</button>
+            <button class="opt" type="button">A sprint name</button>
+          </div>
+          <div class="why">Treat prompts like any shared workspace. Secrets and personal data never go in.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">9. In the Golden Template, where does work get refined until it's Ready?</p>
+          <div class="opts">
+            <button class="opt" data-right type="button">On the Backlog Readiness Kanban board</button>
+            <button class="opt" type="button">On the Sprint Execution Scrum board</button>
+            <button class="opt" type="button">In a dashboard</button>
+            <button class="opt" type="button">In the release page</button>
+          </div>
+          <div class="why">Two boards: Kanban for readiness (New Idea → Product Refinement → Team Refinement → Ready), Scrum for delivery inside the sprint.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">10. What does the sprint name <code>JET-2026.q4.3</code> mean?</p>
+          <div class="opts">
+            <button class="opt" type="button">Jetstream's 3rd release in 2026</button>
+            <button class="opt" data-right type="button">Team JET, year 2026, quarter 4, sprint 3</button>
+            <button class="opt" type="button">The 2026th sprint of team JET</button>
+            <button class="opt" type="button">Epic JET, story 4, sub-task 3</button>
+          </div>
+          <div class="why">Format: &lt;TeamCode&gt;-&lt;Year&gt;.q&lt;Quarter&gt;.&lt;Sprint&gt;.</div>
+        </div>
+        <div class="quiz-score"><div><b>0 / 10</b> <span class="msg"></span></div><button class="btn btn-sm btn-primary retry" type="button">Retake checkride</button></div>
+      </div>
+
+      <div class="next-flight">
+        <div><span class="eyebrow" style="color:var(--beacon)">Next flight</span><h3>Level 2 · First Officer</h3><p style="margin:0">The Golden Template in depth, JQL, dashboards, Rovo in the flow of work, and Zephyr.</p></div>
+        <a class="btn btn-primary" href="first-officer.html">Board Level 2 ✈</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

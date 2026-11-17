@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Syllabus · Jira Flight School</title>
+<meta name="description" content="Full syllabus for Working with Jira (Digital Technology): three levels with modules, learning objectives, durations, delivery formats, prerequisites, progression, demo plan and sandbox plan.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="assets/img/favicon.svg">
+<style>
+  .lvl-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:10px; }
+  .lvl-badge { font-family: var(--font-display); font-weight:700; letter-spacing:.12em; text-transform:uppercase; background: var(--navy-900); color: var(--beacon); padding:6px 12px; border-radius:8px; }
+  .at-a-glance td:first-child { font-weight:700; white-space:nowrap; }
+  table.data td ul { margin: 0; padding-left: 18px; }
+  #level1 table.data td:nth-child(4), #level2 table.data td:nth-child(4), #level3 table.data td:nth-child(4) { white-space: nowrap; }
+  .agenda { display:grid; grid-template-columns: 90px minmax(0,1fr); gap:0; border:1px solid var(--line); border-radius: var(--radius-sm); overflow:hidden; background: var(--white); margin: 12px 0 22px; }
+  .agenda div { padding: 8px 12px; border-top: 1px solid var(--line); font-size: .94rem; }
+  .agenda div:nth-child(-n+2) { border-top: 0; }
+  .agenda .t { font-family: var(--font-mono); font-size: .82rem; color: var(--blue-600); background: var(--ice-50); }
+  .agenda .brk { color: var(--ink-3); font-style: italic; }
+  .ask { counter-reset: a; list-style: none; padding: 0; }
+  .ask li { counter-increment: a; position: relative; padding: 10px 0 10px 46px; border-bottom: 1px dashed var(--line); }
+  .ask li::before { content: counter(a, decimal-leading-zero); position: absolute; left: 0; top: 9px; font-family: var(--font-mono); font-weight: 600; color: var(--white); background: var(--blue-600); border-radius: 6px; padding: 2px 7px; font-size: .8rem; }
+  .print-btn { float: right; }
+  @media print {
+    .topbar, footer.site, .runway, .toc, .print-btn, .hero .clouds { display: none !important; }
+    .layout { display: block; }
+    .hero { background: none !important; color: #000; padding: 10px 0; }
+    .hero h1, .hero .lede, .hero .eyebrow { color: #000 !important; }
+    body { background: #fff; font-size: 12px; }
+    .lesson { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+
+<section class="hero compact">
+  <div class="clouds" aria-hidden="true">
+    <div class="cloud" style="top:20%;width:200px;height:46px;animation-duration:80s;animation-delay:-20s"></div>
+    <div class="cloud" style="top:70%;width:150px;height:38px;animation-duration:65s;animation-delay:-5s"></div>
+  </div>
+  <div class="wrap" style="position:relative;z-index:2">
+    <div class="eyebrow">Flight plan · draft for review</div>
+    <h1>Course syllabus</h1>
+    <p class="lede">The full program for <b>Working with Jira</b>, tailored for Digital Technology: modules, learning objectives, durations, delivery formats, prerequisites, how learners move up, the live-demo and sandbox plan, and where the Golden Template fits.</p>
+    <div class="meta-row" style="margin-top:16px">
+      <span class="chip gold">3 levels</span><span class="chip">~15 hours total</span><span class="chip">Live · Blended · On-demand</span><span class="chip">US &amp; IKC cohorts</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap layout">
+    <aside class="toc" aria-label="Syllabus contents">
+      <h4>Flight plan</h4>
+      <ol>
+        <li><a href="#overview">Program at a glance</a></li>
+        <li><a href="#level1">Level 1 · Ground School</a></li>
+        <li><a href="#level2">Level 2 · First Officer</a></li>
+        <li><a href="#level3">Level 3 · Captain</a></li>
+        <li><a href="#progression">Prerequisites &amp; progression</a></li>
+        <li><a href="#golden">Where the Golden Template fits</a></li>
+        <li><a href="#demos">Live demo plan</a></li>
+        <li><a href="#sandbox">Sandbox plan</a></li>
+        <li><a href="#asks">What we need from United</a></li>
+        <li><a href="#delivery">Delivery options</a></li>
+        <li><a href="#success">Measuring success</a></li>
+        <li><a href="#handouts">Handouts</a></li>
+      </ol>
+    </aside>
+
+    <div>
+      <article class="lesson" id="overview">
+        <button class="btn btn-sm btn-blue print-btn" type="button" onclick="window.print()">🖨 Print / PDF</button>
+        <h2><span class="lesson-code">00</span> Program at a glance</h2>
+        <p>Most Digital Technology Jira users are new to Jira or use only the basics, while Plans, eazyBI and Zephyr go largely unused. The program has three levels so each learner starts where they are and moves up when ready. The original one-day course outline is kept and redistributed across the levels. Service-desk and admin topics stay out of scope.</p>
+        <div class="table-wrap"><table class="data at-a-glance">
+          <thead><tr><th>Level</th><th>Audience</th><th>Duration</th><th>Format</th><th>Exit criteria</th></tr></thead>
+          <tbody>
+            <tr><td>L1 · Ground School</td><td>Everyone new to Jira, plus anyone who only uses the basics</td><td>3.5 h (2.5 h live + 1 h on-demand)</td><td>Blended</td><td>Checkride ≥ 80%, which also unlocks Rovo access</td></tr>
+            <tr><td>L2 · First Officer</td><td>Team members, Scrum Masters, PMs and POs who use Jira every day</td><td>5 h (two 2.5 h sessions or one half day)</td><td>Live, instructor-led, hands-on</td><td>Checkride ≥ 80% plus 2 completed missions</td></tr>
+            <tr><td>L3 · Captain</td><td>Scrum Masters, PMs, engineering leads, QA leads, Jira champions</td><td>6.5 h (one full day or three 2 h labs)</td><td>Live lab</td><td>Checkride ≥ 80% plus the IROPS Day capstone</td></tr>
+            <tr><td>Rovo Flight Manual</td><td>All levels (core content sits in L1 and L2)</td><td>1.5 h self-paced</td><td>On-demand + labs</td><td>Rovo quiz</td></tr>
+            <tr><td>JQL Simulator</td><td>L2 and L3</td><td>Self-paced</td><td>On-demand</td><td>18 graded challenges</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout captain"><strong>Design principle</strong>Every concept ends in a mission on the live FLY sandbox. Learners earn miles, take a checkride, and leave with saved filters, a dashboard and prompts they can reuse on Monday.</div>
+      </article>
+
+      <article class="lesson" id="level1">
+        <div class="lvl-head"><span class="lvl-badge">Level 1</span><h2 style="margin:0">Ground School: Getting to Know Jira</h2></div>
+        <div class="meta-row"><span class="chip">3.5 h</span><span class="chip">Blended</span><span class="chip green">Prereq: Jira account</span><span class="chip gold">Unlocks Rovo</span></div>
+        <div class="objectives"><h4>By the end, learners can…</h4><ul>
+          <li>Explain what a space, board, backlog and work item are, and find their way around Jira in under a minute.</li>
+          <li>Find, create and update work correctly: good summaries, acceptance criteria, links, comments, @mentions, flags.</li>
+          <li>Read a Scrum or Kanban board and explain why an item might be missing from it.</li>
+          <li>Use Rovo Search, Chat and in-Jira AI features responsibly, choose chat or an agent appropriately, and verify AI output.</li>
+          <li>Recognize the Golden Template's statuses and sprint naming.</li>
+        </ul></div>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Code</th><th>Module</th><th>Key content</th><th>Time</th><th>Format</th></tr></thead>
+          <tbody>
+            <tr><td>GS-1</td><td>Welcome aboard: spaces &amp; navigation</td><td>For you, Recent, Starred, spaces, boards, search, shortcuts</td><td>30 m</td><td>Live demo + mission</td></tr>
+            <tr><td>GS-2</td><td>Anatomy of a work item</td><td>Hierarchy (Initiative → Epic → Story/Task/Bug/Spike → Sub-task), fields, status categories</td><td>30 m</td><td>On-demand + quiz</td></tr>
+            <tr><td>GS-3</td><td>Everyday flying: find, create, update</td><td>Create with acceptance criteria, comment, @mention, watch, link, flag, transition</td><td>45 m</td><td>Live hands-on</td></tr>
+            <tr><td>GS-4</td><td>Reading boards &amp; backlogs</td><td>Scrum vs Kanban, columns ↔ statuses, quick filters, swimlanes</td><td>30 m</td><td>On-demand + mission</td></tr>
+            <tr><td>GS-5</td><td>Rovo 101</td><td>Search, Chat, Agents; chat vs agent; summaries; natural-language search; verify results; governance</td><td>45 m</td><td>Live demo + mission</td></tr>
+            <tr><td>GS-6</td><td>Golden Template preview</td><td>Two boards, the standard flow, sprint naming vocabulary</td><td>15 m</td><td>Live</td></tr>
+            <tr><td>✓</td><td>Checkride (Rovo readiness)</td><td>10 questions, 80% to pass</td><td>15 m</td><td>On-demand</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Live session run of show (2.5 h)</h4>
+        <div class="agenda">
+          <div class="t">0:00</div><div>Boarding call: why Jira, how the course works, sandbox tour (GS-1)</div>
+          <div class="t">0:25</div><div>Mission GS-M1 “Find your gate”</div>
+          <div class="t">0:40</div><div>GS-3 demo: write it right, then Mission GS-M2</div>
+          <div class="t">1:20</div><div class="brk">Break (10 m)</div>
+          <div class="t">1:30</div><div>GS-5 Rovo 101 demo: Summarize, Ask AI, Improve Story, chat vs agent</div>
+          <div class="t">2:00</div><div>Mission GS-M4 “Rovo co-pilot”, then GS-6 Golden Template preview</div>
+          <div class="t">2:20</div><div>Q&amp;A, checkride instructions</div>
+        </div>
+      </article>
+
+      <article class="lesson" id="level2">
+        <div class="lvl-head"><span class="lvl-badge">Level 2</span><h2 style="margin:0">First Officer: Working the Standard</h2></div>
+        <div class="meta-row"><span class="chip">5 h</span><span class="chip">Live</span><span class="chip green">Prereq: L1 checkride or skip test</span></div>
+        <div class="objectives"><h4>By the end, learners can…</h4><ul>
+          <li>Run a team on the Golden Template: hierarchy, two-board model, statuses and exit criteria, sprint naming, Definition of Ready.</li>
+          <li>Facilitate refinement and sprint planning in Jira with estimates, capacity and sprint goals.</li>
+          <li>Write intermediate JQL, save and share filters, and set up subscriptions.</li>
+          <li>Build a team dashboard and interpret the sprint report, burndown, velocity and cumulative flow honestly.</li>
+          <li>Use Rovo in the flow of work, and set up basic Zephyr traceability from story to test to bug.</li>
+        </ul></div>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Code</th><th>Module</th><th>Key content</th><th>Time</th><th>Format</th></tr></thead>
+          <tbody>
+            <tr><td>FO-1</td><td>The Golden Template in depth</td><td>Hierarchy, Bug vs Defect, Backlog Readiness Kanban + Sprint Execution Scrum, exit criteria, filters, quick filters, sprint naming, Definition of Ready</td><td>45 m</td><td>Live + mission</td></tr>
+            <tr><td>FO-2</td><td>Refinement &amp; sprint planning</td><td>Story points vs T-shirt sizes, planning poker, capacity, sprint goals, carry-over</td><td>45 m</td><td>Live simulation</td></tr>
+            <tr><td>FO-3</td><td>JQL foundations → intermediate</td><td>Fields, operators, functions, relative dates, saved filters, subscriptions</td><td>60 m</td><td>Live + JQL Simulator</td></tr>
+            <tr><td>FO-4</td><td>Filters, dashboards &amp; reports</td><td>Sprint report, burndown, velocity, CFD, control chart; gadget design</td><td>45 m</td><td>Live + mission</td></tr>
+            <tr><td>FO-5</td><td>Rovo in the flow of work</td><td>AI work breakdown, Improve Story, NL→JQL, reply suggestions, agents in Jira</td><td>30 m</td><td>Demo + mission</td></tr>
+            <tr><td>FO-6</td><td>Zephyr essentials</td><td>Test cases, cycles, executions, linking to stories, raising Bugs from failed steps</td><td>45 m</td><td>Demo + mission</td></tr>
+            <tr><td>✓</td><td>Checkride</td><td>10 questions + 2 missions</td><td>15 m</td><td>On-demand</td></tr>
+          </tbody>
+        </table></div>
+      </article>
+
+      <article class="lesson" id="level3">
+        <div class="lvl-head"><span class="lvl-badge">Level 3</span><h2 style="margin:0">Captain: Advanced Operations</h2></div>
+        <div class="meta-row"><span class="chip">6.5 h</span><span class="chip">Live lab</span><span class="chip green">Prereq: L2 + ~30 days on a team</span><span class="chip red">Needs Premium, eazyBI, Zephyr, MCP</span></div>
+        <div class="objectives"><h4>By the end, learners can…</h4><ul>
+          <li>Measure flow with advanced JQL (WAS, CHANGED … DURING/BY, sprint and link functions): bounce-backs, carry-over, aging WIP.</li>
+          <li>Build a Plan with teams, capacity, scenarios and dependencies, and forecast a release.</li>
+          <li>Design eazyBI reports for velocity, cycle time and quality, and run Zephyr at release scale.</li>
+          <li>Automate the standard with rules and Rovo agents, under clear governance.</li>
+          <li>Connect Claude to Jira through the Atlassian MCP server, use it where it helps, protect team metrics and verify every write.</li>
+          <li>Link Jira and Git with branches, commits, PRs, smart commits and the development panel.</li>
+        </ul></div>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Code</th><th>Module</th><th>Key content</th><th>Time</th><th>Format</th></tr></thead>
+          <tbody>
+            <tr><td>CP-1</td><td>Advanced JQL &amp; flow metrics</td><td>History operators, sprint/link functions, metric queries, dashboards</td><td>60 m</td><td>Live lab</td></tr>
+            <tr><td>CP-2</td><td>Plans &amp; capacity planning</td><td>Plan sources, teams, capacity, iterations, scenarios, dependencies, auto-schedule</td><td>60 m</td><td>Live lab (Premium)</td></tr>
+            <tr><td>CP-3</td><td>Reporting with eazyBI</td><td>Import, cubes, measures, velocity / cycle time / bounce-back reports, dashboards</td><td>60 m</td><td>Live lab (app)</td></tr>
+            <tr><td>CP-4</td><td>Zephyr at scale</td><td>Traceability, coverage, release readiness gates</td><td>45 m</td><td>Live lab (app)</td></tr>
+            <tr><td>CP-5</td><td>Automation &amp; Rovo agents</td><td>Rule anatomy, smart values, agents in Jira, governance, audit</td><td>45 m</td><td>Live lab</td></tr>
+            <tr><td>CP-6</td><td>Claude + Atlassian MCP</td><td>Setup, good uses, metric risks, Co-Pilot Protocol, prompt injection</td><td>60 m</td><td>Live lab + handout</td></tr>
+            <tr><td>CP-7</td><td>Jira ↔ Git</td><td>Keys in branches/commits/PRs, smart commits, development panel, deployments</td><td>30 m</td><td>Live demo</td></tr>
+            <tr><td>★</td><td>Capstone: IROPS Day</td><td>Timed, multi-skill scenario across the FLY sandbox</td><td>60 m</td><td>Team lab</td></tr>
+          </tbody>
+        </table></div>
+      </article>
+
+      <article class="lesson" id="progression">
+        <h2><span class="lesson-code">P</span> Prerequisites &amp; progression</h2>
+        <div class="flow"><span class="st todo">Enroll</span><span class="arr">→</span><span class="st prog">L1 Ground School</span><span class="arr">→</span><span class="st done">Checkride ✓ · Rovo on</span><span class="arr">→</span><span class="st prog">L2 First Officer</span><span class="arr">→</span><span class="st done">Checkride + 2 missions</span><span class="arr">→</span><span class="st prog">30 days on a team</span><span class="arr">→</span><span class="st prog">L3 Captain</span><span class="arr">→</span><span class="st done">Capstone ✓ · Jira Champion</span></div>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Level</th><th>Must have</th><th>Recommended</th><th>Fast track</th></tr></thead>
+          <tbody>
+            <tr><td>L1</td><td>Jira account with access to the training space</td><td>Pluralsight “Jira Getting Started”</td><td>N/A</td></tr>
+            <tr><td>L2</td><td>L1 checkride ≥ 80%</td><td>Pluralsight “Planning, Tracking, and Releasing Software with Jira” skill assessment</td><td>Pass the L1 checkride cold (skip test) to go straight to L2</td></tr>
+            <tr><td>L3</td><td>L2 checkride + 2 missions; on an active team</td><td>Comfortable writing JQL without help</td><td>Instructor sign-off for existing Jira champions</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout united"><strong>Rovo roll-out gate</strong>The L1 checkride is written as a <b>Rovo readiness check</b>. It covers what Rovo is for, chat versus agents, verifying output and responsible use. Passing it can be the trigger for enabling Rovo for that learner, which gives a clean, auditable roll-out path.</div>
+      </article>
+
+      <article class="lesson" id="golden">
+        <h2><span class="lesson-code">GT</span> Recommendation: where the Golden Template fits</h2>
+        <p><b>Recommendation:</b> make the Golden Template the backbone of Level 2, preview it in Level 1, and use it as the substrate for Level 3. Do not teach it as a standalone lecture.</p>
+        <div class="grid g3">
+          <div class="card"><h3>L1 · Vocabulary</h3><p>15-minute preview: the two boards, the standard statuses and sprint names. Learners can read a standard board without being able to configure one.</p></div>
+          <div class="card"><h3>L2 · Practice</h3><p>FO-1 teaches it in depth. Every L2 mission runs on a template-shaped sandbox, so the standard is learned by working inside it.</p></div>
+          <div class="card"><h3>L3 · Measure &amp; automate</h3><p>Advanced JQL, eazyBI, Zephyr gates and automation all build on template statuses. Example: bounce-back rate from eQE Testing to Development.</p></div>
+        </div>
+        <div class="callout tip"><strong>Also ship it as a job aid</strong>A one-page Golden Template quick-reference card (statuses with exit criteria, board filters, sprint naming, Definition of Ready) handed out at L1 and used throughout.</div>
+      </article>
+
+      <article class="lesson" id="demos">
+        <h2><span class="lesson-code">D</span> Live demo plan</h2>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Demo</th><th>Level</th><th>What attendees see</th><th>Sandbox state needed</th></tr></thead>
+          <tbody>
+            <tr><td>Sandbox tour</td><td>L1</td><td>Spaces → boards → work item → search in 5 minutes</td><td>FLY space, both boards starred</td></tr>
+            <tr><td>Rovo in Jira</td><td>L1–L2</td><td>Summarize FLY-36, Ask AI → JQL (with a deliberate “verify this” moment), Improve Story</td><td>Rovo enabled; comment threads on FLY-25/36/46</td></tr>
+            <tr><td>Two-board model</td><td>L2</td><td>Backlog Readiness Kanban with WIP limits feeding the Sprint Execution board</td><td>Both boards configured (done)</td></tr>
+            <tr><td>Sprint planning</td><td>L2</td><td>Plan JET-2026.q4.4 against a 24-point capacity with a blocking spike</td><td>Future sprints populated (done)</td></tr>
+            <tr><td>Flow metrics with JQL</td><td>L3</td><td>Bounce-backs, carry-over, aging WIP turned into dashboard gadgets</td><td>History seeded (done)</td></tr>
+            <tr><td>Plans capacity crunch</td><td>L3</td><td>Cut capacity 30% in a scenario and watch the release slip</td><td><b>Premium site required</b></td></tr>
+            <tr><td>eazyBI + Zephyr</td><td>L3</td><td>Bounce-back report; release readiness gate for Mobile 5.3</td><td><b>Apps installed + data imported</b></td></tr>
+            <tr><td>Claude + MCP</td><td>L3</td><td>Read-only digest → dry-run → confirmed write → JQL verification; FLY-55 prompt-injection red team</td><td>Atlassian connector allowed for the training site</td></tr>
+            <tr><td>Connecting Jira to Git</td><td>L3</td><td>Branch <code>feature/FLY-21-push-alert</code> → commit with smart commit → PR → development panel</td><td><b>GitHub/Bitbucket app connected to a demo repo</b></td></tr>
+          </tbody>
+        </table></div>
+      </article>
+
+      <article class="lesson" id="sandbox">
+        <h2><span class="lesson-code">S</span> Hands-on training instance (sandbox) plan</h2>
+        <p>A working prototype already exists: the <b>FLY</b> space on the Pluralsight training site, built to the Golden Template. For delivery we recommend cloning this design into a United-owned training site so attendees use their real SSO identities.</p>
+        <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/projects/FLY/boards/4</span></div><img src="assets/img/board-readiness.jpg" alt="Backlog Readiness Kanban board with New Idea, Product Refinement, Team Refinement and Ready columns" loading="lazy"></div><figcaption>Backlog Readiness board in the prototype sandbox, with WIP limits on the refinement columns.</figcaption></figure>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Element</th><th>Prototype (today)</th><th>Production training site</th></tr></thead>
+          <tbody>
+            <tr><td>Workflow</td><td>New Idea → Product Refinement → Team Refinement → Ready → To Do → Development → Ready for eQE → eQE Testing → PO Review → Ready for Release → Done</td><td>Same, or the current official template workflow</td></tr>
+            <tr><td>Boards</td><td>Backlog Readiness (Kanban) + Sprint Execution (Scrum)</td><td>One pair per cohort team</td></tr>
+            <tr><td>Data</td><td>6 epics, ~50 items, 2 closed sprints, 1 active, 2 future, bounce-backs, blockers, duplicates, data-quality traps</td><td>Reset script run before each cohort</td></tr>
+            <tr><td>Work types</td><td>Epic, Story, Task, Bug, Spike, Risk, Sub-task</td><td>Add Initiative above Epic (Premium hierarchy)</td></tr>
+            <tr><td>Tier</td><td>Standard (Plans unavailable)</td><td>Premium (Plans, advanced hierarchy)</td></tr>
+          </tbody>
+        </table></div>
+      </article>
+
+      <article class="lesson" id="asks">
+        <h2><span class="lesson-code">?</span> What we need from United</h2>
+        <ol class="ask">
+          <li><b>Golden Template materials</b>: the current official version, so the sandbox and job aid match exactly.</li>
+          <li><b>A training site or sandbox space</b> on Premium, so Plans and the Initiative hierarchy can be demoed. A Premium trial also works.</li>
+          <li><b>Learner accounts</b> with SSO for each cohort, plus permission for learners to create and transition items in the training space.</li>
+          <li><b>Rovo enabled</b> on the training site for all attendees, plus confirmation of the policy that turns it on after the L1 checkride.</li>
+          <li><b>Rovo agent process</b>: the agent request and submission process, so the agent-design mission produces a real submission.</li>
+          <li><b>eazyBI and Zephyr</b> installed on the training site with data imported. Confirm which Zephyr edition is used.</li>
+          <li><b>MCP setup handout</b> (internal steps) to send before L3, plus confirmation that the Atlassian connector is allowed on the training site and whether API-token auth is enabled.</li>
+          <li><b>A demo Git repository</b> connected to the training site (GitHub or Bitbucket app) for the Jira ↔ Git demo.</li>
+          <li><b>Existing Jira 101 and intro session recordings</b> to align terminology and reuse the best examples in L1.</li>
+          <li><b>Two or three real (sanitized) team examples</b>: a messy backlog and a dashboard leadership uses, so missions feel like home.</li>
+        </ol>
+      </article>
+
+      <article class="lesson" id="delivery">
+        <h2><span class="lesson-code">F</span> Delivery options</h2>
+        <div class="grid g2">
+          <div class="card"><h3>Option A · Tiered (recommended)</h3><p>L1 blended (on-demand + one 2.5 h live session), L2 as two 2.5 h live sessions a week apart, L3 as a full-day lab for selected practitioners. Run separate US and IKC cohorts in local business hours.</p><p class="muted">Best for adoption, Rovo gating and real practice between sessions.</p></div>
+          <div class="card"><h3>Option B · One-day intensive</h3><p>Keeps the original 9:00–5:00 single-day format: L1 in the morning, L2 in the afternoon, with L3 offered later as a separate advanced day.</p><p class="muted">Simpler scheduling, but less time to practice between levels.</p></div>
+        </div>
+      </article>
+
+      <article class="lesson" id="success">
+        <h2><span class="lesson-code">KPI</span> Measuring success</h2>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Signal</th><th>How we measure it</th><th>Target (90 days)</th></tr></thead>
+          <tbody>
+            <tr><td>Rovo adoption</td><td>Checkride pass → Rovo enabled → monthly active Rovo users</td><td>≥ 70% of L1 graduates active</td></tr>
+            <tr><td>Backlog hygiene</td><td>JQL: Ready items with points and acceptance criteria / all Ready items</td><td>≥ 90%</td></tr>
+            <tr><td>Plans usage</td><td>Teams with an active Plan used in PI or quarterly planning</td><td>Every L3 graduate's team</td></tr>
+            <tr><td>Zephyr adoption</td><td>Stories in Ready for Release with linked test executions</td><td>≥ 60% for pilot teams</td></tr>
+            <tr><td>Metric integrity</td><td>Share of AI-assisted writes labeled and reviewed (MCP / Rovo)</td><td>100% labeled</td></tr>
+            <tr><td>Learner satisfaction</td><td>Post-course survey + 30-day follow-up</td><td>≥ 4.5 / 5</td></tr>
+          </tbody>
+        </table></div>
+      </article>
+
+      <article class="lesson" id="handouts">
+        <h2><span class="lesson-code">H</span> Handouts &amp; job aids</h2>
+        <div class="grid g3">
+          <a class="card hover" href="first-officer.html" style="text-decoration:none;color:inherit"><h3>🧭 Golden Template card</h3><p class="muted">Statuses and exit criteria, two boards, sprint naming, Definition of Ready.</p></a>
+          <a class="card hover" href="jql-simulator.html" style="text-decoration:none;color:inherit"><h3>🔎 JQL cockpit card</h3><p class="muted">Operators, functions, history queries and metric recipes.</p></a>
+          <a class="card hover" href="mcp.html" style="text-decoration:none;color:inherit"><h3>🤖 MCP setup + Co-Pilot Protocol</h3><p class="muted">Pre-class setup checklist and safe-write guardrails.</p></a>
+          <a class="card hover" href="rovo.html" style="text-decoration:none;color:inherit"><h3>✨ Rovo prompt pack</h3><p class="muted">PILOT prompts for refinement, standups, release notes and risk scans.</p></a>
+          <a class="card hover" href="missions.html" style="text-decoration:none;color:inherit"><h3>🎯 Mission Control</h3><p class="muted">Every hands-on mission, plus the IROPS Day capstone.</p></a>
+          <a class="card hover" href="ground-school.html#checkride" style="text-decoration:none;color:inherit"><h3>✅ Checkrides</h3><p class="muted">Level quizzes, with Rovo readiness in L1.</p></a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

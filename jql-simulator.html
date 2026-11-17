@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JQL Flight Simulator · Jira Flight School</title>
+<meta name="description" content="An interactive JQL flight simulator: 24 challenges from taxi to cruise altitude against a live Jira sandbox, with a pre-flight linter, solution checker, spot-the-bug drills and flow metrics you can build with JQL.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="assets/img/favicon.svg">
+<style>
+  /* ---------- Cockpit hero instruments ---------- */
+  .instruments { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; }
+  .gauge { width: 168px; height: 168px; border-radius: 50%; position: relative; background:
+      radial-gradient(circle at 50% 50%, #0b1424 0 58%, transparent 59%),
+      repeating-conic-gradient(from -1deg, rgba(255,255,255,.75) 0 2deg, transparent 2deg 36deg),
+      repeating-conic-gradient(from -.5deg, rgba(255,255,255,.3) 0 1deg, transparent 1deg 7.2deg),
+      #0b1424;
+    border: 6px solid #1c2a44; box-shadow: inset 0 0 0 2px #2c3d5e, 0 12px 30px rgba(0,0,0,.35); }
+  .gauge .needle { position: absolute; left: 50%; top: 50%; width: 4px; height: 62px; background: linear-gradient(var(--beacon), #ff8a00); border-radius: 3px; transform-origin: 50% 100%; transform: translate(-50%, -100%) rotate(0deg); transition: transform 1.2s cubic-bezier(.3,1.5,.5,1); }
+  .gauge .hub { position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; border-radius: 50%; background: #dbe6f7; transform: translate(-50%,-50%); }
+  .gauge .readout { position: absolute; left: 50%; bottom: 30px; transform: translateX(-50%); font-family: var(--font-mono); font-size: .85rem; color: #3ce38f; background: #050a14; padding: 2px 8px; border-radius: 4px; border: 1px solid #1c2a44; white-space: nowrap; }
+  .gauge .glabel { position: absolute; left: 50%; top: 34px; transform: translateX(-50%); font-family: var(--font-display); letter-spacing: .2em; font-size: .7rem; color: #8b93a7; }
+  .horizon { width: 168px; height: 168px; border-radius: 50%; overflow: hidden; position: relative; border: 6px solid #1c2a44; box-shadow: 0 12px 30px rgba(0,0,0,.35); }
+  .horizon .sky { position: absolute; inset: -40% -40% 50% -40%; background: linear-gradient(#2b6fd6, #6aa8f0); transform-origin: 50% 100%; animation: bank 6s ease-in-out infinite; }
+  .horizon .ground { position: absolute; inset: 50% -40% -40% -40%; background: linear-gradient(#a0703a, #6b4520); transform-origin: 50% 0; animation: bank 6s ease-in-out infinite; }
+  .horizon .wings { position: absolute; left: 22%; right: 22%; top: 50%; height: 4px; background: var(--beacon); transform: translateY(-50%); border-radius: 2px; }
+  .horizon .wings::after { content: ""; position: absolute; left: 50%; top: -6px; width: 10px; height: 10px; border-radius: 50%; background: var(--beacon); transform: translateX(-50%); }
+  @keyframes bank { 0%,100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+  @media (prefers-reduced-motion: reduce) { .horizon .sky, .horizon .ground { animation: none; } }
+  .sim-stats { display: grid; grid-template-columns: repeat(3, auto); gap: 6px 22px; margin-top: 18px; color: #c9d8f2; font-size: .9rem; }
+  .sim-stats b { display: block; font-family: var(--font-display); font-size: 1.6rem; color: var(--white); }
+
+  /* ---------- Cockpit reference panel ---------- */
+  .panel { background: linear-gradient(180deg, #0b1424, #0f1d36); border-radius: 18px; padding: 22px; color: #dbe6f7; box-shadow: var(--shadow-2); }
+  .panel h3 { color: var(--white); }
+  .panel .grid { gap: 16px; }
+  .inst { background: #0a1220; border: 1px solid #22355a; border-radius: 12px; padding: 14px 16px; }
+  .inst h4 { color: var(--beacon); font-size: .78rem; margin-bottom: 8px; }
+  .inst ul { list-style: none; padding: 0; margin: 0; font-family: var(--font-mono); font-size: .8rem; line-height: 1.8; }
+  .inst li code { background: transparent !important; color: #7fd1ff !important; padding: 0; }
+  .inst li span { color: #8b93a7; font-family: var(--font-body); font-size: .82rem; }
+  .inst.caveat { border-color: #6b4500; }
+
+  /* ---------- Legs + challenges ---------- */
+  .leg-head { display: flex; align-items: center; gap: 14px; margin: 46px 0 14px; flex-wrap: wrap; }
+  .leg-head h2 { margin: 0; }
+  .leg-badge { font-family: var(--font-mono); font-size: .8rem; padding: 4px 10px; border-radius: 6px; background: var(--navy-900); color: var(--beacon); letter-spacing: .08em; }
+  .leg-progress { margin-left: auto; font-family: var(--font-mono); font-size: .85rem; color: var(--ink-3); }
+  details.chal { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); margin: 12px 0; box-shadow: var(--shadow-1); overflow: hidden; }
+  details.chal[open] { box-shadow: var(--shadow-2); }
+  details.chal > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 14px; align-items: center; padding: 14px 18px; }
+  details.chal > summary::-webkit-details-marker { display: none; }
+  .chal-code { font-family: var(--font-mono); font-size: .8rem; background: var(--sky-100); color: var(--blue-600); padding: 4px 8px; border-radius: 6px; font-weight: 600; }
+  .chal-title { font-family: var(--font-display); font-weight: 600; font-size: 1.18rem; color: var(--navy-900); line-height: 1.2; }
+  .chal-meta { display: flex; gap: 8px; align-items: center; }
+  .chal-done-flag { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--ice-50); border: 1.5px solid var(--line); color: transparent; font-weight: 700; }
+  details.chal.done .chal-done-flag { background: var(--go); border-color: var(--go); color: var(--white); }
+  details.chal.done .chal-code { background: var(--go-bg); color: var(--go); }
+  .chal-body { padding: 4px 18px 18px; border-top: 1px dashed var(--line); }
+  .chal-q { font-size: 1.05rem; margin: 14px 0 10px; }
+  .chal-q b.atc { font-family: var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--blue-600); font-size: .85rem; display: block; margin-bottom: 2px; }
+  .hints { margin: 0 0 12px; padding-left: 0; list-style: none; }
+  .hints li { background: var(--warn-bg); border-left: 3px solid var(--beacon); border-radius: 0 8px 8px 0; padding: 8px 12px; margin: 6px 0; font-size: .95rem; }
+  .jql-input { width: 100%; min-height: 96px; font-family: var(--font-mono); font-size: .9rem; padding: 12px 14px; border-radius: 10px; border: 1.5px solid var(--line); background: #fbfdff; color: var(--ink); resize: vertical; line-height: 1.5; }
+  .jql-input:focus { outline: none; border-color: var(--sky-400); box-shadow: 0 0 0 4px rgba(74,144,226,.15); }
+  .chal-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+  .chal-actions button, .chal-actions a { font: 600 .85rem var(--font-body); border-radius: 8px; padding: 8px 12px; cursor: pointer; border: 1.5px solid var(--line); background: var(--white); color: var(--navy-800); text-decoration: none; }
+  .chal-actions button:hover, .chal-actions a:hover { border-color: var(--sky-400); background: var(--sky-100); }
+  .chal-actions .primary { background: var(--blue-600); color: var(--white); border-color: var(--blue-600); }
+  .chal-actions .primary:hover { background: var(--blue-500); color: var(--white); }
+  .chal-actions .gold { background: var(--beacon); border-color: var(--beacon); color: var(--navy-950); }
+  .atc-out { font-size: .93rem; margin: 8px 0; }
+  .atc-msg { display: flex; gap: 10px; align-items: flex-start; padding: 8px 12px; border-radius: 8px; margin: 6px 0; }
+  .atc-msg::before { flex: none; font-weight: 700; }
+  .atc-msg.err { background: var(--alert-bg); color: #8a1426; } .atc-msg.err::before { content: "✖"; }
+  .atc-msg.warn { background: var(--warn-bg); color: var(--beacon-ink); } .atc-msg.warn::before { content: "▲"; }
+  .atc-msg.ok { background: var(--go-bg); color: #0e6b47; } .atc-msg.ok::before { content: "✔"; }
+  .atc-msg.info { background: var(--sky-100); color: var(--navy-800); } .atc-msg.info::before { content: "ℹ"; }
+  .solution { display: none; margin-top: 10px; }
+  .solution.show { display: block; }
+  .expect { font-size: .92rem; background: var(--ice-50); border: 1px dashed var(--line); border-radius: 8px; padding: 8px 12px; }
+  .expect b { font-family: var(--font-display); letter-spacing: .06em; text-transform: uppercase; font-size: .8rem; color: var(--blue-600); margin-right: 6px; }
+  .expect.verified b { color: var(--go); }
+  .metric h3 { display: flex; gap: 10px; align-items: center; }
+  .bug-q { font-family: var(--font-mono); font-size: .88rem; background: #fff4f5; border: 1px solid #f2b7c0; border-radius: 8px; padding: 10px 12px; color: #8a1426; overflow-x: auto; white-space: pre; }
+</style>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+
+<section class="hero compact">
+  <div class="clouds" aria-hidden="true">
+    <div class="cloud" style="top:14%;width:200px;height:44px;animation-duration:80s"></div>
+    <div class="cloud" style="top:62%;width:140px;height:32px;animation-duration:60s;animation-delay:-30s"></div>
+    <div class="cloud" style="top:38%;width:260px;height:54px;animation-duration:100s;animation-delay:-60s"></div>
+  </div>
+  <div class="wrap hero-grid" style="position:relative;z-index:2">
+    <div>
+      <span class="eyebrow">Interactive · All levels</span>
+      <h1>JQL Flight Simulator</h1>
+      <p class="lede">24 challenges flown against the live FLY sandbox, from taxi to cruising altitude. Write your query, run the pre-flight check, compare it with the flight plan, then open it in Jira to see real results. Every challenge you clear climbs the altimeter.</p>
+      <div class="sim-stats">
+        <div><b data-sim-done>0</b>challenges flown</div>
+        <div><b data-sim-total>24</b>on the board</div>
+        <div><b data-sim-miles>0</b>sim miles</div>
+      </div>
+      <div class="btn-row"><a class="btn btn-primary" href="#leg-taxi">Start taxiing</a><a class="btn btn-ghost" href="#cockpit">Open the cockpit reference</a></div>
+    </div>
+    <div class="instruments" aria-hidden="true">
+      <div class="gauge"><span class="glabel">ALTITUDE</span><div class="needle" id="alt-needle"></div><div class="hub"></div><span class="readout" id="alt-readout">FL000</span></div>
+      <div class="horizon"><div class="sky"></div><div class="ground"></div><div class="wings"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== COCKPIT REFERENCE ============================== -->
+<section class="tight band-white" id="cockpit">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">Cockpit reference</span><h2>Every switch you'll need</h2><p class="muted">Native Jira Cloud JQL only. Fields and functions from Marketplace apps (ScriptRunner, eazyBI, Zephyr) are called out separately.</p></div>
+    <div class="panel">
+      <div class="grid g3">
+        <div class="inst"><h4>Core fields</h4><ul>
+          <li><code>project</code> <span>space key</span></li>
+          <li><code>type</code> / <code>issuetype</code></li>
+          <li><code>status</code> · <code>statusCategory</code> <span>To Do / In Progress / Done</span></li>
+          <li><code>priority</code> · <code>labels</code> · <code>component</code></li>
+          <li><code>assignee</code> · <code>reporter</code></li>
+          <li><code>parent</code> <span>epic or parent key</span></li>
+          <li><code>sprint</code> · <code>fixVersion</code></li>
+          <li><code>created</code> · <code>updated</code> · <code>resolved</code> · <code>duedate</code></li>
+          <li><code>"Story Points"</code> <span>= cf[10036] here</span></li>
+          <li><code>Flagged</code> · <code>issueLinkType</code></li>
+          <li><code>text</code> · <code>summary</code> · <code>description</code> · <code>comment</code></li>
+        </ul></div>
+        <div class="inst"><h4>Operators</h4><ul>
+          <li><code>=  !=</code> <span>one value</span></li>
+          <li><code>IN  NOT IN</code> <span>lists ( , , )</span></li>
+          <li><code>&gt;  &gt;=  &lt;  &lt;=</code> <span>dates, numbers</span></li>
+          <li><code>~  !~</code> <span>text contains (fuzzy)</span></li>
+          <li><code>IS EMPTY  IS NOT EMPTY</code></li>
+          <li><code>AND  OR  NOT  ( )</code></li>
+          <li><code>ORDER BY f ASC|DESC, …</code> <span>always last</span></li>
+          <li><code>-7d  -2w  -1h  "2026-12-31"</code></li>
+        </ul></div>
+        <div class="inst"><h4>History operators</h4><ul>
+          <li><code>WAS  WAS IN  WAS NOT  WAS NOT IN</code></li>
+          <li><code>CHANGED</code></li>
+          <li><span>predicates:</span> <code>FROM  TO  BY  ON</code></li>
+          <li><code>AFTER  BEFORE  DURING (a, b)</code></li>
+          <li><span>work on:</span> <code>status assignee priority</code></li>
+          <li><code>reporter resolution fixVersion</code></li>
+          <li><span>example:</span> <code>status CHANGED FROM "eQE Testing" TO Development DURING (startOfWeek(), now())</code></li>
+        </ul></div>
+        <div class="inst"><h4>Sprint &amp; version functions</h4><ul>
+          <li><code>openSprints()</code> · <code>closedSprints()</code> · <code>futureSprints()</code></li>
+          <li><code>releasedVersions()</code> · <code>unreleasedVersions()</code></li>
+          <li><code>earliestUnreleasedVersion()</code></li>
+          <li><code>latestReleasedVersion()</code></li>
+          <li><span>use with</span> <code>IN</code>, <span>never</span> <code>=</code></li>
+        </ul></div>
+        <div class="inst"><h4>People &amp; date functions</h4><ul>
+          <li><code>currentUser()</code> · <code>membersOf("group")</code></li>
+          <li><code>now()</code> · <code>startOfDay()</code> · <code>endOfDay()</code></li>
+          <li><code>startOfWeek()</code> · <code>startOfMonth()</code> · <code>startOfYear()</code></li>
+          <li><code>endOfWeek()</code> · <code>endOfMonth()</code> <span>accept offsets: startOfWeek(-1w)</span></li>
+          <li><code>lastLogin()</code> · <code>currentLogin()</code></li>
+        </ul></div>
+        <div class="inst"><h4>Item-set functions</h4><ul>
+          <li><code>issue in linkedIssues(FLY-24, "blocks")</code></li>
+          <li><code>issue in issueHistory()</code> <span>recently viewed by you</span></li>
+          <li><code>issue in watchedIssues()</code> · <code>votedIssues()</code></li>
+          <li><code>issue in updatedBy("user", "-7d")</code></li>
+          <li><code>parent in (FLY-1, FLY-2)</code> <span>children of epics</span></li>
+        </ul></div>
+      </div>
+      <div class="inst caveat" style="margin-top:16px"><h4>⚠ Not native Jira Cloud</h4>
+        <p style="margin:0;font-size:.9rem;color:#dbe6f7"><code style="color:#ffb81c;background:transparent">childIssuesOf()</code>, <code style="color:#ffb81c;background:transparent">linkedIssuesOf()</code>, <code style="color:#ffb81c;background:transparent">subtasksOf()</code>, <code style="color:#ffb81c;background:transparent">issueFunction in …</code> come from ScriptRunner or Data Center Advanced Roadmaps. If a blog post uses them, they won't work in plain Cloud JQL. In Cloud, use <code style="color:#7fd1ff;background:transparent">parent = KEY</code>. With Plans (Premium), <code style="color:#7fd1ff;background:transparent">issue in portfolioChildIssuesOf(KEY)</code> walks the whole hierarchy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SIMULATOR ============================== -->
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">The simulator</span>
+      <h2>Three legs to cruising altitude</h2>
+      <p class="lede">Each challenge gives you a request from the line, hints that unlock one at a time, a pre-flight linter, a checker that compares your query with the flight plan, and a one-click run against the sandbox.</p>
+    </div>
+    <div class="callout tip"><strong>How checking works</strong>
+      <p><b>Pre-flight check</b> lints your JQL for the classic mistakes. <b>Check against flight plan</b> compares your clauses with the reference solution. It's loose, so equivalent queries written differently may not match. The real test is always <b>Open my JQL in Jira</b>: if your results match the expected keys, press <b>Results match: log it</b> to bank the miles. Results marked <i>verified</i> were confirmed on the sandbox. Results marked <i>expected</i> are what the seed data should return, so confirm them with Run in Jira.</p>
+    </div>
+    <div class="callout warn"><strong>Personal results vary</strong>
+      <p>The sandbox was seeded by one instructor account. Anything using <code>currentUser()</code> or <code>BY</code> returns different results for you. Time-relative queries (<code>-7d</code>, <code>startOfWeek()</code>) change as days pass, too.</p>
+    </div>
+    <div id="sim"></div>
+  </div>
+</section>
+
+<!-- ============================== SPOT THE BUG ============================== -->
+<section class="band-white" id="spot-the-bug">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">Maintenance hangar</span><h2>Spot the bug</h2><p class="lede">Each of these queries is broken or quietly wrong. Find the fault before you open the fix. Paste any of them into a challenge box and run the pre-flight check to see the linter catch it.</p></div>
+    <div class="grid g2">
+      <div class="card"><h3>1 · The unquoted status</h3><div class="bug-q">project = FLY AND status = Ready for eQE</div>
+        <details class="reveal"><summary>Show the fix</summary><div><p>Multi-word values need quotes, or Jira reads "for" and "eQE" as extra keywords.</p><pre data-jql>project = FLY AND status = "Ready for eQE"</pre></div></details></div>
+      <div class="card"><h3>2 · Equals with a list</h3><div class="bug-q">project = FLY AND type = Bug, Story</div>
+        <details class="reveal"><summary>Show the fix</summary><div><p><code>=</code> takes one value. Lists need <code>IN</code>.</p><pre data-jql>project = FLY AND type in (Bug, Story)</pre></div></details></div>
+      <div class="card"><h3>3 · ORDER BY in the middle</h3><div class="bug-q">project = FLY ORDER BY priority DESC AND type = Bug</div>
+        <details class="reveal"><summary>Show the fix</summary><div><p>ORDER BY must be the last thing in the query.</p><pre data-jql>project = FLY AND type = Bug ORDER BY priority DESC</pre></div></details></div>
+      <div class="card"><h3>4 · The silent EMPTY trap</h3><div class="bug-q">-- "Show me everything that isn't blocked"
+project = FLY AND labels != Blocked</div>
+        <details class="reveal"><summary>Show the fix</summary><div><p>It runs, but it skips every item with <b>no labels at all</b>, which is most of the backlog. Empty values never match <code>!=</code>.</p><pre data-jql>project = FLY AND (labels != Blocked OR labels is EMPTY)</pre></div></details></div>
+      <div class="card"><h3>5 · Function with equals</h3><div class="bug-q">project = FLY AND sprint = openSprints()</div>
+        <details class="reveal"><summary>Show the fix</summary><div><p>Sprint functions return a <i>list</i> of sprints, so use <code>IN</code>.</p><pre data-jql>project = FLY AND sprint in openSprints()</pre></div></details></div>
+      <div class="card"><h3>6 · Copied from Teams</h3><div class="bug-q">project = FLY AND “Story Points” = EMPTY</div>
+        <details class="reveal"><summary>Show the fix</summary><div><p>Two faults: curly "smart" quotes from a chat or doc, and <code>= EMPTY</code> instead of <code>is EMPTY</code>.</p><pre data-jql>project = FLY AND "Story Points" is EMPTY</pre></div></details></div>
+      <div class="card"><h3>7 · Bonus: the escaping OR</h3><div class="bug-q">project = FLY AND type = Bug OR labels = customer-reported</div>
+        <details class="reveal"><summary>Show the fix</summary><div><p>AND binds tighter than OR, so this returns FLY bugs <b>plus</b> every customer-reported item in <i>every space you can see</i>. Parenthesize.</p><pre data-jql>project = FLY AND (type = Bug OR labels = customer-reported)</pre></div></details></div>
+      <div class="card"><h3>8 · Bonus: history on the wrong field</h3><div class="bug-q">project = FLY AND labels WAS Blocked</div>
+        <details class="reveal"><summary>Show the fix</summary><div><p>WAS and CHANGED only work on status, assignee, priority, reporter, resolution and fix version. For labels you need the item history, an automation rule that stamps a field, or eazyBI.</p><pre data-jql>project = FLY AND labels = Blocked</pre></div></details></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== METRICS ============================== -->
+<section id="metrics">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">Instrument panel</span><h2>Metrics you can fly with JQL</h2><p class="lede">JQL alone doesn't divide or chart over time, but saved filters plus dashboard gadgets get you surprisingly far. When you need ratios and trends, hand the same filters to eazyBI in Level 3.</p></div>
+    <div class="grid g2">
+      <div class="card metric"><h3>↩ Bounce-back rate from eQE</h3>
+        <p>The share of work that failed quality engineering this month. Rising means stories reach eQE half-baked.</p>
+<pre data-jql data-label="Numerator · bounced this month">project = FLY AND status CHANGED FROM "eQE Testing" TO Development DURING (startOfMonth(), now())</pre>
+<pre data-jql data-label="Denominator · tested this month">project = FLY AND status WAS "eQE Testing" DURING (startOfMonth(), now())</pre>
+        <p class="muted"><b>Gadget:</b> two <i>Filter Results</i> gadgets side by side, and divide in your head. For a trend line, use eazyBI's transition measures.</p></div>
+      <div class="card metric"><h3>🔁 Carry-over</h3>
+        <p>Work that was in a finished sprint and is still in the current one. It's a planning-accuracy signal, not a blame list.</p>
+<pre data-jql data-label="Carried into the active sprint">project = FLY AND sprint in closedSprints() AND sprint in openSprints()</pre>
+        <p class="muted"><b>Gadget:</b> <i>Filter Results</i> showing Sprint and Story Points columns. Review it in retro.</p></div>
+      <div class="card metric"><h3>🕰 Aging WIP</h3>
+        <p>In-progress work whose status hasn't moved in a week. These are the items to swarm at stand-up.</p>
+<pre data-jql data-label="Stuck for 7+ days">project = FLY AND statusCategory = "In Progress" AND NOT status CHANGED AFTER -7d ORDER BY updated ASC</pre>
+        <p class="muted"><b>Heads-up:</b> the sandbox was seeded today, so this returns nothing until a week has passed. <b>Gadget:</b> <i>Two-Dimensional Filter Statistics</i>, Status × Assignee.</p></div>
+      <div class="card metric"><h3>🚧 Flagged &amp; blocked</h3>
+        <p>Everything flagged as an impediment, labeled Blocked, or with an inbound blocker.</p>
+<pre data-jql data-label="All impediments">project = FLY AND statusCategory != Done AND (Flagged = Impediment OR labels = Blocked OR issueLinkType = "is blocked by")</pre>
+        <p class="muted"><b>Gadget:</b> <i>Filter Results</i> at the top of the team dashboard. The same JQL works as a board swimlane.</p></div>
+      <div class="card metric"><h3>✅ Ready hygiene</h3>
+        <p>"Ready" items that fail the Definition of Ready. Use it to keep refinement honest.</p>
+<pre data-jql data-label="Ready but not really">project = FLY AND status = Ready AND ("Story Points" is EMPTY OR issueLinkType = "is blocked by")</pre>
+        <p class="muted">Missing acceptance criteria can't be found reliably with text search. Pair this filter with Rovo's <i>Improve Story</i> or a quick human pass. <b>Gadget:</b> <i>Filter Results</i> plus a daily subscription to the PO.</p></div>
+      <div class="card metric"><h3>🐞 Quality inflow</h3>
+        <p>Are bugs arriving faster than they're fixed?</p>
+<pre data-jql data-label="All FLY bugs">project = FLY AND type = Bug</pre>
+        <p class="muted"><b>Gadget:</b> <i>Created vs Resolved Chart</i>, last 30 days, cumulative. Red area means the backlog of bugs is growing.</p></div>
+    </div>
+    <div class="btn-row"><a class="btn btn-blue" href="first-officer.html#fo-3">Back to FO-3 JQL lesson</a><a class="btn btn-blue" href="captain.html">Advanced JQL in Level 3 →</a></div>
+  </div>
+</section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/js/site.js"></script>
+<script>
+(function () {
+  "use strict";
+  var JFS = window.JFS || {};
+  var MILES = { taxi: 100, climb: 200, cruise: 350 };
+
+  /* ---------------- Challenge data ---------------- */
+  var C = [
+    // ---------- TAXI ----------
+    { id: "t1", leg: "taxi", title: "Bug sweep", q: "Ops wants a list of every bug in the FLY space, open or closed.",
+      hints: ["You need two clauses: the space and the work type.", "The work type field is <code>type</code> (or <code>issuetype</code>)."],
+      sol: ["project = FLY AND type = Bug"], exp: "8 bugs: FLY-10, FLY-19, FLY-25, FLY-27, FLY-30, FLY-48, FLY-50, FLY-51", verified: true },
+    { id: "t2", leg: "taxi", title: "What's on the active sprint?", q: "The Scrum Master is projecting the sprint at stand-up. Pull everything in the current sprint.",
+      hints: ["There's a function for sprints that are currently open.", "Sprint functions return lists, so use <code>in</code>, not <code>=</code>."],
+      sol: ["project = FLY AND sprint in openSprints()"], exp: "Sprint JET-2026.q4.3: FLY-20 to FLY-30 plus sub-tasks FLY-52 to FLY-54", verified: true },
+    { id: "t3", leg: "taxi", title: "Customer complaints still open", q: "Customer Care asks: which customer-reported items are we still working on?",
+      hints: ["Customer-reported work carries the label <code>customer-reported</code>.", "\"Still working on\" means status category isn't Done."],
+      sol: ["project = FLY AND labels = customer-reported AND statusCategory != Done"], exp: "FLY-25, FLY-50", verified: true,
+      note: "Notice FLY-51, the duplicate crash report, isn't here: it has no label. Labels only work if people use them." },
+    { id: "t4", leg: "taxi", title: "Highest priority, not done", q: "The director wants every open Highest-priority item in FLY, whatever its status.",
+      hints: ["Priority values are Highest, High, Medium, Low, Lowest.", "Combine with <code>statusCategory != Done</code>."],
+      sol: ["project = FLY AND priority = Highest AND statusCategory != Done"], exp: "FLY-21, FLY-36, FLY-50", verified: true },
+    { id: "t5", leg: "taxi", title: "Waiting on someone else", q: "Which items are waiting on quality engineering or the product owner? (Ready for eQE, eQE Testing, PO Review)",
+      hints: ["Several statuses → <code>status in (…)</code>.", "Quote the multi-word status names."],
+      sol: ['project = FLY AND status in ("Ready for eQE", "eQE Testing", "PO Review")'], exp: "FLY-21, FLY-23, FLY-25", verified: true },
+    { id: "t6", leg: "taxi", title: "Gate alerts epic: what's left?", q: "The FLY-2 epic owner wants the children of Real-time Gate Change Alerts that aren't done.",
+      hints: ["In Jira Cloud, epic children use the <code>parent</code> field.", "<code>parent = FLY-2</code>"],
+      sol: ["parent = FLY-2 AND statusCategory != Done", "project = FLY AND parent = FLY-2 AND statusCategory != Done"], exp: "FLY-21, FLY-22, FLY-23, FLY-24, FLY-25, FLY-42, FLY-47", verified: true },
+    { id: "t7", leg: "taxi", title: "Accessibility backlog", q: "The accessibility champion wants everything labeled accessibility, done or not.",
+      hints: ["Labels are matched exactly and are case-sensitive in display. Use <code>labels = accessibility</code>."],
+      sol: ["project = FLY AND labels = accessibility"], exp: "FLY-26, FLY-34, FLY-35, FLY-43", verified: true },
+
+    // ---------- CLIMB ----------
+    { id: "c1", leg: "climb", title: "Ready but un-estimated", q: "Sprint planning is tomorrow. Find Ready items with no story points.",
+      hints: ["The estimate field is <code>\"Story Points\"</code> (or <code>cf[10036]</code>).", "Missing values: <code>is EMPTY</code>."],
+      sol: ['project = FLY AND status = Ready AND "Story Points" is EMPTY'], exp: "FLY-43", verified: true },
+    { id: "c2", leg: "climb", title: "Overdue and still open", q: "Which open FLY items are past their due date?",
+      hints: ["The due date field is <code>duedate</code> (alias <code>due</code>).", "Compare with <code>now()</code>, and exclude the Done category."],
+      sol: ["project = FLY AND duedate < now() AND statusCategory != Done"], exp: "FLY-49, FLY-50", verified: true },
+    { id: "c3", leg: "climb", title: "Orphans without an epic", q: "Governance check: which stories, tasks and bugs have no parent epic?",
+      hints: ["Restrict to <code>type in (Story, Task, Bug)</code>. Sub-tasks always have a parent.", "<code>parent is EMPTY</code>"],
+      sol: ["project = FLY AND type in (Story, Task, Bug) AND parent is EMPTY"], exp: "FLY-29, FLY-44, FLY-45, FLY-49", verified: true },
+    { id: "c4", leg: "climb", title: "Nobody's flying this", q: "Find unassigned, not-done work in the active sprint, including sub-tasks.",
+      hints: ["Unassigned = <code>assignee is EMPTY</code>.", "Combine with <code>sprint in openSprints()</code> and <code>statusCategory != Done</code>."],
+      sol: ["project = FLY AND sprint in openSprints() AND assignee is EMPTY AND statusCategory != Done"], exp: "FLY-22, FLY-26, FLY-27, FLY-29, FLY-53, FLY-54", verified: true },
+    { id: "c5", leg: "climb", title: "The defect in disguise", q: "The standard says problems are Bugs. Find anything that isn't a Bug but is labeled or titled as a defect.",
+      hints: ["Exclude Bugs with <code>type != Bug</code>.", "Use OR inside parentheses: label <code>defect</code> or <code>summary ~ \"defect\"</code>."],
+      sol: ['project = FLY AND type != Bug AND (labels = defect OR summary ~ "defect")'], exp: "FLY-44", verified: true },
+    { id: "c6", leg: "climb", title: "Impediment radar", q: "Stand-up starts with impediments. Find items that are flagged OR labeled Blocked.",
+      hints: ["The flag field is <code>Flagged</code>, and its value is <code>Impediment</code>.", "Parenthesize the OR."],
+      sol: ["project = FLY AND (Flagged = Impediment OR labels = Blocked)"], exp: "FLY-22", verified: true },
+    { id: "c7", leg: "climb", title: "Risks due this year", q: "The risk review needs open Risks due on or before 31 Dec 2026, soonest first.",
+      hints: ["Absolute dates go in quotes: <code>\"2026-12-31\"</code>.", "<code>ORDER BY duedate ASC</code> goes last."],
+      sol: ['project = FLY AND type = Risk AND duedate <= "2026-12-31" AND statusCategory != Done ORDER BY duedate ASC'], exp: "FLY-47 (1 Dec), then FLY-46 (18 Dec)", verified: true, order: true },
+
+    // ---------- CRUISE ----------
+    { id: "x1", leg: "cruise", title: "Bounce-backs from eQE", q: "Quality wants every item that ever failed eQE Testing and went back to Development.",
+      hints: ["You need a history operator, because the current status isn't enough.", "<code>status CHANGED FROM … TO …</code>"],
+      sol: ['project = FLY AND status CHANGED FROM "eQE Testing" TO Development'], exp: "FLY-19, FLY-21, FLY-25", verified: true },
+    { id: "x2", leg: "cruise", title: "Bounce-backs in this sprint", q: "Same question, but only for work in the active sprint.",
+      hints: ["Add the sprint function to the history query."],
+      sol: ['project = FLY AND sprint in openSprints() AND status CHANGED FROM "eQE Testing" TO Development'], exp: "FLY-21, FLY-25 (FLY-19 bounced in a closed sprint)", verified: true },
+    { id: "x3", leg: "cruise", title: "Carry-over detector", q: "Which items were in a finished sprint and are still in the active one?",
+      hints: ["An item can belong to several sprints at once.", "Combine <code>closedSprints()</code> and <code>openSprints()</code> with AND."],
+      sol: ["project = FLY AND sprint in closedSprints() AND sprint in openSprints()"], exp: "FLY-20", verified: true },
+    { id: "x4", leg: "cruise", title: "Who's stuck behind the push integration?", q: "FLY-24 (push provider integration) is late. What does it block?",
+      hints: ["There's a function that follows links from one item.", "<code>issue in linkedIssues(KEY, \"link description\")</code>, where the description is from FLY-24's side."],
+      sol: ['issue in linkedIssues(FLY-24, "blocks")', 'project = FLY AND issue in linkedIssues(FLY-24, "blocks")'], exp: "FLY-22", verified: true },
+    { id: "x5", leg: "cruise", title: "Duplicate hunter", q: "Find items that are marked as duplicating something else.",
+      hints: ["The <code>issueLinkType</code> field matches link descriptions.", "From the duplicate's side, the description is <code>duplicates</code>."],
+      sol: ["project = FLY AND issueLinkType = duplicates"], exp: "FLY-51 (duplicates FLY-50)", verified: true },
+    { id: "x6", leg: "cruise", title: "Tested but not shipped", q: "Find work that has been in eQE Testing at some point and isn't Done yet.",
+      hints: ["<code>WAS</code> matches current <i>or</i> past values.", "Exclude the Done category."],
+      sol: ['project = FLY AND status WAS "eQE Testing" AND statusCategory != Done'], exp: "FLY-21, FLY-25, FLY-27", verified: true },
+    { id: "x7", leg: "cruise", title: "My landings this week", q: "Show the items <i>you</i> moved to Done since the start of this week.",
+      hints: ["<code>CHANGED TO … BY … DURING (…, …)</code>", "<code>DURING (startOfWeek(), now())</code>"],
+      sol: ["project = FLY AND status CHANGED TO Done BY currentUser() DURING (startOfWeek(), now())"], exp: "Depends on who you are. For the instructor account it's every Done item; for attendees it's likely empty until you close something.", verified: false },
+    { id: "x8", leg: "cruise", title: "Gate-alert flight order", q: "For the Gate Alerts epic, list active-sprint work still before PO Review (Development, Ready for eQE, eQE Testing), most urgent first, then by board rank.",
+      hints: ["Three clauses plus a status list.", "Two sort keys: <code>ORDER BY priority DESC, Rank ASC</code>."],
+      sol: ['project = FLY AND parent = FLY-2 AND sprint in openSprints() AND status in (Development, "Ready for eQE", "eQE Testing") ORDER BY priority DESC, Rank ASC'], exp: "FLY-21 (Highest), then FLY-22 and FLY-24 (High), then FLY-23 (Medium)", verified: true, order: true },
+    { id: "x9", leg: "cruise", title: "Not blocked, really", q: "List open active-sprint work that is NOT labeled Blocked, including items with no labels at all.",
+      hints: ["This is the EMPTY trap.", "<code>(labels != Blocked OR labels is EMPTY)</code>"],
+      sol: ["project = FLY AND sprint in openSprints() AND statusCategory != Done AND (labels != Blocked OR labels is EMPTY)"], exp: "Every open active-sprint item except FLY-22", verified: true },
+    { id: "x10", leg: "cruise", title: "Stale WIP alarm", q: "Find in-progress work whose status hasn't changed in the last 7 days, oldest update first.",
+      hints: ["Negate a history clause: <code>NOT status CHANGED AFTER -7d</code>.", "Filter with <code>statusCategory = \"In Progress\"</code>."],
+      sol: ['project = FLY AND statusCategory = "In Progress" AND NOT status CHANGED AFTER -7d ORDER BY updated ASC'], exp: "Empty today (the sandbox was seeded on 17 Nov 2026). It starts returning items a week later. Run it again then.", verified: false, order: true }
+  ];
+
+  var LEGS = [
+    { key: "taxi", name: "Leg 1 · Taxi", badge: "EASY · " + MILES.taxi + " mi each", blurb: "Single-clause thinking: spaces, types, labels, statuses, epics." },
+    { key: "climb", name: "Leg 2 · Climb", badge: "MEDIUM · " + MILES.climb + " mi each", blurb: "EMPTY, dates, OR logic, flags, and sorting." },
+    { key: "cruise", name: "Leg 3 · Cruise at altitude", badge: "HARD · " + MILES.cruise + " mi each", blurb: "History operators, sprint set logic, link functions, and the gotchas that fool AI-generated JQL." }
+  ];
+
+  /* ---------------- Helpers ---------------- */
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function hl(s) { return JFS.hlJql ? JFS.hlJql(s) : esc(s); }
+  function site() { return JFS.siteUrl ? JFS.siteUrl() : "https://varoonsahgaltraining.atlassian.net"; }
+  function stripComments(q) { return q.split("\n").map(function (l) { return l.replace(/--.*$/, ""); }).join(" ").replace(/\s+/g, " ").trim(); }
+  function doneMap() { return (JFS.store && JFS.store.get("done", {})) || {}; }
+  function isDone(id) { return !!doneMap()["jql-" + id]; }
+  function award(c) {
+    if (isDone(c.id)) return false;
+    if (JFS.award) JFS.award("jql-" + c.id, MILES[c.leg], "Sim " + c.id.toUpperCase() + " cleared");
+    syncAll();
+    return true;
+  }
+
+  /* ---------------- Linter (pre-flight check) ---------------- */
+  var MULTI = ["Ready for eQE", "eQE Testing", "PO Review", "Ready for Release", "New Idea", "Product Refinement", "Team Refinement", "To Do", "Story Points", "In Progress", "Gate Ops 1.0", "Mobile 5.3", "Mobile 5.2", "Bag Tracker Beta"];
+  var HIST_OK = ["status", "assignee", "priority", "reporter", "resolution", "fixversion"];
+  function lint(raw) {
+    var out = [];
+    var q = raw.replace(/--[^\n]*/g, "");
+    if (!q.trim()) return [{ lvl: "err", msg: "Empty flight plan. Type some JQL first." }];
+    if (/[“”‘’]/.test(q)) out.push({ lvl: "err", msg: "Smart quotes detected (“ ” ‘ ’). JQL needs straight quotes (\" or '). This happens when you copy from Teams, Word or email." });
+    var dq = (q.match(/"/g) || []).length;
+    if (dq % 2) out.push({ lvl: "err", msg: "Unbalanced double quotes: there's an opening \" without a closing one." });
+    var depth = 0, bad = false, inq = false;
+    for (var i = 0; i < q.length; i++) { var ch = q[i]; if (ch === '"') inq = !inq; if (inq) continue; if (ch === "(") depth++; if (ch === ")") { depth--; if (depth < 0) bad = true; } }
+    if (bad || depth !== 0) out.push({ lvl: "err", msg: "Unbalanced parentheses. Count your ( and )." });
+    var stripped = q.replace(/"[^"]*"/g, '""');
+    var ob = stripped.search(/\border\s+by\b/i);
+    var main = ob >= 0 ? stripped.slice(0, ob) : stripped;
+    if (ob >= 0 && /\b(and|or)\b/i.test(stripped.slice(ob))) out.push({ lvl: "err", msg: "ORDER BY must come last. Move your AND/OR conditions in front of it." });
+    if (/(^|[^!<>])=\s*("[^"]*"|[\w.\-]+)\s*,/.test(q)) out.push({ lvl: "err", msg: "\"=\" takes one value. For several values use IN (a, b, c)." });
+    if (/(^|[^!<>~])=\s*\(/.test(stripped)) out.push({ lvl: "err", msg: "\"= (…)\" doesn't work. Use IN (…) for lists." });
+    if (/\b(sprint|fixversion)\s*(!?=)\s*(open|closed|future)?\w*(sprints|versions)\s*\(/i.test(stripped)) out.push({ lvl: "err", msg: "Sprint and version functions return lists. Use IN / NOT IN instead of = / !=." });
+    if (/(^|[^!<>])=\s*(empty|null)\b/i.test(stripped)) out.push({ lvl: "warn", msg: "Use \"is EMPTY\" rather than \"= EMPTY\". It works on every field type." });
+    if (/!=\s*(empty|null)\b/i.test(stripped)) out.push({ lvl: "warn", msg: "Use \"is not EMPTY\" rather than \"!= EMPTY\"." });
+    if (/(!=|\bnot\s+in\b)/i.test(stripped) && !/\bis\s+empty\b/i.test(stripped) && !/statuscategory\s*!=/i.test(stripped) && !/\btype\s*!=/i.test(stripped) && !/\bissuetype\s*!=/i.test(stripped))
+      out.push({ lvl: "warn", msg: "EMPTY trap: != and NOT IN never match empty fields. If you also want items where that field is blank, add \"OR field is EMPTY\"." });
+    MULTI.forEach(function (mw) {
+      var re = new RegExp("(^|[^\\w])" + mw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![\\w])", "i");
+      if (re.test(stripped)) out.push({ lvl: "err", msg: "\"" + mw + "\" looks unquoted. Multi-word values need quotes: \"" + mw + "\"." });
+    });
+    if (/\b(issue)?type\s*(=\s*defect\b|in\s*\([^)]*\bdefect\b[^)]*\))/i.test(q.replace(/["']/g, ""))) out.push({ lvl: "warn", msg: "The standard uses the Bug work type, not \"Defect\"." });
+    var hre = /(\"?[\w\[\] ]+?\"?)\s+(was|changed)\b/ig, m;
+    while ((m = hre.exec(stripped))) {
+      var f = m[1].trim().split(/\s+/).pop().toLowerCase().replace(/"/g, "");
+      if (f && f !== "not" && f !== "and" && f !== "or" && f !== "(" && HIST_OK.indexOf(f) === -1)
+        out.push({ lvl: "err", msg: "History operators (WAS/CHANGED) don't support \"" + f + "\". They work on status, assignee, priority, reporter, resolution and fixVersion only." });
+    }
+    if (/\bduring\b/i.test(stripped) && !/\bduring\s*\(/i.test(stripped)) out.push({ lvl: "err", msg: "DURING needs two dates in parentheses: DURING (start, end)." });
+    if (/\band\b/i.test(main) && /\bor\b/i.test(main) && !/\(/.test(main)) out.push({ lvl: "warn", msg: "You mix AND and OR without parentheses. AND binds first, so this probably isn't what you mean." });
+    if (!/\b(project|parent|issue|key|issuekey)\b/i.test(stripped)) out.push({ lvl: "warn", msg: "No project clause, so this searches every space you can see. Add \"project = FLY\"." });
+    if (!out.length) out.push({ lvl: "ok", msg: "Pre-flight check clean. Cleared to taxi! Now compare it with the flight plan or open it in Jira." });
+    return out;
+  }
+
+  /* ---------------- Comparison (loose) ---------------- */
+  function canon(c) {
+    c = c.trim();
+    while (/^\(.*\)$/.test(c) && balanced(c.slice(1, -1))) c = c.slice(1, -1).trim();
+    c = c.replace(/["']/g, "")
+      .replace(/\s*(!=|>=|<=|!~|=|~|>|<)\s*/g, "$1")
+      .replace(/\bissuetype\b/g, "type").replace(/\bdue\b(?=\s*[<>=!])/g, "duedate")
+      .replace(/cf\[10036\]/g, "story points")
+      .replace(/\bkey\b(?=\s*(=|in))/g, "issue")
+      .replace(/\(([^()]*)\)/g, function (all, inner) {
+        if (inner.indexOf(",") === -1) return "(" + inner.trim() + ")";
+        return "(" + inner.split(",").map(function (s) { return s.trim(); }).sort().join(",") + ")";
+      })
+      .replace(/\s+/g, " ").trim();
+    // OR-groups: order of alternatives doesn't matter
+    var ors = splitTop(c, " or ");
+    if (ors.length > 1) c = ors.map(function (s) { return s.trim(); }).sort().join(" or ");
+    return c;
+  }
+  function splitTop(s, sep) {
+    var parts = [], depth = 0, cur = "";
+    for (var k = 0; k < s.length; k++) {
+      var ch = s[k];
+      if (ch === "(") depth++; if (ch === ")") depth--;
+      if (depth === 0 && s.substr(k, sep.length) === sep) { parts.push(cur); cur = ""; k += sep.length - 1; continue; }
+      cur += ch;
+    }
+    parts.push(cur);
+    return parts;
+  }
+  function balanced(s) { var d = 0; for (var i = 0; i < s.length; i++) { if (s[i] === "(") d++; if (s[i] === ")") { d--; if (d < 0) return false; } } return d === 0; }
+  function parse(q) {
+    var n = q.replace(/[“”]/g, '"').replace(/--[^\n]*/g, "").replace(/\s+/g, " ").trim().toLowerCase();
+    var order = "", i = n.search(/\border by\b/);
+    if (i >= 0) { order = n.slice(i + 8).replace(/\s+/g, "").replace(/asc/g, " asc").replace(/desc/g, " desc").replace(/,/g, ", "); n = n.slice(0, i); }
+    var parts = [], depth = 0, inq = false, cur = "";
+    for (var k = 0; k < n.length; k++) {
+      var ch = n[k];
+      if (ch === '"') inq = !inq;
+      if (!inq) { if (ch === "(") depth++; if (ch === ")") depth--; }
+      if (!inq && depth === 0 && n.substr(k, 5) === " and ") { parts.push(cur); cur = ""; k += 4; continue; }
+      cur += ch;
+    }
+    if (cur.trim()) parts.push(cur);
+    return { clauses: parts.map(canon).filter(Boolean), order: order.trim() };
+  }
+  function compare(user, c) {
+    var u = parse(user), best = null;
+    c.sol.forEach(function (s) {
+      var p = parse(s);
+      var missing = p.clauses.filter(function (x) { return u.clauses.indexOf(x) === -1; });
+      var extra = u.clauses.filter(function (x) { return p.clauses.indexOf(x) === -1; });
+      var orderOk = !c.order || u.order === p.order;
+      var score = (p.clauses.length - missing.length) / p.clauses.length;
+      if (!best || score > best.score) best = { score: score, missing: missing, extra: extra, orderOk: orderOk, p: p };
+    });
+    return best;
+  }
+  function fieldOf(clause) { var m = clause.match(/^(not )?([a-z ]+?)(?=\s*(!=|>=|<=|!~|=|~|>|<| in | not in | is | was | changed))/); return m ? m[2].trim() : clause.split(/\s|=|!/)[0]; }
+
+  /* ---------------- Render ---------------- */
+  var host = document.getElementById("sim");
+  LEGS.forEach(function (leg) {
+    var wrap = document.createElement("div");
+    wrap.id = "leg-" + leg.key;
+    var list = C.filter(function (c) { return c.leg === leg.key; });
+    wrap.innerHTML = '<div class="leg-head"><h2>' + esc(leg.name) + '</h2><span class="leg-badge">' + esc(leg.badge) + '</span><span class="leg-progress" data-leg-progress="' + leg.key + '"></span></div><p class="muted" style="margin-top:-6px">' + esc(leg.blurb) + "</p>";
+    list.forEach(function (c, idx) { wrap.appendChild(card(c, idx)); });
+    host.appendChild(wrap);
+  });
+
+  function card(c, idx) {
+    var d = document.createElement("details");
+    d.className = "chal"; d.id = "jql-" + c.id;
+    if (c.leg === "taxi" && idx === 0) d.open = true;
+    var solHtml = c.sol.map(function (s, i) {
+      return '<div class="codeblock"><div class="cb-head"><span>' + (i ? "Also accepted" : "Flight plan") + '</span><span class="cb-actions"><a class="cb-btn run" target="_blank" rel="noopener" data-run-jql="' + esc(stripComments(s)) + '">Run in Jira ↗</a></span></div><pre>' + hl(s) + "</pre></div>";
+    }).join("");
+    d.innerHTML =
+      '<summary><span class="chal-code">' + c.id.toUpperCase() + '</span><span class="chal-title">' + esc(c.title) + '</span><span class="chal-meta"><span class="miles-tag">+' + MILES[c.leg] + ' mi</span><span class="chal-done-flag" aria-hidden="true">✓</span></span></summary>' +
+      '<div class="chal-body">' +
+        '<p class="chal-q"><b class="atc">📻 Request from the line</b>' + c.q + "</p>" +
+        '<ul class="hints"></ul>' +
+        '<label class="muted" for="in-' + c.id + '" style="font-size:.85rem">Your JQL</label>' +
+        '<textarea class="jql-input" id="in-' + c.id + '" spellcheck="false" placeholder="project = FLY AND …"></textarea>' +
+        '<div class="chal-actions">' +
+          '<button type="button" class="primary" data-act="lint">Pre-flight check</button>' +
+          '<button type="button" data-act="check">Check against flight plan</button>' +
+          '<button type="button" data-act="open">Open my JQL in Jira ↗</button>' +
+          '<button type="button" data-act="hint">Hint (' + c.hints.length + ")</button>" +
+          '<button type="button" data-act="sol">Show flight plan</button>' +
+          '<button type="button" class="gold" data-act="log">Results match: log it</button>' +
+        "</div>" +
+        '<div class="atc-out" aria-live="polite"></div>' +
+        '<div class="solution">' + solHtml +
+          '<div class="expect' + (c.verified ? " verified" : "") + '"><b>' + (c.verified ? "Verified result" : "Expected result") + "</b>" + esc(c.exp) + (c.verified ? "" : " <span class=\"muted\">(confirm with Run in Jira)</span>") + "</div>" +
+          (c.note ? '<p class="muted" style="margin:8px 0 0">💡 ' + esc(c.note) + "</p>" : "") +
+        "</div>" +
+      "</div>";
+    var ta = d.querySelector("textarea"), out = d.querySelector(".atc-out"), hints = d.querySelector(".hints"), sol = d.querySelector(".solution");
+    var hintBtn = d.querySelector('[data-act="hint"]'), shown = 0;
+    try { var draft = JFS.store && JFS.store.get("draft:" + c.id, ""); if (draft) ta.value = draft; } catch (e) {}
+    ta.addEventListener("input", function () { JFS.store && JFS.store.set("draft:" + c.id, ta.value); });
+    function say(list) { out.innerHTML = list.map(function (m) { return '<div class="atc-msg ' + m.lvl + '">' + m.msg + "</div>"; }).join(""); }
+    d.querySelector(".chal-actions").addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      var act = b.dataset.act, val = ta.value;
+      if (act === "lint") say(lint(val).map(function (m) { return { lvl: m.lvl, msg: esc(m.msg) }; }));
+      if (act === "hint") {
+        if (shown < c.hints.length) { var li = document.createElement("li"); li.innerHTML = "<b>Hint " + (shown + 1) + ":</b> " + c.hints[shown]; hints.appendChild(li); shown++; }
+        hintBtn.textContent = shown < c.hints.length ? "Hint (" + (c.hints.length - shown) + ")" : "No more hints";
+        if (shown >= c.hints.length) hintBtn.disabled = true;
+      }
+      if (act === "sol") { sol.classList.toggle("show"); b.textContent = sol.classList.contains("show") ? "Hide flight plan" : "Show flight plan"; JFS.refreshRunLinks && JFS.refreshRunLinks(); }
+      if (act === "open") {
+        if (!val.trim()) { say([{ lvl: "info", msg: "Type your JQL first, then open it in Jira." }]); return; }
+        window.open(site() + "/issues/?jql=" + encodeURIComponent(stripComments(val)), "_blank", "noopener");
+        say([{ lvl: "info", msg: "Opened in a new tab. Compare your results with the expected keys (Show flight plan), then press <b>Results match: log it</b>." }]);
+      }
+      if (act === "check") {
+        var lints = lint(val).filter(function (m) { return m.lvl === "err"; });
+        if (!val.trim()) { say([{ lvl: "info", msg: "Type your JQL first." }]); return; }
+        if (lints.length) { say([{ lvl: "err", msg: "Fix the pre-flight errors first:" }].concat(lints.map(function (m) { return { lvl: "err", msg: esc(m.msg) }; }))); return; }
+        var r = compare(val, c), msgs = [];
+        if (r.score === 1 && r.orderOk) {
+          msgs.push({ lvl: "ok", msg: "✈ Flight plan matched. Cleared for takeoff! " + (r.extra.length ? "You have " + r.extra.length + " extra clause(s). That's fine if intentional, but verify the count in Jira." : "") });
+          if (award(c)) msgs.push({ lvl: "info", msg: "+" + MILES[c.leg] + " miles logged." });
+        } else {
+          if (r.score > 0) msgs.push({ lvl: "warn", msg: "Close. " + Math.round(r.score * 100) + "% of the required clauses match." });
+          else msgs.push({ lvl: "warn", msg: "Not matching the flight plan yet." });
+          if (r.missing.length) msgs.push({ lvl: "info", msg: "Check your conditions on: <b>" + r.missing.map(function (x) { return esc(fieldOf(x)); }).filter(function (v, i, a) { return a.indexOf(v) === i; }).join(", ") + "</b>" });
+          if (!r.orderOk) msgs.push({ lvl: "info", msg: "Look at your ORDER BY. This request cares about sort order." });
+          msgs.push({ lvl: "info", msg: "Equivalent JQL written differently can miss here. Run it in Jira, and if the results match the expected keys, log it." });
+        }
+        say(msgs);
+      }
+      if (act === "log") {
+        if (award(c)) say([{ lvl: "ok", msg: "Logged! +" + MILES[c.leg] + " miles. Nice flying." }]);
+        else say([{ lvl: "info", msg: "Already logged in your flight book ✓" }]);
+      }
+    });
+    return d;
+  }
+
+  /* ---------------- Progress / altimeter ---------------- */
+  function syncAll() {
+    var total = C.length, done = 0, miles = 0;
+    C.forEach(function (c) {
+      var ok = isDone(c.id); if (ok) { done++; miles += MILES[c.leg]; }
+      var el = document.getElementById("jql-" + c.id); if (el) el.classList.toggle("done", ok);
+    });
+    LEGS.forEach(function (leg) {
+      var list = C.filter(function (c) { return c.leg === leg.key; });
+      var n = list.filter(function (c) { return isDone(c.id); }).length;
+      document.querySelectorAll('[data-leg-progress="' + leg.key + '"]').forEach(function (el) { el.textContent = n + " / " + list.length + " flown" + (n === list.length ? " ✓" : ""); });
+    });
+    var frac = done / total, fl = Math.round(frac * 410);
+    var needle = document.getElementById("alt-needle"); if (needle) needle.style.transform = "translate(-50%, -100%) rotate(" + (frac * 330) + "deg)";
+    var ro = document.getElementById("alt-readout"); if (ro) ro.textContent = "FL" + String(fl).padStart(3, "0");
+    document.querySelectorAll("[data-sim-done]").forEach(function (el) { el.textContent = done; });
+    document.querySelectorAll("[data-sim-total]").forEach(function (el) { el.textContent = total; });
+    document.querySelectorAll("[data-sim-miles]").forEach(function (el) { el.textContent = miles.toLocaleString(); });
+    if (done === total && !(JFS.store && JFS.store.get("sim:cruise-msg", false))) {
+      JFS.store && JFS.store.set("sim:cruise-msg", true);
+      JFS.toast && JFS.toast("Cruising altitude reached: all 24 challenges flown 🛫");
+      JFS.confetti && JFS.confetti(60);
+    }
+  }
+  JFS.refreshRunLinks && JFS.refreshRunLinks();
+  syncAll();
+})();
+</script>
+</body>
+</html>

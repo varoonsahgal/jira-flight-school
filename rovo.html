@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rovo Flight Manual · Jira Flight School</title>
+<meta name="description" content="The Rovo Flight Manual: Search, Chat, Agents and Studio; when to use chat vs an agent; Rovo inside Jira; the PILOT prompt pattern; verification and governance; and advanced Rovo missions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<style>
+  .hero .wrap { position: relative; z-index: 2; }
+  .decision { display: grid; gap: 12px; margin: 16px 0 24px; }
+  .decision .node { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; display: grid; grid-template-columns: 34px minmax(0,1fr); gap: 12px; align-items: start; }
+  .decision .node .n { width: 34px; height: 34px; border-radius: 50%; background: var(--navy-900); color: var(--beacon); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; }
+  .decision .node p { margin: 0; }
+  .decision .ans { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .decision .ans span { font-size: .85rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
+  .ans .yes { background: var(--go-bg); color: var(--go); }
+  .ans .no { background: var(--sky-100); color: var(--navy-800); }
+  .pilot { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; margin: 16px 0 22px; }
+  @media (max-width: 860px) { .pilot { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+  @media (max-width: 460px) { .pilot { grid-template-columns: minmax(0,1fr); } }
+  .pilot div { background: var(--navy-900); color: #dbe6f7; border-radius: 12px; padding: 14px; }
+  .pilot b { display: block; font-family: var(--font-display); font-size: 2rem; color: var(--beacon); line-height: 1; }
+  .pilot strong { color: var(--white); font-family: var(--font-display); letter-spacing: .05em; text-transform: uppercase; }
+  .pilot p { margin: 6px 0 0; font-size: .9rem; }
+  .prompt-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; margin: 16px 0; box-shadow: var(--shadow-1); }
+  .prompt-card h3 { margin-bottom: 4px; }
+  .prompt-card .when { color: var(--ink-3); font-size: .92rem; margin-bottom: 10px; }
+  .score-table td:last-child { white-space: nowrap; }
+  .spec-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin: 12px 0; }
+  @media (max-width: 700px) { .spec-grid { grid-template-columns: minmax(0,1fr); } }
+  .spec-grid div { border: 1px dashed var(--line); border-radius: 10px; padding: 12px 14px; background: var(--ice-50); }
+  .spec-grid b { font-family: var(--font-display); letter-spacing: .06em; text-transform: uppercase; color: var(--blue-600); font-size: .9rem; }
+</style>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+
+<section class="hero compact">
+  <div class="clouds" aria-hidden="true">
+    <div class="cloud" style="top:22%;width:220px;height:46px;animation-duration:80s"></div>
+    <div class="cloud" style="top:62%;width:170px;height:36px;animation-duration:65s;animation-delay:-30s"></div>
+    <div class="cloud" style="top:40%;width:280px;height:56px;animation-duration:110s;animation-delay:-70s"></div>
+  </div>
+  <div class="wrap">
+    <span class="eyebrow">All levels · AI co-pilot</span>
+    <h1>Rovo Flight Manual</h1>
+    <p class="lede">Rovo is Atlassian's AI layer across Jira, Confluence and connected apps. This manual covers what each instrument does, when to use chat and when to use an agent, a prompt pattern you can use every day, and how to verify what the AI tells you. Then five missions that go well past the basics.</p>
+    <div class="meta-row" style="margin-top:18px">
+      <span class="chip gold">✨ Search · Chat · Agents · Studio</span>
+      <span class="chip">🧭 Used in Levels 1, 2 &amp; 3</span>
+      <span class="chip green">✈ 5 missions · 1 quiz</span>
+    </div>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="wrap layout">
+    <aside class="toc" aria-label="On this page">
+      <h4>Manual</h4>
+      <ol>
+        <li><a href="#rv-1">1 · What Rovo is</a></li>
+        <li><a href="#rv-2">2 · Chat or agent?</a></li>
+        <li><a href="#rv-3">3 · Rovo inside Jira</a></li>
+        <li><a href="#rv-4">4 · The PILOT pattern</a></li>
+        <li><a href="#rv-5">5 · Trust but verify</a></li>
+        <li><a href="#rv-6">6 · Governance</a></li>
+      </ol>
+      <h4 style="margin-top:16px">Missions</h4>
+      <ol>
+        <li><a href="#rv-m1">RV-M1 Duplicate detective</a></li>
+        <li><a href="#rv-m2">RV-M2 Refinement assistant</a></li>
+        <li><a href="#rv-m3">RV-M3 Sprint health brief</a></li>
+        <li><a href="#rv-m4">RV-M4 Agent design studio</a></li>
+        <li><a href="#rv-m5">RV-M5 NL→JQL accuracy</a></li>
+      </ol>
+      <h4 style="margin-top:16px">Finish</h4>
+      <ol><li><a href="#rv-quiz">Rovo quiz</a></li></ol>
+    </aside>
+
+    <div>
+      <!-- ============ RV-1 ============ -->
+      <article class="lesson" id="rv-1">
+        <h2><span class="lesson-code">RV-1</span> What Rovo is</h2>
+        <div class="meta-row"><span class="chip">⏱ 15 min</span><span class="chip">📖 Concepts</span></div>
+        <div class="objectives">
+          <h4>After this section you can</h4>
+          <ul>
+            <li>Name Rovo's four parts and what each is for.</li>
+            <li>Describe how agents now work <em>inside</em> Jira.</li>
+            <li>Explain why two people may get different answers to the same question.</li>
+          </ul>
+        </div>
+
+        <div class="grid g2">
+          <div class="card hover"><div class="icon-badge">🔍</div><h3>Search</h3><p>One search across Atlassian apps and connected tools. Results are filtered by <strong>your</strong> permissions, so you never see anything you couldn't already open.</p></div>
+          <div class="card hover"><div class="icon-badge">💬</div><h3>Chat</h3><p>A conversation grounded in your organization's content. Ask, summarize, compare, draft. You steer every turn. Rovo Chat also has a <strong>Max mode</strong> for heavier reasoning tasks.</p></div>
+          <div class="card hover"><div class="icon-badge">🤖</div><h3>Agents</h3><p>Specialists with instructions, knowledge and sometimes actions. With <strong>Agents in Jira</strong>, teams can assign work to Rovo agents (and third-party agents), work with them in comments, and trigger them from <strong>automation rules or board columns</strong>. Agent actions are logged for audit.</p></div>
+          <div class="card hover"><div class="icon-badge">🛠</div><h3>Studio</h3><p><strong>Rovo Studio</strong> is where agents and no-code automations are built from natural-language descriptions. It ships with <strong>20+ out-of-the-box agents</strong> and a preview pane to test an agent before it goes live.</p></div>
+        </div>
+
+        <div class="callout captain">
+          <strong>From the flight deck</strong>
+          <p>Rovo works like a well-briefed first officer. It knows what's in the logbook (your Jira and Confluence content), it can't open doors you can't open, and it still needs the captain (you) to confirm the important calls.</p>
+        </div>
+
+        <div class="callout tip">
+          <strong>Why answers differ between people</strong>
+          <p>Rovo answers from content <em>the person asking</em> can access. If your teammate can see a restricted Confluence space and you can't, their answer may include facts yours doesn't. Neither answer is “wrong”. They're built from different evidence.</p>
+        </div>
+      </article>
+
+      <!-- ============ RV-2 ============ -->
+      <article class="lesson" id="rv-2">
+        <h2><span class="lesson-code">RV-2</span> Chat or agent? The decision guide</h2>
+        <div class="meta-row"><span class="chip">⏱ 15 min</span><span class="chip">🧭 Decision aid</span></div>
+
+        <p>Work through the checkpoints in order. The first “yes” tells you which tool to use.</p>
+        <div class="decision">
+          <div class="node"><span class="n">1</span><div><p><strong>Is this a one-off question, draft or exploration?</strong></p><div class="ans"><span class="yes">Yes → Chat</span><span class="no">No → go to 2</span></div></div></div>
+          <div class="node"><span class="n">2</span><div><p><strong>Will you (or your team) do this same task again and again, with the same instructions?</strong></p><div class="ans"><span class="yes">Yes → Agent</span><span class="no">No → Chat</span></div></div></div>
+          <div class="node"><span class="n">3</span><div><p><strong>Should it start by itself when something happens (a new item, a status change, a release)?</strong></p><div class="ans"><span class="yes">Yes → Agent triggered by automation or a board column</span><span class="no">No → Agent you invoke on demand</span></div></div></div>
+          <div class="node"><span class="n">4</span><div><p><strong>Does an out-of-the-box agent already do it?</strong></p><div class="ans"><span class="yes">Yes → Use it, and check the Studio catalog first</span><span class="no">No → Write an agent request (see RV-M4)</span></div></div></div>
+        </div>
+
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Scenario</th><th>Pick</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>“What did we decide about partner rebooking?”</td><td><b>Chat</b></td><td>One question that needs content from several places.</td></tr>
+            <tr><td>Drafting acceptance criteria for a single story</td><td><b>Chat</b> or <em>Improve Story</em></td><td>One-off, and you edit the result.</td></tr>
+            <tr><td>Every new story should be checked against the Definition of Ready</td><td><b>Agent + automation</b></td><td>Repeatable, rule-based, event-triggered.</td></tr>
+            <tr><td>Weekly release notes from items Done in a version</td><td><b>Agent</b></td><td>Same format every time; consistency matters.</td></tr>
+            <tr><td>Brainstorming risks for the IROPS epic</td><td><b>Chat</b></td><td>Exploratory and conversational.</td></tr>
+            <tr><td>Triage of incoming bug reports into components</td><td><b>Agent</b> (in a column or rule)</td><td>High volume, consistent judgement, auditable.</td></tr>
+          </tbody>
+        </table></div>
+      </article>
+
+      <!-- ============ RV-3 ============ -->
+      <article class="lesson" id="rv-3">
+        <h2><span class="lesson-code">RV-3</span> Rovo inside Jira</h2>
+        <div class="meta-row"><span class="chip">⏱ 30 min</span><span class="chip">🛠 Hands-on</span></div>
+        <div class="objectives">
+          <h4>After this section you can</h4>
+          <ul>
+            <li>Summarize a work item and judge what the summary missed.</li>
+            <li>Use Improve Story / Improve Bug without accepting fluff.</li>
+            <li>Turn plain English into JQL with Ask AI, and audit the result.</li>
+            <li>Use AI suggestions for child work items and comment replies.</li>
+          </ul>
+        </div>
+
+        <h3>1 · Summarize work item</h3>
+        <p>Open any item and click <em>Summarize work item</em>. Rovo builds a briefing from the description, comments and history: status, next steps, risks and the latest update.</p>
+        <figure class="shot">
+          <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/browse/FLY-36</span></div>
+          <img src="assets/img/rovo-summary.jpg" alt="Rovo summary of FLY-36 with status, priority, next steps, risks and blockers, latest updates, and a Uses AI Verify results footer" loading="lazy"></div>
+          <figcaption>On <code>FLY-36</code>, Rovo picked up the split suggestion and the 8–12 s rebooking API risk from the comments. Compare it with the thread yourself in Mission RV-M2.</figcaption>
+        </figure>
+
+        <h3>2 · Improve Story / Improve Bug</h3>
+        <p>The <em>Improve</em> button on a work item suggests a clearer description and acceptance criteria. Treat it as a draft from a keen new team member: often useful, sometimes generic. Keep specific, testable criteria. Delete anything like “should be intuitive”.</p>
+
+        <h3>3 · Ask AI: natural language to JQL</h3>
+        <p>On the search page, click <em>Ask AI</em>, describe what you want, and press <em>Go</em>. Rovo writes the JQL, switches to JQL mode if needed, and runs it. Two real examples from our sandbox:</p>
+        <div class="grid g2">
+          <figure class="shot" style="margin:0">
+            <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>Ask AI · example A</span></div>
+            <img src="assets/img/rovo-nl-jql-ready.jpg" alt="Ask AI generating project = FLY AND issuetype = Story AND status = Ready AND cf[10036] IS EMPTY and returning FLY-43" loading="lazy"></div>
+            <figcaption><b>Accurate.</b> “Stories in FLY that are in Ready status but have no story points” → <code>cf[10036] IS EMPTY</code>, where <code>cf[10036]</code> is the Story Points field → <code>FLY-43</code>.</figcaption>
+          </figure>
+          <figure class="shot" style="margin:0">
+            <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>Ask AI · example B</span></div>
+            <img src="assets/img/rovo-nl-jql-bounce.jpg" alt="Ask AI generating status CHANGED FROM eQE Testing TO Development or In Progress and returning FLY-25, FLY-21 and FLY-19" loading="lazy"></div>
+            <figcaption><b>Close, with a quiet extra.</b> “FLY work that failed QA and was sent back to developers” → it added <code>"In Progress"</code>, a status our team doesn't use. The results happen to be right, but the logic isn't what you asked for.</figcaption>
+          </figure>
+        </div>
+
+        <h3>4 · Suggested child work items</h3>
+        <p>On an epic or a large story, look for AI suggestions to <strong>break the work down</strong> into child items. Use them as a starting list for refinement, not as the plan. The team still decides the split, the order and the estimates.</p>
+
+        <h3>5 · Comment assists</h3>
+        <p>The comment box offers quick starts such as <em>Suggest a reply…</em> and <em>Status update…</em>. They help you write a clear stakeholder update in seconds. Read it before you post. A status update that says “on track” when the item is flagged does more harm than no update at all.</p>
+      </article>
+
+      <!-- ============ RV-4 ============ -->
+      <article class="lesson" id="rv-4">
+        <h2><span class="lesson-code">RV-4</span> The PILOT prompt pattern</h2>
+        <div class="meta-row"><span class="chip">⏱ 30 min</span><span class="chip">✍️ Practice</span></div>
+        <p>Good prompts read like a flight plan. Our course uses <strong>PILOT</strong>:</p>
+        <div class="pilot">
+          <div><b>P</b><strong>Purpose</strong><p>What you're trying to achieve and for whom.</p></div>
+          <div><b>I</b><strong>Inputs</strong><p>Exactly which items, sprint, epic or page to use.</p></div>
+          <div><b>L</b><strong>Limits</strong><p>Scope, what to ignore, tone, what <em>not</em> to change.</p></div>
+          <div><b>O</b><strong>Output</strong><p>The format: table, bullets, max length, fields.</p></div>
+          <div><b>T</b><strong>Test</strong><p>Ask it to show its sources and flag uncertainty.</p></div>
+        </div>
+
+        <div class="split">
+          <div class="vs"><h4>✗ Without PILOT</h4><p><em>“How's the sprint going?”</em></p><p class="muted">Which sprint? For whom? What counts as “going well”? You'll get something vague.</p></div>
+          <div class="vs"><h4>✓ With PILOT</h4><p><em>“<b>Purpose:</b> brief my director on sprint health. <b>Inputs:</b> sprint JET-2026.q4.3 in FLY. <b>Limits:</b> only items in the sprint, no speculation. <b>Output:</b> 5 bullets: goal status, done vs remaining points, blockers, carry-over, top risk. <b>Test:</b> cite the work item key for every claim and say if anything is unclear.”</em></p></div>
+        </div>
+
+        <h3>Ready-to-fly prompts</h3>
+        <p class="muted">Copy, adapt the keys and sprint names, and paste into Rovo Chat.</p>
+
+        <div class="prompt-card">
+          <h3>🧪 Refinement prep</h3>
+          <p class="when">When: before Team Refinement.</p>
+          <pre data-code="Prompt" data-label="Rovo Chat prompt">Purpose: help my team prepare for Team Refinement.
+Inputs: work items in space FLY with status "Team Refinement".
+Limits: do not change any items. Only use what is written in the items and their comments.
+Output: a table with columns: key, summary, missing information (acceptance criteria / estimate / dependencies), 2 questions we should ask, suggested split if larger than 8 points.
+Test: cite the key for every row and mark anything you inferred rather than read as "(inferred)".</pre>
+        </div>
+
+        <div class="prompt-card">
+          <h3>☕ Standup digest</h3>
+          <p class="when">When: 5 minutes before standup.</p>
+          <pre data-code="Prompt" data-label="Rovo Chat prompt">Purpose: a 60-second standup digest for team Jetstream.
+Inputs: sprint JET-2026.q4.3 in space FLY; changes since yesterday.
+Limits: only items in this sprint; no opinions about people.
+Output: three short lists - Moved forward / Moved backward (e.g. eQE Testing back to Development) / Blocked or flagged - each line "KEY - summary - status".
+Test: if you cannot see change history for an item, say so instead of guessing.</pre>
+        </div>
+
+        <div class="prompt-card">
+          <h3>📦 Release notes draft</h3>
+          <p class="when">When: a version is about to ship.</p>
+          <pre data-code="Prompt" data-label="Rovo Chat prompt">Purpose: draft customer-facing release notes.
+Inputs: work items in FLY with fix version "Mobile 5.3" that are Done or Ready for Release.
+Limits: plain language for travelers; leave out internal tasks, spikes and sub-tasks; no promises about dates.
+Output: "New", "Improved", "Fixed" sections, max 8 bullets total.
+Test: list the keys you used under each bullet in brackets so I can verify, and list any item you excluded and why.</pre>
+        </div>
+
+        <div class="prompt-card">
+          <h3>⚠️ Risk scan</h3>
+          <p class="when">When: weekly, or before a steering meeting.</p>
+          <pre data-code="Prompt" data-label="Rovo Chat prompt">Purpose: identify delivery risks for epic FLY-2 (Real-time Gate Change Alerts).
+Inputs: FLY-2, its child items, their links (blocks / is blocked by) and comments, plus Risk work items that relate to it.
+Limits: only evidence in Jira; do not invent dates.
+Output: top 5 risks as a table: risk, evidence (keys), likelihood (H/M/L), suggested mitigation, owner if stated.
+Test: separate "stated in Jira" from "your inference".</pre>
+        </div>
+
+        <div class="prompt-card">
+          <h3>✅ Acceptance criteria drafting</h3>
+          <p class="when">When: writing or reviewing a story.</p>
+          <pre data-code="Prompt" data-label="Rovo Chat prompt">Purpose: draft acceptance criteria a tester can execute.
+Inputs: the description of FLY-42.
+Limits: 3 to 6 criteria; each must be observable and testable; no vague words like "fast", "intuitive" or "user-friendly".
+Output: Given / When / Then format.
+Test: after the list, name one assumption you made and one question for the product owner.</pre>
+        </div>
+
+        <div class="prompt-card">
+          <h3>🔁 Duplicate hunt</h3>
+          <p class="when">When: backlog grooming or after a support spike.</p>
+          <pre data-code="Prompt" data-label="Rovo Chat prompt">Purpose: find possible duplicate work items so we do not fix the same thing twice.
+Inputs: open Bugs and Stories in space FLY.
+Limits: only flag pairs that describe the same user-visible problem; "related" is not "duplicate".
+Output: table: key A, key B, why they look like duplicates, confidence (H/M/L), already linked? (yes/no).
+Test: quote the phrase from each item that convinced you.</pre>
+        </div>
+      </article>
+
+      <!-- ============ RV-5 ============ -->
+      <article class="lesson" id="rv-5">
+        <h2><span class="lesson-code">RV-5</span> Trust but verify</h2>
+        <div class="meta-row"><span class="chip">⏱ 15 min</span><span class="chip red">Non-negotiable</span></div>
+
+        <p>Every Rovo answer in Jira carries the same footer: <em>Uses AI. Verify results.</em> Here's what verifying actually means.</p>
+        <ul class="checklist" data-id="rv-verify">
+          <li><input type="checkbox" id="rvv1"><label for="rvv1"><strong>Read the JQL</strong> before reading the results. Does every condition match your intent? Is anything extra or missing?</label></li>
+          <li><input type="checkbox" id="rvv2"><label for="rvv2"><strong>Spot-check 2–3 items</strong> from any list or summary by opening them.</label></li>
+          <li><input type="checkbox" id="rvv3"><label for="rvv3"><strong>Check the numbers</strong>. If a summary quotes a figure, find it in the source.</label></li>
+          <li><input type="checkbox" id="rvv4"><label for="rvv4"><strong>Ask for keys</strong>. Claims without a work item key or page link are opinions.</label></li>
+          <li><input type="checkbox" id="rvv5"><label for="rvv5"><strong>Know the blind spots</strong>: decisions made in meetings and never written down, restricted content, and anything in tools Rovo isn't connected to.</label></li>
+          <li><input type="checkbox" id="rvv6"><label for="rvv6"><strong>Own the action</strong>. If you post it, send it or change an item because of it, it's yours.</label></li>
+        </ul>
+
+        <div class="callout warn">
+          <strong>Case study: the extra status</strong>
+          <p>Asked for “FLY work that failed QA and was sent back to developers”, Ask AI produced:</p>
+          <pre data-jql data-label="What Rovo generated">project = FLY AND status CHANGED FROM "eQE Testing" TO ("Development", "In Progress") ORDER BY created DESC</pre>
+          <p>Our workflow sends failed items back to <em>Development</em>. <em>In Progress</em> exists but isn't used. Today the results are the same (<code>FLY-19</code>, <code>FLY-21</code>, <code>FLY-25</code>). In a space that <em>does</em> use “In Progress” for something else, this query would quietly count the wrong things, and a bounce-back metric would be wrong in a slide deck. The fix:</p>
+          <pre data-jql data-label="What you meant">project = FLY AND status CHANGED FROM "eQE Testing" TO "Development" ORDER BY created DESC</pre>
+        </div>
+
+        <div class="callout tip">
+          <strong>Search question or reading question?</strong>
+          <p>JQL answers questions about <em>fields and history</em>: status, assignee, dates, changes. It can't judge <em>text quality</em>, such as “does this story have good acceptance criteria?”. Use Ask AI for the first kind and Rovo Chat (with spot-checks) for the second.</p>
+        </div>
+      </article>
+
+      <!-- ============ RV-6 ============ -->
+      <article class="lesson" id="rv-6">
+        <h2><span class="lesson-code">RV-6</span> Governance: flying within the rules</h2>
+        <div class="meta-row"><span class="chip">⏱ 10 min</span><span class="chip navy">Policy</span></div>
+        <div class="grid g2">
+          <div class="card"><h3>🔐 Permissions travel with you</h3><p>Rovo can only use content you can access, and agents act within the permissions they're given. Studio-built automations run with the permissions of the person who built them, which is one reason agent building is controlled.</p></div>
+          <div class="card"><h3>🧑‍✈️ Builders vs users</h3><p>Admins can grant AI <em>usage</em> separately from agent <em>building</em>. At our organization, agent creation is limited to a small group of builders. Everyone else can use agents and request new ones.</p></div>
+          <div class="card"><h3>📝 The agent request process</h3><p>Got an idea for an agent? Write a short spec (purpose, inputs, actions, guardrails, success measure) and submit it through your team's agent request process. RV-M4 walks you through it.</p></div>
+          <div class="card"><h3>🚫 Never in a prompt</h3><p>Passwords, API tokens, keys, customer personal data or anything you wouldn't put on a Jira ticket. Rovo is a work tool, and the same data rules apply.</p></div>
+        </div>
+        <div class="callout united">
+          <strong>Why strong Rovo habits matter here</strong>
+          <p>Wider Rovo access depends on people using it well. Every verified summary, every reviewed AC set and every well-written agent request makes the case for rolling it out to everyone.</p>
+        </div>
+      </article>
+
+      <hr>
+      <h2 id="missions">Rovo missions</h2>
+      <p class="lede">These go beyond “click Summarize”. Each one trains judgement: when to trust, when to dig, and how to turn AI output into a decision your team can stand behind.</p>
+
+      <!-- ============ RV-M1 ============ -->
+      <article class="mission" id="rv-m1" data-miles="350">
+        <div class="mission-head"><div><span class="mcode">MISSION RV-M1</span><h3>Duplicate detective</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> · Customer Care says, “People keep telling us the app crashes on the boarding pass.” Before anyone writes another bug, find out whether we're already tracking it, and whether we're tracking it <em>twice</em>.</div>
+          <ol class="steps">
+            <li>In Rovo Chat, run the <strong>Duplicate hunt</strong> prompt from RV-4, limited to Bugs in space FLY.</li>
+            <li>For every pair Rovo flags, open both items. Decide: <em>duplicate</em>, <em>related</em> or <em>different</em>.</li>
+            <li>Check the <strong>Linked work items</strong> section of each candidate. Is a duplicate link already there? Which direction does it point?</li>
+            <li>Decide which item should survive. Consider which has better detail, the right priority, a fix version and the older history.</li>
+            <li>Write your recommendation as a comment on the item that should be closed, starting with your initials, for example <code>[AK] Recommend closing as duplicate of …</code>. Don't close or relink items yourself; the instructor does that in the shared sandbox.</li>
+            <li>Bonus: did Rovo flag <code>FLY-19</code> and <code>FLY-25</code> as duplicates? Argue why or why not.</li>
+          </ol>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <ul>
+              <li><b>The real pair:</b> <code>FLY-51</code> “App crash on boarding pass for names with special characters” and <code>FLY-50</code> “Boarding pass crashes when passenger name contains an apostrophe”. They describe the same user-visible failure (D'Angelo vs O'Brien).</li>
+              <li><b>Already linked:</b> <code>FLY-51</code> <em>duplicates</em> <code>FLY-50</code>. That's the right direction. The newer, thinner report points at the better one.</li>
+              <li><b>Survivor:</b> <code>FLY-50</code>. It has Highest priority, acceptance criteria, a fix version (Mobile 5.3) and a due date. Note that it's also <em>overdue</em>, a separate signal worth raising.</li>
+              <li><b>Not duplicates:</b> <code>FLY-19</code> (wallet pass shows the old gate) and <code>FLY-25</code> (duplicate push alerts) are both about gate changes, but they're different defects with different fixes. “Same topic” isn't “same problem”.</li>
+              <li><b>Also worth noticing:</b> <code>FLY-44</code> “Defect: login spinner…” is a Task, not a Bug, so a Bug-only search never sees it. Good detectives widen the search.</li>
+            </ul>
+            <pre data-jql data-label="Confirm the existing duplicate link">issue in linkedIssues("FLY-50", "is duplicated by")</pre>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+350 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- ============ RV-M2 ============ -->
+      <article class="mission" id="rv-m2" data-miles="450">
+        <div class="mission-head"><div><span class="mcode">MISSION RV-M2</span><h3>Refinement assistant: split the 13-pointer</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> · <code>FLY-36</code> “As a traveler on a canceled flight, I see rebooking options in-app” is estimated at <strong>13 points</strong>, planned for JET-2027.q1.1 and sitting in Team Refinement. Thirteen points is too big to finish in one sprint. Use Rovo to propose a split, then compare it with what the humans already suggested.</div>
+          <ol class="steps">
+            <li>Without reading the comments, ask Rovo Chat: <em>“Propose how to split FLY-36 into 3–4 smaller user stories, each independently valuable and testable, with acceptance criteria. Respect the 10-second response requirement. Cite which parts of FLY-36 each story covers.”</em></li>
+            <li>Now open <code>FLY-36</code> and read the comment thread, especially the architect's note and the Scrum Master's suggestion.</li>
+            <li>Compare: did Rovo's split match the Scrum Master's <em>read-only options → hold seat → confirm</em> idea? Did it address the architect's warning that the rebooking engine is synchronous and takes 8–12 s?</li>
+            <li>Check each proposed story against INVEST. Which one is <em>not</em> independently valuable?</li>
+            <li>Write your final split (3–4 stories) as a comment on <code>FLY-36</code>, prefixed with your initials. Include one acceptance criterion per story that addresses performance.</li>
+          </ol>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <p>A strong split, close to the Scrum Master's suggestion:</p>
+            <ol>
+              <li><b>View options (read-only):</b> as a traveler on a canceled flight, I see same-day and next-day rebooking options. <em>AC:</em> options appear within 10 s, served from a pre-computed cache if the engine is slow.</li>
+              <li><b>Hold a seat:</b> I can hold my chosen option for a short time while I decide. <em>AC:</em> the hold is confirmed within 3 s or a clear retry is shown.</li>
+              <li><b>Confirm and reissue:</b> I accept with one tap and get a new boarding pass. (This overlaps <code>FLY-37</code>. Notice the overlap!)</li>
+              <li><b>Async enabler (technical):</b> move the rebooking engine call to an async pattern so the UI isn't blocked for 8–12 s.</li>
+            </ol>
+            <p><b>What AI typically misses:</b> the existing sibling <code>FLY-37</code> (one-tap accept), so it proposes a duplicate; and the async enabler, unless it read the architect's comment. <b>Lesson:</b> AI is a fast first draft for refinement, and the team's context turns it into the right plan.</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+450 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- ============ RV-M3 ============ -->
+      <article class="mission" id="rv-m3" data-miles="400">
+        <div class="mission-head"><div><span class="mcode">MISSION RV-M3</span><h3>Sprint health brief for JET-2026.q4.3</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> · Your director wants a five-bullet sprint health brief in ten minutes. Use Rovo to draft it, then verify every bullet against the board and backlog before it leaves your hands.</div>
+          <ol class="steps">
+            <li>Use the PILOT example from RV-4 (“brief my director on sprint health”) for sprint <code>JET-2026.q4.3</code>.</li>
+            <li>Open the Backlog and read the point totals next to the sprint name (grey, blue and green bubbles). Do Rovo's numbers match?</li>
+            <li>Check that Rovo named the <strong>blocker</strong>, the <strong>carry-over</strong> item and the items that <strong>bounced back from eQE</strong>. Use these queries to confirm:</li>
+          </ol>
+          <pre data-jql data-label="Verify: blocked or flagged in the sprint">project = FLY AND sprint in openSprints() AND (labels = Blocked OR Flagged is not EMPTY)</pre>
+          <pre data-jql data-label="Verify: carry-over (in a closed sprint AND the open one)">project = FLY AND sprint in closedSprints() AND sprint in openSprints()</pre>
+          <pre data-jql data-label="Verify: bounced back from eQE this sprint">project = FLY AND sprint in openSprints() AND status CHANGED FROM "eQE Testing" TO "Development"</pre>
+          <ol class="steps" start="4">
+            <li>Rewrite the brief so every bullet carries at least one work item key. Add one sentence: “Is the sprint goal at risk? Yes / No, because…”.</li>
+          </ol>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <ul>
+              <li><b>Goal:</b> “Gate change push alerts end-to-end in staging”. This depends on <code>FLY-21</code>, <code>FLY-22</code>, <code>FLY-23</code>, <code>FLY-24</code> and <code>FLY-25</code>.</li>
+              <li><b>Points:</b> about 7 to do / 33 in progress / 5 done. Most work is in flight with little finished. Classic mid-sprint risk.</li>
+              <li><b>Blocked:</b> <code>FLY-22</code> (flagged, label Blocked), blocked by <code>FLY-24</code>, which is still in Development.</li>
+              <li><b>Carry-over:</b> <code>FLY-20</code> (pairing rest-rule warning), now in its second sprint.</li>
+              <li><b>Quality signal:</b> <code>FLY-21</code> and <code>FLY-25</code> both bounced back from eQE in this sprint (<code>FLY-25</code> twice, according to its comments). <code>FLY-19</code> bounced in the previous sprint.</li>
+              <li><b>Verdict:</b> the goal is <em>at risk</em>. The blocker chain <code>FLY-24 → FLY-22</code> sits on the critical path, and the core story <code>FLY-21</code> is still in eQE.</li>
+            </ul>
+            <p class="muted">If Rovo said “on track”, that's exactly why you verify. Totals may change as classmates work in the sandbox.</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+400 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- ============ RV-M4 ============ -->
+      <article class="mission" id="rv-m4" data-miles="500">
+        <div class="mission-head"><div><span class="mcode">MISSION RV-M4</span><h3>Agent design studio: the Definition of Ready Checker</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> · Too many stories enter sprints without acceptance criteria or estimates. <code>FLY-43</code> is “Ready” with no points, and <code>FLY-42</code> is “Ready” with no acceptance criteria. You'll design an agent that catches this <em>before</em> sprint planning, and write a spec good enough to submit through the agent request process. Work on paper, a whiteboard or a Confluence page. You don't need build rights.</div>
+          <ol class="steps">
+            <li>Fill in every box of the spec template below for a <strong>Definition of Ready Checker</strong> agent.</li>
+            <li>Decide the <strong>trigger</strong>: on demand, a scheduled rule, or when an item moves to the <em>Ready</em> column on the Backlog Readiness board.</li>
+            <li>Write the agent's <strong>instructions</strong> in PILOT form. Be explicit about what it may and may not change.</li>
+            <li>Dry-run it by hand: apply your rules to <code>FLY-31</code>, <code>FLY-42</code> and <code>FLY-43</code>. What should the agent say for each?</li>
+            <li>Peer review: swap specs with a classmate and find one way their agent could cause harm or noise.</li>
+          </ol>
+          <div class="spec-grid">
+            <div><b>Purpose &amp; user</b><p>Who benefits, and what decision does it support?</p></div>
+            <div><b>Trigger</b><p>When does it run? Who can invoke it?</p></div>
+            <div><b>Knowledge</b><p>Which spaces and pages does it read (e.g. the team's Definition of Ready page)?</p></div>
+            <div><b>Checks</b><p>The concrete rules: AC present and testable? Estimate present? Parent epic set? Dependencies linked? Fix version?</p></div>
+            <div><b>Actions</b><p>What it may do: comment? add a label? Never: change status, estimates or assignees.</p></div>
+            <div><b>Guardrails</b><p>Read-only by default; rate limits; how a human overrides it; audit trail.</p></div>
+            <div><b>Success measure</b><p>For example: % of sprint items meeting DoR at planning; fewer mid-sprint AC rewrites.</p></div>
+            <div><b>Risks</b><p>False positives, comment noise, people “gaming” the checklist.</p></div>
+          </div>
+          <details class="reveal"><summary>Show debrief: a model spec</summary><div>
+            <p><b>Purpose:</b> help Product Owners and Scrum Masters keep 2–3 sprints of <em>truly</em> Ready work. <b>Trigger:</b> when an item enters the <em>Ready</em> column on the Backlog Readiness board, plus on demand. <b>Knowledge:</b> the team's Definition of Ready page and the item's description and links.</p>
+            <p><b>Checks:</b> (1) an acceptance criteria section exists with at least 3 testable bullets; (2) Story Points set; (3) parent epic set; (4) blocking links named; (5) for Bugs, repro steps present.</p>
+            <p><b>Actions:</b> post <em>one</em> comment listing any gaps and add label <code>dor-gap</code>. It must never move status or edit fields. <b>Guardrails:</b> one comment per item per day; ignore Sub-tasks; a human removes the label once fixed.</p>
+            <p><b>Dry run:</b> <code>FLY-31</code> passes (AC, points, epic). <code>FLY-42</code> fails on acceptance criteria. <code>FLY-43</code> fails on estimate. <b>Success:</b> 90%+ of items pass DoR at sprint planning within one quarter.</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+500 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- ============ RV-M5 ============ -->
+      <article class="mission" id="rv-m5" data-miles="500">
+        <div class="mission-head"><div><span class="mcode">MISSION RV-M5</span><h3>NL→JQL accuracy challenge</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> · Put Ask AI through a checkride. Type each prompt into <em>Ask AI</em> on the search page, copy the JQL it generates, and score it against the reference. Score 2 for exact intent, 1 for close but with an extra or missing condition, 0 for wrong.</div>
+          <div class="table-wrap"><table class="data score-table">
+            <thead><tr><th>#</th><th>Type this into Ask AI</th><th>Expected result</th><th>Your score</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Open bugs in FLY that customers reported</td><td><code>FLY-25</code>, <code>FLY-50</code></td><td>0 / 1 / 2</td></tr>
+              <tr><td>2</td><td>Work in the current FLY sprint that is blocked or flagged</td><td><code>FLY-22</code></td><td>0 / 1 / 2</td></tr>
+              <tr><td>3</td><td>FLY items that are past their due date and not done</td><td><code>FLY-49</code>, <code>FLY-50</code></td><td>0 / 1 / 2</td></tr>
+              <tr><td>4</td><td>Mobile 5.3 work that isn't ready for release yet</td><td>8 items: <code>FLY-21, 23, 24, 25, 26, 34, 35, 50</code></td><td>0 / 1 / 2</td></tr>
+              <tr><td>5</td><td>FLY stories that bounced back from eQE more than once</td><td>Trap! See debrief</td><td>0 / 1 / 2</td></tr>
+            </tbody>
+          </table></div>
+          <details class="reveal"><summary>Show reference JQL &amp; debrief</summary><div>
+            <pre data-jql data-label="1 · customer-reported open bugs">project = FLY AND issuetype = Bug AND labels = customer-reported AND statusCategory != Done</pre>
+            <pre data-jql data-label="2 · blocked or flagged in the current sprint">project = FLY AND sprint in openSprints() AND (labels = Blocked OR Flagged is not EMPTY)</pre>
+            <pre data-jql data-label="3 · overdue">project = FLY AND duedate < now() AND statusCategory != Done</pre>
+            <pre data-jql data-label="4 · Mobile 5.3 not yet releasable">project = FLY AND fixVersion = "Mobile 5.3" AND status not in ("Ready for Release", Done)</pre>
+            <pre data-jql data-label="5 · the closest JQL can get">project = FLY AND issuetype = Story AND status CHANGED FROM "eQE Testing" TO "Development"</pre>
+            <ul>
+              <li><b>#1:</b> common slips are using <code>status != Done</code> (fine here) or forgetting the label entirely and returning all open bugs.</li>
+              <li><b>#2:</b> watch for queries that use only the label <em>or</em> only the flag. Teams use both.</li>
+              <li><b>#3:</b> <code>now()</code> versus <code>startOfDay()</code> can change edge cases; either is acceptable.</li>
+              <li><b>#4:</b> a typical miss is <code>statusCategory != Done</code>, which wrongly includes <code>FLY-27</code> (Ready for Release). Business meaning beats category shortcuts.</li>
+              <li><b>#5 (the trap):</b> JQL can tell you an item <em>changed</em> from eQE Testing to Development, but not <em>how many times</em>. And the only Story among the bounces is <code>FLY-21</code>, which bounced once. The bug <code>FLY-25</code> bounced twice. Full marks if you spotted that Rovo can't answer this with JQL alone, and that you need to read the history or use a reporting tool (eazyBI in Level 3).</li>
+            </ul>
+            <p><b>Scoring:</b> 8–10 means Ask AI is a trusted co-pilot for your team's questions. 5–7 means use it, but always read the JQL. Below 5 means rephrase with field names (“label”, “fix version”, “status”) and try again.</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+500 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- ============ Quiz ============ -->
+      <hr>
+      <h2 id="rv-quiz">Rovo quiz</h2>
+      <p class="lede">Six quick questions. Pass at 80%.</p>
+      <div class="quiz" data-id="rovo" data-pass="80" data-miles="400">
+        <div class="q">
+          <p class="prompt">1. Which Rovo capability best fits “every time a story moves to Ready, check it against our Definition of Ready”?</p>
+          <div class="opts">
+            <button class="opt" type="button">Rovo Search</button>
+            <button class="opt" type="button">A one-off Rovo Chat prompt</button>
+            <button class="opt" data-right type="button">An agent triggered by automation or a board column</button>
+            <button class="opt" type="button">The Summarize button</button>
+          </div>
+          <div class="why">Repeatable and event-triggered: an agent wired to an automation rule or a board column.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">2. In PILOT, what does the “T” ask you to include?</p>
+          <div class="opts">
+            <button class="opt" type="button">The tone of voice</button>
+            <button class="opt" data-right type="button">A test: ask for sources and for uncertainty to be flagged</button>
+            <button class="opt" type="button">A time limit</button>
+            <button class="opt" type="button">The team name</button>
+          </div>
+          <div class="why">Test/verify: make the answer checkable by asking for keys, sources and flagged inferences.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">3. Ask AI added <code>"In Progress"</code> to your status condition. What's the right response?</p>
+          <div class="opts">
+            <button class="opt" type="button">Ignore it, since the results look right</button>
+            <button class="opt" data-right type="button">Edit the JQL to match your workflow's real meaning before reusing it</button>
+            <button class="opt" type="button">Report a bug to Atlassian</button>
+            <button class="opt" type="button">Switch to Basic mode</button>
+          </div>
+          <div class="why">Correct results today can hide wrong logic. Fix the query so it stays right when the data changes.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">4. Can you use JQL alone to find “stories whose acceptance criteria are vague”?</p>
+          <div class="opts">
+            <button class="opt" type="button">Yes, with the <code>~</code> operator</button>
+            <button class="opt" data-right type="button">No. That's a judgement about text, so use Rovo Chat and spot-check</button>
+            <button class="opt" type="button">Yes, with <code>issueFunction</code></button>
+            <button class="opt" type="button">Only on Kanban boards</button>
+          </div>
+          <div class="why">JQL is good at fields and history. Assessing quality of writing is a reading task for Rovo Chat, verified by a human.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">5. Who can create new Rovo agents at our organization today?</p>
+          <div class="opts">
+            <button class="opt" type="button">Everyone with Rovo access</button>
+            <button class="opt" data-right type="button">A small group of builders. Others submit agent requests</button>
+            <button class="opt" type="button">Nobody; agents are disabled</button>
+            <button class="opt" type="button">Only Jira admins</button>
+          </div>
+          <div class="why">Admins can separate AI usage from agent building. Use the agent request process for new ideas.</div>
+        </div>
+        <div class="q">
+          <p class="prompt">6. Rovo says <code>FLY-19</code> and <code>FLY-25</code> are duplicates. What do you do?</p>
+          <div class="opts">
+            <button class="opt" type="button">Link them as duplicates immediately</button>
+            <button class="opt" type="button">Close the newer one</button>
+            <button class="opt" data-right type="button">Open both, compare the user-visible problem, and decide: duplicate, related or different</button>
+            <button class="opt" type="button">Ask Rovo again until it agrees with you</button>
+          </div>
+          <div class="why">They share a topic (gate changes) but are different defects. Rovo flags candidates, and humans decide.</div>
+        </div>
+        <div class="quiz-score"><div><b>0 / 6</b> <span class="msg"></span></div><button class="btn btn-sm btn-primary retry" type="button">Retake quiz</button></div>
+      </div>
+
+      <div class="callout captain" style="margin-top:28px">
+        <strong>From the flight deck</strong>
+        <p>Ready for the next leg? Rovo shows up again in <a href="first-officer.html">Level 2</a> (Rovo in the flow of work) and <a href="captain.html">Level 3</a> (agents in automation). If you want to see what an external AI assistant can do with Jira, read <a href="mcp.html">Claude + MCP</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

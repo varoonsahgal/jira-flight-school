@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jira Flight School · Working with Jira for Digital Technology</title>
+<meta name="description" content="A three-level, hands-on Jira course for Digital Technology teams: Ground School, First Officer and Captain. Golden Template, Rovo, JQL, Plans, eazyBI, Zephyr, Git and Claude + Atlassian MCP.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="assets/img/favicon.svg">
+<style>
+  .hero-pass { max-width: 440px; justify-self: end; width: 100%; }
+  @media (max-width: 880px) { .hero-pass { justify-self: start; } }
+  .hero-pass .pass { transform: rotate(2deg); }
+  .hero-pass .pass:hover { transform: rotate(0deg) translateY(-4px); }
+  .logbook { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(0,.8fr); gap: 28px; align-items: center; }
+  @media (max-width: 820px) { .logbook { grid-template-columns: minmax(0,1fr); } }
+  .tier-row { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 12px; font-family: var(--font-display); letter-spacing: .06em; text-transform: uppercase; font-size: .85rem; color: #9fb2d3; }
+  .feature h3 { font-size: 1.25rem; }
+  .feature p { color: var(--ink-2); margin: 0; font-size: .97rem; }
+  .sandbox-grid { display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr); gap: 34px; align-items: center; }
+  @media (max-width: 900px) { .sandbox-grid { grid-template-columns: minmax(0,1fr); } }
+  .kv { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 8px 16px; font-size: .95rem; }
+  .kv dt { font-weight: 700; color: var(--navy-800); }
+  .kv dd { margin: 0; color: var(--ink-2); }
+</style>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+
+<section class="hero">
+  <div class="clouds" aria-hidden="true">
+    <div class="cloud" style="top:14%;width:180px;height:44px;animation-duration:70s;animation-delay:-10s"></div>
+    <div class="cloud" style="top:58%;width:260px;height:60px;animation-duration:95s;animation-delay:-40s"></div>
+    <div class="cloud" style="top:78%;width:140px;height:36px;animation-duration:60s;animation-delay:-25s"></div>
+  </div>
+  <svg class="flightpath" viewBox="0 0 1900 520" preserveAspectRatio="none" aria-hidden="true"><path d="M -60 380 C 300 120, 700 520, 1100 160 S 1700 220, 1900 60"/></svg>
+  <svg class="plane-fly" viewBox="0 0 64 64" aria-hidden="true"><path fill="#ffb81c" d="M58 30 40 27 29 8h-5l5 19-13-1-5-6H7l3 12-3 12h4l5-6 13-1-5 19h5l11-19 18-3c2.6-.5 2.6-3.5 0-4z"/></svg>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Working with Jira · Digital Technology</div>
+      <h1>Welcome aboard<br>Jira Flight School</h1>
+      <p class="lede">Three levels of hands-on training, from your first board to Plans, eazyBI, Zephyr, Rovo agents and Claude connected to Jira through MCP. Every exercise runs against a live sandbox built on the Golden Template.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="ground-school.html">✈ Start Ground School</a>
+        <a class="btn btn-ghost" href="syllabus.html">View the syllabus</a>
+      </div>
+    </div>
+    <div class="hero-pass">
+      <a class="pass" href="#logbook" aria-label="Your boarding pass and miles">
+        <div class="pass-main">
+          <div class="pass-head"><span>Boarding pass</span><span class="lvl" data-miles-tier>Ground Crew</span></div>
+          <div class="pass-route">
+            <div>NEW<small>New to Jira</small></div>
+            <div class="arrow"></div>
+            <div>ACE<small>Jira Captain</small></div>
+          </div>
+          <div class="pass-meta">
+            <div><span>Miles</span><b data-miles-total>0</b></div>
+            <div><span>Flight</span><b>JFS 101</b></div>
+            <div><span>Gate</span><b>FLY</b></div>
+          </div>
+          <div class="light" style="margin-top:14px"><div class="progress-bar"><i data-miles-bar></i></div><div class="muted" style="font-size:.8rem;margin-top:6px" data-miles-next></div></div>
+        </div>
+        <div class="pass-stub">
+          <div class="center"><div class="seat-l">Seat</div><div class="seat">1A</div></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="tight band-white">
+  <div class="wrap">
+    <div class="board" role="region" aria-label="Course departures board">
+      <div class="board-title"><span>Departures · Course modules</span><span class="board-clock"></span></div>
+      <table>
+        <thead><tr><th>Flight</th><th>Destination</th><th>Gate</th><th>Duration</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><a href="ground-school.html"><span class="flap">JFS101</span></a></td><td><a href="ground-school.html"><span class="flap">GROUND SCHOOL</span></a></td><td><span class="flap">L1</span></td><td><span class="flap">3H30</span></td><td class="status-board st-boarding">BOARDING</td></tr>
+          <tr><td><a href="rovo.html"><span class="flap">JFS150</span></a></td><td><a href="rovo.html"><span class="flap">ROVO FLIGHT MANUAL</span></a></td><td><span class="flap">ALL</span></td><td><span class="flap">1H30</span></td><td class="status-board st-boarding">BOARDING</td></tr>
+          <tr><td><a href="first-officer.html"><span class="flap">JFS201</span></a></td><td><a href="first-officer.html"><span class="flap">FIRST OFFICER</span></a></td><td><span class="flap">L2</span></td><td><span class="flap">5H00</span></td><td class="status-board st-ontime">ON TIME</td></tr>
+          <tr><td><a href="jql-simulator.html"><span class="flap">JFS250</span></a></td><td><a href="jql-simulator.html"><span class="flap">JQL SIMULATOR</span></a></td><td><span class="flap">L2+</span></td><td><span class="flap">SELF</span></td><td class="status-board st-ontime">ON TIME</td></tr>
+          <tr><td><a href="captain.html"><span class="flap">JFS301</span></a></td><td><a href="captain.html"><span class="flap">CAPTAIN</span></a></td><td><span class="flap">L3</span></td><td><span class="flap">6H30</span></td><td class="status-board st-ontime">ON TIME</td></tr>
+          <tr><td><a href="mcp.html"><span class="flap">JFS350</span></a></td><td><a href="mcp.html"><span class="flap">CLAUDE + MCP</span></a></td><td><span class="flap">L3</span></td><td><span class="flap">1H00</span></td><td class="status-board st-ontime">ON TIME</td></tr>
+          <tr><td><a href="missions.html#capstone"><span class="flap">JFS399</span></a></td><td><a href="missions.html#capstone"><span class="flap">CAPSTONE IROPS DAY</span></a></td><td><span class="flap">L3</span></td><td><span class="flap">1H00</span></td><td class="status-board st-final">FINAL CALL</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Choose your flight</div>
+      <h2>Three levels, one upgrade path</h2>
+      <p class="lede">Most people start at Ground School. Pass each level's checkride to move up. The Ground School checkride doubles as the <b>Rovo readiness check</b>, the gate to getting Rovo turned on.</p>
+    </div>
+    <div class="grid g3">
+      <a class="pass" href="ground-school.html">
+        <div class="pass-main">
+          <div class="pass-head"><span>Level 1</span><span class="lvl">Ground School</span></div>
+          <div class="pass-route"><div>NEW<small>Day one</small></div><div class="arrow"></div><div>JRA<small>Confident user</small></div></div>
+          <div class="pass-meta"><div><span>Time</span><b>3.5 h</b></div><div><span>Format</span><b>Blended</b></div><div><span>Missions</span><b>4</b></div></div>
+          <p class="muted" style="margin:12px 0 0;font-size:.92rem">Spaces, navigation, everyday work, boards, Rovo 101 and a preview of the Golden Template.</p>
+        </div>
+        <div class="pass-stub"><div class="center"><div class="seat-l">Seat</div><div class="seat">L1</div></div><div class="barcode"></div></div>
+      </a>
+      <a class="pass" href="first-officer.html">
+        <div class="pass-main">
+          <div class="pass-head"><span>Level 2</span><span class="lvl">First Officer</span></div>
+          <div class="pass-route"><div>JRA<small>Confident user</small></div><div class="arrow"></div><div>PRO<small>Team practitioner</small></div></div>
+          <div class="pass-meta"><div><span>Time</span><b>5 h</b></div><div><span>Format</span><b>Live</b></div><div><span>Missions</span><b>6</b></div></div>
+          <p class="muted" style="margin:12px 0 0;font-size:.92rem">Golden Template in depth, refinement and planning, JQL, dashboards and reports, Zephyr essentials.</p>
+        </div>
+        <div class="pass-stub"><div class="center"><div class="seat-l">Seat</div><div class="seat">L2</div></div><div class="barcode"></div></div>
+      </a>
+      <a class="pass" href="captain.html">
+        <div class="pass-main">
+          <div class="pass-head"><span>Level 3</span><span class="lvl">Captain</span></div>
+          <div class="pass-route"><div>PRO<small>Practitioner</small></div><div class="arrow"></div><div>ACE<small>Power user</small></div></div>
+          <div class="pass-meta"><div><span>Time</span><b>6.5 h</b></div><div><span>Format</span><b>Live lab</b></div><div><span>Missions</span><b>6+</b></div></div>
+          <p class="muted" style="margin:12px 0 0;font-size:.92rem">Advanced JQL and flow metrics, Plans and capacity, eazyBI, Zephyr at scale, automation, agents, MCP, Git.</p>
+        </div>
+        <div class="pass-stub"><div class="center"><div class="seat-l">Seat</div><div class="seat">L3</div></div><div class="barcode"></div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="band-white">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">What you'll be able to do</div>
+      <h2>Skills that actually move your team's numbers</h2>
+    </div>
+    <div class="grid g4">
+      <div class="card hover feature"><div class="icon-badge">🧭</div><h3>Work the Golden Template</h3><p>Two-board model, standard statuses with exit criteria, sprint naming and Definition of Ready.</p></div>
+      <div class="card hover feature"><div class="icon-badge">✨</div><h3>Fly with Rovo</h3><p>Chat versus agents, summaries, natural-language search and prompt patterns you can trust and verify.</p></div>
+      <div class="card hover feature"><div class="icon-badge">🔎</div><h3>Speak JQL</h3><p>From filters to history operators that measure bounce-backs, carry-over and aging work.</p></div>
+      <div class="card hover feature"><div class="icon-badge">🗺️</div><h3>Plan capacity</h3><p>Use Plans to forecast across teams, model scenarios and expose dependencies early.</p></div>
+      <div class="card hover feature"><div class="icon-badge">📊</div><h3>Report with eazyBI</h3><p>Build velocity, cycle-time and quality reports that leadership can actually read.</p></div>
+      <div class="card hover feature"><div class="icon-badge">🧪</div><h3>Test with Zephyr</h3><p>Trace stories to tests to defects, and gate releases on real coverage.</p></div>
+      <div class="card hover feature"><div class="icon-badge">🤖</div><h3>Claude + MCP</h3><p>Connect Claude to Jira safely. Know when it helps, when it hurts metrics and how to verify.</p></div>
+      <div class="card hover feature"><div class="icon-badge">🔗</div><h3>Jira ↔ Git</h3><p>Branches, commits and PRs that update Jira automatically through the development panel.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap sandbox-grid">
+    <div>
+      <div class="eyebrow">Your training aircraft</div>
+      <h2>The FLY sandbox</h2>
+      <p>Every mission runs against <b>Flight Deck Digital (Training)</b>, a live Jira space set up the way the Golden Template recommends. It has real sprint history, failed eQE rounds, blockers and a few deliberate data-quality problems for you to find.</p>
+      <dl class="kv">
+        <dt>Space</dt><dd>FLY · company-managed Scrum</dd>
+        <dt>Boards</dt><dd>Jetstream - Sprint Board · Jetstream - Backlog Readiness</dd>
+        <dt>Epics</dt><dd>Boarding Pass 2.0 · Gate Change Alerts · Bag Tracker · IROPS Rebooking · Crew API · Seat Map Accessibility</dd>
+        <dt>Sprints</dt><dd>JET-2026.q4.1 → JET-2027.q1.1</dd>
+        <dt>Releases</dt><dd>Mobile 5.2 · Mobile 5.3 · Gate Ops 1.0 · Bag Tracker Beta</dd>
+      </dl>
+      <div class="btn-row"><a class="btn btn-blue" href="missions.html">Open Mission Control</a><a class="btn btn-sm" style="color:var(--blue-600)" href="jql-simulator.html">Try the JQL Simulator →</a></div>
+    </div>
+    <figure class="shot">
+      <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…atlassian.net/jira/software/c/projects/FLY/boards/3</span></div>
+      <img src="assets/img/board-sprint.jpg" alt="Jetstream Sprint Board showing columns To Do, Development, Ready for eQE, eQE Testing, PO Review, Ready for Release and Done" loading="lazy"></div>
+      <figcaption>The Sprint Execution board in the sandbox, with Golden Template columns, a flagged blocker and a bug waiting for PO Review.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="band-navy" id="logbook">
+  <div class="wrap logbook">
+    <div>
+      <div class="eyebrow" style="color:var(--beacon)">Pilot logbook</div>
+      <h2>Earn miles. Earn your wings.</h2>
+      <p>Each mission and checkride you finish earns miles, saved in this browser. Climb from <b>Ground Crew</b> to <b>Chief Pilot</b>. The instructor may run a live leaderboard during class.</p>
+      <div class="progress-bar" style="height:14px;margin-top:18px"><i data-miles-bar></i></div>
+      <div class="tier-row"><span>Ground Crew 0</span><span>Cadet 500</span><span>First Officer 1.5k</span><span>Captain 3.5k</span><span>Chief Pilot 6k</span></div>
+    </div>
+    <div class="card" style="background:#0b2a5b;border-color:#1f3f78;color:#dbe6f7">
+      <div class="stat-l" style="color:#9fb2d3">Your miles</div>
+      <div class="stat" style="color:var(--beacon)"><span data-miles-total>0</span></div>
+      <p style="margin:10px 0 4px">Status: <b data-miles-tier style="color:#fff">Ground Crew</b></p>
+      <p class="muted" style="color:#9fb2d3;margin:0"><span data-count-done>0</span> missions and checkrides logged · <span data-miles-next></span></p>
+    </div>
+  </div>
+</section>
+
+<section class="band-white">
+  <div class="wrap grid g2" style="align-items:start">
+    <div>
+      <div class="eyebrow">Before you board</div>
+      <h2>Pre-flight checklist</h2>
+      <p>Complete these before your first live session. Your progress saves automatically.</p>
+      <ul class="checklist" data-id="preflight">
+        <li><input type="checkbox" id="pf1"><label for="pf1">I can sign in to Jira and see the <b>FLY</b> space (or my team's training space).</label></li>
+        <li><input type="checkbox" id="pf2"><label for="pf2">I starred the <b>Jetstream - Sprint Board</b> so it shows in my sidebar.</label></li>
+        <li><input type="checkbox" id="pf3"><label for="pf3">I know my two-letter initials code for naming practice items (for example <code>VS</code>).</label></li>
+        <li><input type="checkbox" id="pf4"><label for="pf4">I can see the <b>Ask AI</b> or Rovo button in Jira, or I know I'll get access after the Ground School checkride.</label></li>
+        <li><input type="checkbox" id="pf5"><label for="pf5">Level 3 only: I have a Claude account and read the internal MCP setup handout.</label></li>
+        <li><input type="checkbox" id="pf6"><label for="pf6">Level 3 only: I have access to a Git repository connected to Jira (or I'll watch the demo).</label></li>
+      </ul>
+    </div>
+    <div>
+      <div class="eyebrow">Cabin rules</div>
+      <h2>How we fly together</h2>
+      <div class="callout captain"><strong>From the flight deck</strong>The sandbox is shared. Prefix anything you create with your initials, for example <code>[VS] Seat map zoom story</code>, and never delete other people's work.</div>
+      <div class="callout tip"><strong>Run in Jira buttons</strong>Every JQL block has a <b>Run in Jira ↗</b> button that opens the query on the sandbox. Point it at your own site from the footer.</div>
+      <div class="callout warn"><strong>Trust, then verify</strong>Rovo and Claude are excellent co-pilots, but you're the captain. Always check AI-generated JQL and changes against the real results.</div>
+    </div>
+  </div>
+</section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

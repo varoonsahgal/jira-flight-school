@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mission Control · Jira Flight School</title>
+<meta name="description" content="Every hands-on mission in Jira Flight School in one place, plus the IROPS Day capstone scenario.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="assets/img/favicon.svg">
+<style>
+  .filters { display:flex; flex-wrap:wrap; gap:8px; margin: 0 0 18px; }
+  .filters button { font: 600 .9rem var(--font-body); border:1.5px solid var(--line); background: var(--white); color: var(--ink-2); padding: 7px 14px; border-radius: 999px; cursor: pointer; }
+  .filters button[aria-pressed="true"] { background: var(--navy-900); color: var(--white); border-color: var(--navy-900); }
+  .mlist { display:grid; gap:10px; }
+  .mrow { display:grid; grid-template-columns: 110px minmax(0,1fr) auto auto; gap:14px; align-items:center; background: var(--white); border:1px solid var(--line); border-radius: 12px; padding: 12px 16px; text-decoration:none; color: var(--ink); transition: transform .15s ease, box-shadow .15s ease; }
+  .mrow:hover { transform: translateX(4px); box-shadow: var(--shadow-1); color: var(--ink); }
+  .mrow .code { font-family: var(--font-mono); font-size: .8rem; color: var(--blue-600); }
+  .mrow .t { font-weight: 600; }
+  .mrow .pg { font-size: .8rem; color: var(--ink-3); }
+  .mrow .turb i { background: var(--line); }
+  .mrow .turb i.on { background: var(--beacon); }
+  .mrow.done { border-color: #9fd9bf; background: #f3fbf7; }
+  .mrow.done .t::after { content: "  ✓"; color: var(--go); }
+  @media (max-width: 640px) { .mrow { grid-template-columns: minmax(0,1fr) auto; } .mrow .code { grid-column: 1 / -1; } .mrow .turb { display:none; } }
+  .station { background: var(--white); border:1px solid var(--line); border-radius: var(--radius); padding: 22px; margin: 18px 0; box-shadow: var(--shadow-1); position: relative; }
+  .station .num { position:absolute; top:-14px; left:20px; background: var(--beacon); color: var(--navy-950); font-family: var(--font-display); font-weight:700; letter-spacing:.08em; padding: 3px 12px; border-radius: 8px; font-size: .9rem; }
+  .station h3 { margin-top: 8px; }
+  .timer { font-family: var(--font-mono); font-size: clamp(2.4rem, 7vw, 4rem); color: var(--beacon); letter-spacing: .06em; line-height: 1; }
+  .timer-wrap { display:flex; align-items:center; gap: 18px; flex-wrap: wrap; }
+  .score-table input { width: 64px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; font: inherit; }
+  .score-table input[type=text] { width: 140px; }
+  .weather { display:inline-flex; gap:8px; align-items:center; background: var(--alert-bg); color: var(--alert); font-weight: 700; padding: 6px 12px; border-radius: 999px; font-size: .85rem; }
+</style>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+
+<section class="hero compact">
+  <div class="clouds" aria-hidden="true">
+    <div class="cloud" style="top:18%;width:210px;height:48px;animation-duration:85s;animation-delay:-30s"></div>
+    <div class="cloud" style="top:66%;width:170px;height:40px;animation-duration:70s;animation-delay:-8s"></div>
+  </div>
+  <div class="wrap" style="position:relative;z-index:2">
+    <div class="eyebrow">Ops center</div>
+    <h1>Mission Control</h1>
+    <p class="lede">Every hands-on mission in one place. Filter by level, see your progress, then take on the <b>IROPS Day</b> capstone.</p>
+    <div class="meta-row" style="margin-top:14px"><span class="chip gold">✈ <span data-miles-total>0</span>&nbsp;miles</span><span class="chip"><span data-count-done>0</span>&nbsp;logged</span><span class="chip navy" data-miles-tier>Ground Crew</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head"><div class="eyebrow">All missions</div><h2>Mission board</h2></div>
+    <div class="filters" role="group" aria-label="Filter missions">
+      <button type="button" data-f="all" aria-pressed="true">All</button>
+      <button type="button" data-f="ground-school.html" aria-pressed="false">L1 Ground School</button>
+      <button type="button" data-f="first-officer.html" aria-pressed="false">L2 First Officer</button>
+      <button type="button" data-f="captain.html" aria-pressed="false">L3 Captain</button>
+      <button type="button" data-f="rovo.html" aria-pressed="false">Rovo</button>
+      <button type="button" data-f="mcp.html" aria-pressed="false">Claude + MCP</button>
+      <button type="button" data-f="todo" aria-pressed="false">Not done yet</button>
+    </div>
+    <div class="mlist" id="mlist"><p class="muted">Loading missions…</p></div>
+  </div>
+</section>
+
+<section class="band-navy" id="capstone">
+  <div class="wrap">
+    <div class="eyebrow" style="color:var(--beacon)">Level 3 · Capstone</div>
+    <h2>IROPS Day: the storm scenario</h2>
+    <p class="weather">⛈ Winter storm warning · ORD hub · ground stop expected 14:00</p>
+    <p style="max-width:70ch;margin-top:16px">A storm is about to hit the Chicago hub. Leadership wants the <b>IROPS Self-Service Rebooking</b> pilot (FLY-4) pulled forward and <b>Gate Change Alerts</b> (FLY-2) hardened for a surge. You have <b>60 minutes</b> to triage, re-plan, put up quality gates and brief leadership, without breaking your team's metrics.</p>
+    <div class="timer-wrap" style="margin-top:18px">
+      <div class="timer" id="timer" aria-live="polite">60:00</div>
+      <div class="btn-row" style="margin:0">
+        <button class="btn btn-primary btn-sm" id="t-start" type="button">Start clock</button>
+        <button class="btn btn-ghost btn-sm" id="t-pause" type="button">Pause</button>
+        <button class="btn btn-ghost btn-sm" id="t-reset" type="button">Reset</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="callout captain"><strong>Rules of the air</strong>Work in crews of 2 or 3. Pick a crew code (for example <code>T1</code>) and prefix everything you create with <code>[T1]</code>. Add the label <code>irops-T1</code> so the instructor can review your work with one query. Don't edit items you don't own: comment and link instead. Plans steps need the Premium site; otherwise do the math by hand and show your working.</div>
+
+    <div class="station"><span class="num">STATION 1 · 10 MIN · 15 PTS</span>
+      <h3>Situation report</h3>
+      <p>Build one saved filter, <code>[T1] IROPS sitrep</code>, that shows every unresolved item under FLY-2 and FLY-4, plus every open Risk in FLY, sorted so the scariest items are on top.</p>
+      <pre data-jql data-label="Starter (improve it)">project = FLY
+AND (parent in (FLY-2, FLY-4) OR type = Risk)
+AND statusCategory != Done
+ORDER BY priority DESC, duedate ASC</pre>
+      <ul><li>Bonus (+3): add a second filter showing what in that set is <b>blocked or flagged</b>.</li>
+      <li>Bonus (+2): use Rovo <b>Ask AI</b> to generate the same filter from plain English, then note one difference between its JQL and yours.</li></ul>
+    </div>
+
+    <div class="station"><span class="num">STATION 2 · 10 MIN · 15 PTS</span>
+      <h3>Turn a risk into work</h3>
+      <p>Risk FLY-47 (push provider rate limits during mass IROPS events) is now likely. Create a <b>Spike</b> <code>[T1] Spike: surge test push provider at 200k alerts / 10 min</code> under FLY-2 with acceptance criteria and a 2-day time box. Link it so that it <b>relates to</b> FLY-47 and <b>blocks</b> FLY-21. Flag it if it needs a decision today.</p>
+      <details class="reveal"><summary>Debrief: what good looks like</summary><div><p>A spike has a question, a time box and a decision output, not a deliverable feature. Good acceptance criteria might be: “Measured throughput and error rate at 50k / 100k / 200k alerts”, “Recommendation: batch vs. priority queue”, “Decision recorded on FLY-47”. Check your links from FLY-21's side: it should now say <i>is blocked by</i> your spike.</p></div></details>
+    </div>
+
+    <div class="station"><span class="num">STATION 3 · 15 MIN · 20 PTS</span>
+      <h3>Re-plan under pressure</h3>
+      <p>FLY-36 (13 points) is too big. Split it into three stories: read-only options, seat hold, and one-tap confirm. The Scrum Master's comment on FLY-36 hints at this. Then build a plan for <b>JET-2026.q4.4</b> assuming the crew loses <b>30% capacity</b> to storm support: from 24 points down to about 17.</p>
+      <ol><li>Decide what moves out of JET-2026.q4.4 to make room for the IROPS slice and your spike.</li>
+      <li><b>Premium:</b> in Plans, create a scenario called <code>T1 storm</code>, reduce team capacity, and screenshot the impact on <i>Mobile 5.3</i> and <i>Bag Tracker Beta</i>.</li>
+      <li><b>Standard:</b> write the same reasoning as a comment on FLY-4 (sprint, points in, points out, release risk).</li></ol>
+      <details class="reveal"><summary>Debrief: the trade-offs</summary><div><p>Strong answers keep the spike (it de-risks the whole surge), pull in only the read-only IROPS slice (smallest valuable increment), defer the accessibility work with a note on the regulatory date, and respect FLY-33 → FLY-31. The best crews check the result against the Backlog Readiness rule: is there still 2–3 sprints of Ready work after the re-plan?</p></div></details>
+    </div>
+
+    <div class="station"><span class="num">STATION 4 · 10 MIN · 15 PTS</span>
+      <h3>Quality gate for the surge</h3>
+      <p>Write the release-readiness query for <b>Mobile 5.3</b>: anything in the release that is not yet <i>Ready for Release</i> or <i>Done</i>, plus any open Bug of High priority or above in FLY-2. With Zephyr installed, also create a test cycle <code>[T1] IROPS surge</code> with at least three test cases linked to FLY-21 and FLY-25.</p>
+      <pre data-jql data-label="Release gate (check it)">project = FLY AND fixVersion = "Mobile 5.3"
+AND status not in ("Ready for Release", Done)
+ORDER BY status ASC</pre>
+    </div>
+
+    <div class="station"><span class="num">STATION 5 · 5 MIN · 10 PTS</span>
+      <h3>Automate the next storm</h3>
+      <p>Design (on paper or in Automation if you have rights) a rule: <i>When a Risk in FLY is changed to priority Highest, create a linked Spike under the same parent, flag the Risk, and notify the space lead.</i> Write the trigger, conditions, actions and smart values.</p>
+      <details class="reveal"><summary>Debrief: a reference design</summary><div><p><b>Trigger:</b> Field value changed (Priority). <b>Conditions:</b> issue type = Risk; priority = Highest; project = FLY. <b>Actions:</b> Create work item (Spike) with summary <code>Spike: mitigate {{issue.summary}}</code> and parent <code>{{issue.parent.key}}</code>; Link work items (relates to trigger); Edit Flagged = Impediment; Send notification with <code>{{issue.url}}</code>. <b>Guardrail:</b> add a condition that no Spike already relates to the Risk, so re-triggering doesn't create duplicates.</p></div></details>
+    </div>
+
+    <div class="station"><span class="num">STATION 6 · 10 MIN · 25 PTS</span>
+      <h3>Co-pilot briefing (Claude + MCP or Rovo)</h3>
+      <p>Using Claude connected through the Atlassian MCP server (or Rovo Chat if MCP isn't set up), draft a 5-bullet leadership update from your Station 1 filter. Follow the <a href="mcp.html" style="color:var(--blue-600)">Co-Pilot Protocol</a>:</p>
+      <ul class="checklist" data-id="capstone-copilot">
+        <li><input type="checkbox" id="cc1"><label for="cc1">Read-only first: Claude only searches and reads.</label></li>
+        <li><input type="checkbox" id="cc2"><label for="cc2">Every number in the draft is checked with <b>Run in Jira</b> (counts match).</label></li>
+        <li><input type="checkbox" id="cc3"><label for="cc3">Claude showed the exact comment text and target item before posting, and you confirmed.</label></li>
+        <li><input type="checkbox" id="cc4"><label for="cc4">The comment on FLY-4 says it was AI-assisted, and your items carry the <code>ai-assisted</code> label.</label></li>
+        <li><input type="checkbox" id="cc5"><label for="cc5">Nothing was transitioned, re-estimated or moved between sprints by the AI.</label></li>
+      </ul>
+    </div>
+
+    <div class="station"><span class="num">DEBRIEF · 10 PTS</span>
+      <h3>Metrics integrity check</h3>
+      <p>Prove you didn't damage the team's numbers. Run these and explain anything surprising:</p>
+      <pre data-jql data-label="What did my crew touch?">project = FLY AND labels = irops-T1 ORDER BY created ASC</pre>
+      <pre data-jql data-label="Any AI-driven status changes in the last hour?">project = FLY AND status CHANGED AFTER -1h ORDER BY updated DESC</pre>
+      <p>Then open the sprint report for JET-2026.q4.3 and check whether your work showed up as <b>scope added after sprint start</b>. If it did, say whether that was intended.</p>
+    </div>
+
+    <h3 style="margin-top:34px">Crew scoreboard</h3>
+    <p class="muted">The instructor can score crews live. Scores save in this browser.</p>
+    <div class="table-wrap"><table class="data score-table" id="scores">
+      <thead><tr><th>Crew</th><th>S1 /15</th><th>S2 /15</th><th>S3 /20</th><th>S4 /15</th><th>S5 /10</th><th>S6 /25</th><th>Debrief /10</th><th>Total</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <div class="btn-row"><button class="btn btn-sm btn-blue" id="add-crew" type="button">+ Add crew</button><button class="btn btn-sm btn-primary" id="land" type="button">🛬 Land the plane (finish)</button></div>
+  </div>
+</section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/js/site.js"></script>
+<script>
+(function () {
+  const S = window.JFS.store;
+  /* -------- Mission index, built from the level pages -------- */
+  const PAGES = [["ground-school.html","L1 Ground School"],["rovo.html","Rovo"],["first-officer.html","L2 First Officer"],["captain.html","L3 Captain"],["mcp.html","Claude + MCP"]];
+  const list = document.getElementById("mlist");
+  let rows = [];
+  Promise.all(PAGES.map(([p, label]) => fetch(p).then(r => r.ok ? r.text() : "").then(html => {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    return Array.from(doc.querySelectorAll(".mission[id]")).map(m => ({
+      id: m.id, page: p, label,
+      code: (m.querySelector(".mcode") || {}).textContent || m.id.toUpperCase(),
+      title: (m.querySelector(".mission-head h3") || {}).textContent || m.id,
+      turb: m.querySelectorAll(".turb i.on").length,
+      miles: +(m.dataset.miles || 250)
+    }));
+  }).catch(() => []))).then(all => {
+    rows = all.flat();
+    if (!rows.length) { list.innerHTML = '<p class="muted">Missions load when this site is served over http(s), for example on GitHub Pages. Open a level page to see its missions.</p>'; return; }
+    render("all");
+  });
+  function render(f) {
+    const done = S.get("done", {});
+    const shown = rows.filter(r => f === "all" ? true : f === "todo" ? !done[r.id] : r.page === f);
+    list.innerHTML = shown.map(r =>
+      '<a class="mrow' + (done[r.id] ? " done" : "") + '" href="' + r.page + "#" + r.id + '">' +
+      '<span class="code">' + r.code.replace(/^MISSION\s*/i, "") + "</span>" +
+      '<span><span class="t">' + r.title + '</span><br><span class="pg">' + r.label + "</span></span>" +
+      '<span class="turb" title="Turbulence">' + [0,1,2].map(i => '<i class="' + (i < r.turb ? "on" : "") + '"></i>').join("") + "</span>" +
+      '<span class="miles-tag">+' + r.miles + " mi</span></a>").join("") || '<p class="muted">Nothing here. Blue skies! ✈</p>';
+  }
+  document.querySelectorAll(".filters button").forEach(b => b.addEventListener("click", () => {
+    document.querySelectorAll(".filters button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    render(b.dataset.f);
+  }));
+
+  /* -------- Capstone timer -------- */
+  let remaining = S.get("cap:remaining", 3600), tick = null;
+  const el = document.getElementById("timer");
+  const fmt = s => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+  const paint = () => { el.textContent = fmt(Math.max(0, remaining)); el.style.color = remaining <= 300 ? "#ff6b7d" : ""; };
+  paint();
+  document.getElementById("t-start").onclick = () => { if (tick) return; tick = setInterval(() => { remaining--; S.set("cap:remaining", remaining); paint(); if (remaining === 600) window.JFS.toast("⏱ 10 minutes to landing"); if (remaining <= 0) { clearInterval(tick); tick = null; window.JFS.toast("🛬 Time! Wheels down."); window.JFS.confetti(40); } }, 1000); };
+  document.getElementById("t-pause").onclick = () => { clearInterval(tick); tick = null; };
+  document.getElementById("t-reset").onclick = () => { clearInterval(tick); tick = null; remaining = 3600; S.set("cap:remaining", remaining); paint(); };
+
+  /* -------- Scoreboard -------- */
+  const tbody = document.querySelector("#scores tbody");
+  const MAX = [15, 15, 20, 15, 10, 25, 10];
+  let crews = S.get("cap:crews", [{ name: "T1", s: [0,0,0,0,0,0,0] }]);
+  function drawScores() {
+    tbody.innerHTML = crews.map((c, i) => '<tr><td><input type="text" value="' + c.name.replace(/"/g, "&quot;") + '" data-i="' + i + '" data-k="name" aria-label="Crew name"></td>' +
+      c.s.map((v, j) => '<td><input type="number" min="0" max="' + MAX[j] + '" value="' + v + '" data-i="' + i + '" data-k="' + j + '" aria-label="Score"></td>').join("") +
+      "<td><b>" + c.s.reduce((a, b) => a + (+b || 0), 0) + "</b></td></tr>").join("");
+  }
+  tbody.addEventListener("input", e => { const t = e.target, i = +t.dataset.i; if (t.dataset.k === "name") crews[i].name = t.value; else crews[i].s[+t.dataset.k] = Math.min(MAX[+t.dataset.k], Math.max(0, +t.value || 0)); S.set("cap:crews", crews); if (t.dataset.k !== "name") { const tot = t.closest("tr").lastElementChild.firstElementChild; tot.textContent = crews[i].s.reduce((a, b) => a + (+b || 0), 0); } });
+  document.getElementById("add-crew").onclick = () => { crews.push({ name: "T" + (crews.length + 1), s: [0,0,0,0,0,0,0] }); S.set("cap:crews", crews); drawScores(); };
+  document.getElementById("land").onclick = () => {
+    const best = crews.slice().sort((a, b) => b.s.reduce((x, y) => x + y, 0) - a.s.reduce((x, y) => x + y, 0))[0];
+    window.JFS.confetti(60); window.JFS.toast("🛬 Smooth landing! Top crew: " + best.name);
+    if (!S.get("done", {})["cap-irops"]) window.JFS.award("cap-irops", 1500, "IROPS Day capstone");
+  };
+  drawScores();
+})();
+</script>
+</body>
+</html>

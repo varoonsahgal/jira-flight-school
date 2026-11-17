@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 2 · First Officer · Jira Flight School</title>
+<meta name="description" content="Level 2 of Jira Flight School: work the Golden Template standard. Two-board model, refinement and sprint planning, JQL foundations, dashboards and reports, Rovo in the flow of work, and Zephyr essentials.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="assets/img/favicon.svg">
+<style>
+  .status-table td:first-child { white-space: nowrap; font-weight: 700; }
+  .two-boards { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 18px; margin: 18px 0 24px; }
+  @media (max-width: 760px) { .two-boards { grid-template-columns: minmax(0,1fr); } }
+  .two-boards .vs { border-top: 5px solid var(--blue-500); }
+  .two-boards .vs.kanban { border-top-color: var(--beacon); }
+  .two-boards .vs ul { margin: 6px 0 0; padding-left: 20px; }
+  .fib { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 18px; }
+  .fib span { width: 52px; height: 72px; border-radius: 10px; background: var(--white); border: 2px solid var(--blue-500); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; color: var(--blue-600); box-shadow: var(--shadow-1); transition: transform .15s; }
+  .fib span:hover { transform: translateY(-4px) rotate(-3deg); }
+  .fib span.q { border-color: var(--beacon); color: var(--beacon-ink); }
+  .cta-band { background: linear-gradient(90deg, var(--navy-900), var(--navy-700)); color: #dbe6f7; border-radius: var(--radius); padding: 30px; display: flex; gap: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .cta-band h3 { color: var(--white); margin: 0 0 4px; }
+</style>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+
+<section class="hero compact">
+  <div class="clouds" aria-hidden="true">
+    <div class="cloud" style="top:16%;width:190px;height:42px;animation-duration:78s"></div>
+    <div class="cloud" style="top:58%;width:130px;height:30px;animation-duration:58s;animation-delay:-22s"></div>
+    <div class="cloud" style="top:34%;width:240px;height:52px;animation-duration:96s;animation-delay:-50s"></div>
+  </div>
+  <div class="wrap" style="position:relative;z-index:2">
+    <span class="eyebrow">Level 2 · Intermediate</span>
+    <h1>First Officer: Working the Standard</h1>
+    <p class="lede">You can find and update work. Now you'll fly the team's standard: the Golden Template's two-board model and workflow, real refinement and sprint planning, JQL you write yourself, dashboards that answer real questions, and test management with Zephyr.</p>
+    <div class="meta-row" style="margin-top:16px">
+      <span class="chip navy">⏱ ~5 hours live</span>
+      <span class="chip gold">Prereq: Level 1 checkride ≥ 80%</span>
+      <span class="chip">6 lessons · 6 missions · 1 checkride</span>
+      <span class="chip green">Sandbox: FLY</span>
+    </div>
+  </div>
+</section>
+
+<section>
+<div class="wrap layout">
+  <aside class="toc" aria-label="On this page">
+    <h4>Flight plan</h4>
+    <ol>
+      <li><a href="#fo-1">FO-1 · Golden Template in depth</a></li>
+      <li><a href="#fo-2">FO-2 · Refinement &amp; planning</a></li>
+      <li><a href="#fo-3">FO-3 · JQL foundations</a></li>
+      <li><a href="#fo-4">FO-4 · Dashboards &amp; reports</a></li>
+      <li><a href="#fo-5">FO-5 · Rovo in the flow</a></li>
+      <li><a href="#fo-6">FO-6 · Zephyr essentials</a></li>
+    </ol>
+    <h4 style="margin-top:16px">Missions</h4>
+    <ol>
+      <li><a href="#fo-m1">FO-M1 · Build two boards</a></li>
+      <li><a href="#fo-m2">FO-M2 · Refinement triage</a></li>
+      <li><a href="#fo-m3">FO-M3 · Plan q4.4</a></li>
+      <li><a href="#fo-m4">FO-M4 · Release dashboard</a></li>
+      <li><a href="#fo-m5">FO-M5 · Velocity forensics</a></li>
+      <li><a href="#fo-m6">FO-M6 · Zephyr traceability</a></li>
+    </ol>
+    <h4 style="margin-top:16px">Checkride</h4>
+    <ol><li><a href="#fo-checkride">Level 2 checkride</a></li></ol>
+  </aside>
+
+  <div>
+  <!-- ============================== FO-1 ============================== -->
+  <article class="lesson" id="fo-1">
+    <h2><span class="lesson-code">FO-1</span> The Golden Template in depth</h2>
+    <div class="meta-row"><span class="chip">45 min</span><span class="chip">Live demo + discussion</span><span class="chip gold">Backbone of Level 2</span></div>
+    <div class="objectives">
+      <h4>Objectives</h4>
+      <ul>
+        <li>Explain each level of the work hierarchy and choose the right work type.</li>
+        <li>Describe why teams run <b>two boards</b>, and what each one is for.</li>
+        <li>State the purpose and exit criteria of every workflow status.</li>
+        <li>Name a sprint correctly, and apply a Definition of Ready.</li>
+      </ul>
+    </div>
+
+    <div class="callout united"><strong>Why this lesson anchors Level 2</strong>
+      <p>The Golden Template is your organization's standard way to set up a Jira space. When every team uses the same hierarchy, statuses and naming, cross-team reporting works, people can move between teams without relearning Jira, and AI tools like Rovo and Claude get consistent data. Level 1 previews the vocabulary. Level 2 teaches you to operate it. Level 3 builds metrics on top of it.</p>
+    </div>
+
+    <h3>1. The hierarchy: pick the right work type</h3>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Level</th><th>Work type</th><th>Use it for</th><th>Rule of thumb</th></tr></thead>
+      <tbody>
+        <tr><td>Above epic</td><td>Initiative</td><td>Large outcome spanning several epics and quarters</td><td>Needs Premium hierarchy levels. Managed in Plans.</td></tr>
+        <tr><td>1</td><td>Epic</td><td>A body of work delivering a capability, e.g. <b>FLY-2 Real-time Gate Change Alerts</b></td><td>Usually spans several sprints; has a start and due date</td></tr>
+        <tr><td>0</td><td>Story</td><td>User-facing value: "As a traveler, I…"</td><td>Fits in one sprint. Has acceptance criteria.</td></tr>
+        <tr><td>0</td><td>Task</td><td>Technical work with no direct user-facing value (infra, upgrades)</td><td>Still needs a clear "done"</td></tr>
+        <tr><td>0</td><td>Bug</td><td>Something that doesn't work as intended</td><td><b>Use Bug</b> — not a custom "Defect" type or a <code>defect</code> label</td></tr>
+        <tr><td>0</td><td>Spike</td><td>Time-boxed research to reduce uncertainty</td><td>Output is a decision, not shipped code</td></tr>
+        <tr><td>0</td><td>Risk</td><td>A possible event that would hurt delivery</td><td>Has an owner, a mitigation and a review date</td></tr>
+        <tr><td>0</td><td>Improvement</td><td>Retro action or enhancement to an existing capability</td><td>Bring it into a sprint so it actually happens</td></tr>
+        <tr><td>−1</td><td>Sub-task</td><td>A slice of a story or task done by one person</td><td>Points live on the parent, not on sub-tasks</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="callout warn"><strong>Standardize on Bug</strong>
+      <p>Some teams log problems as a Task with a <code>defect</code> label, or in a custom "Defect" field. Those items vanish from bug dashboards and cross-team quality metrics. The sandbox has one on purpose: <b>FLY-44 "Defect: login spinner never stops on slow 3G"</b> is a Task. You'll catch it in the JQL Simulator.</p>
+    </div>
+
+    <h3>2. Two boards, one space</h3>
+    <p>The standard asks Scrum teams to keep <b>two boards</b> on the same space. Each board is just a saved filter plus a column layout. Same data, different lens.</p>
+    <div class="two-boards">
+      <div class="vs kanban"><h4>Backlog Readiness · Kanban</h4>
+        <p><b>Purpose:</b> move ideas through discovery and refinement until they're truly ready.</p>
+        <ul><li>No sprint. Work flows continuously.</li><li>Columns: New Idea → Product Refinement → Team Refinement → Ready</li><li>WIP limits keep refinement focused (sandbox: 10 / 15)</li><li><b>Goal:</b> always hold <b>2–3 sprints of Ready work</b></li></ul></div>
+      <div class="vs"><h4>Sprint Execution · Scrum</h4>
+        <p><b>Purpose:</b> deliver what the team committed to in the active sprint.</p>
+        <ul><li>Tied to an active sprint the Scrum Master starts and ends</li><li>Columns: To Do → Development → Ready for eQE → eQE Testing → PO Review → Ready for Release → Done</li><li><b>Goal:</b> meet the sprint goal and finish committed work</li></ul></div>
+    </div>
+    <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>varoonsahgaltraining.atlassian.net/jira/software/c/projects/FLY/boards/4</span></div><img src="assets/img/board-readiness.jpg" alt="Jetstream Backlog Readiness Kanban board with New Idea, Product Refinement, Team Refinement, Ready and Done columns" loading="lazy"></div><figcaption>The Backlog Readiness board in the sandbox. Items in Ready are candidates for the next two sprints.</figcaption></figure>
+    <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>varoonsahgaltraining.atlassian.net/jira/software/c/projects/FLY/boards/3</span></div><img src="assets/img/board-sprint.jpg" alt="Jetstream Sprint Board showing the active sprint JET-2026.q4.3 across the Golden Template columns" loading="lazy"></div><figcaption>The Sprint Execution board for active sprint JET-2026.q4.3. FLY-22 is highlighted because it's flagged as an impediment.</figcaption></figure>
+
+    <h3>3. The workflow: purpose and exit criteria</h3>
+    <p>A status tells everyone what's happening and what has to be true before the work moves on. Read the right-hand column as a contract.</p>
+    <div class="flow" aria-label="Refinement workflow">
+      <span class="st todo">New Idea</span><span class="arr">→</span><span class="st todo">Product Refinement</span><span class="arr">→</span><span class="st todo">Team Refinement</span><span class="arr">→</span><span class="st todo">Ready</span>
+    </div>
+    <div class="flow" aria-label="Delivery workflow">
+      <span class="st todo">To Do</span><span class="arr">→</span><span class="st prog">Development</span><span class="arr">→</span><span class="st prog">Ready for eQE</span><span class="arr">→</span><span class="st prog">eQE Testing</span><span class="arr">→</span><span class="st prog">PO Review</span><span class="arr">→</span><span class="st prog">Ready for Release</span><span class="arr">→</span><span class="st done">Done</span>
+    </div>
+    <div class="table-wrap"><table class="data status-table">
+      <thead><tr><th>Status</th><th>What's happening</th><th>Move on when…</th></tr></thead>
+      <tbody>
+        <tr><td>New Idea</td><td>Anyone captured a request, idea or enhancement</td><td>The product team agrees it's worth looking into</td></tr>
+        <tr><td>Product Refinement</td><td>Product owner clarifies the problem, value and priority</td><td>Business value is understood, a first cut of acceptance criteria exists, and priority is set</td></tr>
+        <tr><td>Team Refinement</td><td>The delivery team asks questions, splits and estimates</td><td>Dependencies are known, it meets the Definition of Ready, and it's estimated</td></tr>
+        <tr><td>Ready</td><td>Refined and eligible for sprint planning</td><td>The team pulls it into a sprint</td></tr>
+        <tr><td>To Do</td><td>Committed in the sprint, not started</td><td>Someone starts building it</td></tr>
+        <tr><td>Development</td><td>Being built. Pairing and swarming encouraged. Code reviewed and unit-tested.</td><td>Development is done and the story is ready for formal testing</td></tr>
+        <tr><td>Ready for eQE</td><td>Waiting for quality engineering</td><td>Dev and acceptance criteria are complete</td></tr>
+        <tr><td>eQE Testing</td><td>Quality engineering validates against acceptance criteria</td><td><b>Pass</b> → PO Review. <b>Fail</b> → back to Development with notes. That's a bounce-back.</td></tr>
+        <tr><td>PO Review</td><td>Product owner checks business expectations</td><td><b>Accepted</b> → Ready for Release. <b>Not accepted</b> → Development with feedback.</td></tr>
+        <tr><td>Ready for Release</td><td>Accepted, waiting to ship</td><td>It's deployed to production</td></tr>
+        <tr><td>Done</td><td>In production</td><td>— </td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout captain"><strong>From the flight deck</strong>
+      <p>Bounce-backs from eQE Testing to Development aren't failures to hide. They're the most useful quality signal you have. In Level 3 you'll measure them with JQL. For a preview, open <b>FLY-25</b> and read the comments: it failed eQE twice before passing.</p>
+    </div>
+    <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>varoonsahgaltraining.atlassian.net/browse/FLY-25</span></div><img src="assets/img/item-comments.jpg" alt="FLY-25 comment thread showing eQE failures and developer fixes" loading="lazy"></div><figcaption>FLY-25's history: Dev → eQE fail → Dev → eQE pass → PO Review. Comments carry the "why".</figcaption></figure>
+
+    <h3>4. Board filters, quick filters and swimlanes</h3>
+    <p>A board shows what its <b>filter</b> returns. The standard pattern scopes a sprint board to one team's committed work:</p>
+<pre data-jql="norun" data-label="Standard sprint board filter (pattern)">-- Replace with your space and team. The sandbox has no Team values set, so this is a pattern only.
+project = FLY AND Team = "Jetstream" AND sprint is not EMPTY
+ORDER BY Rank ASC</pre>
+<pre data-jql data-label="Backlog Readiness board filter (runs on the sandbox)">project = FLY AND status in ("New Idea", "Product Refinement", "Team Refinement", "Ready")
+ORDER BY Rank ASC</pre>
+    <p><b>Quick filters</b> are one-click JQL toggles at the top of the board. Recommended set:</p>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Quick filter</th><th>JQL</th></tr></thead>
+      <tbody>
+        <tr><td>My items</td><td><code>assignee = currentUser()</code></td></tr>
+        <tr><td>Impediments</td><td><code>Flagged = Impediment</code></td></tr>
+        <tr><td>Blocked</td><td><code>labels = Blocked</code></td></tr>
+        <tr><td>Bugs</td><td><code>type = Bug</code></td></tr>
+        <tr><td>Waiting on PO</td><td><code>status = "PO Review"</code></td></tr>
+      </tbody>
+    </table></div>
+    <p><b>Swimlanes by query</b> put blocked work at the top of the board so stand-up starts with it. Add a lane named "🚧 Blocked" with <code>labels = Blocked OR Flagged = Impediment</code>, and let everything else fall into the default lane. For larger initiatives, swimlanes by epic work well too.</p>
+
+    <h3>5. Sprint naming</h3>
+    <p>Format: <code>&lt;TeamCode&gt;-&lt;Year&gt;.q&lt;Quarter&gt;.&lt;Sprint&gt;</code>. The sandbox team code is <b>JET</b>, so the active sprint is <b>JET-2026.q4.3</b>: team Jetstream, fiscal year 2026, quarter 4, third sprint.</p>
+    <div class="callout tip"><strong>Why it matters</strong><p>Consistent names sort correctly, read well in cross-team reports and Plans, and let JQL find sprints by pattern. Rovo and Claude also answer questions like "how did q4 go?" more reliably.</p></div>
+
+    <h3>6. Definition of Ready (pre-flight checklist)</h3>
+    <p>A story may move to <b>Ready</b> only when every box is ticked. Try it on any story in Team Refinement:</p>
+    <ul class="checklist" data-id="fo-dor">
+      <li><input type="checkbox" id="dor1"><label for="dor1">Written as user value ("As a…, I can…, so that…") or a clear technical outcome</label></li>
+      <li><input type="checkbox" id="dor2"><label for="dor2">Acceptance criteria present and testable by eQE</label></li>
+      <li><input type="checkbox" id="dor3"><label for="dor3">Estimated in story points by the team</label></li>
+      <li><input type="checkbox" id="dor4"><label for="dor4">Dependencies linked (blocks / is blocked by), with any blocking spike finished</label></li>
+      <li><input type="checkbox" id="dor5"><label for="dor5">Small enough to finish in one sprint (otherwise split it)</label></li>
+      <li><input type="checkbox" id="dor6"><label for="dor6">Parent epic, component and fix version set</label></li>
+    </ul>
+  </article>
+
+  <!-- ============================== FO-2 ============================== -->
+  <article class="lesson" id="fo-2">
+    <h2><span class="lesson-code">FO-2</span> Refinement &amp; sprint planning</h2>
+    <div class="meta-row"><span class="chip">45 min</span><span class="chip">Workshop</span></div>
+    <div class="objectives"><h4>Objectives</h4><ul>
+      <li>Choose an estimation approach and run planning poker.</li>
+      <li>Plan a sprint against capacity with a clear sprint goal.</li>
+      <li>Handle carry-over honestly.</li></ul></div>
+
+    <h3>Estimation approaches</h3>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th></th><th>Story points</th><th>T-shirt sizes</th><th>No estimates (split instead)</th></tr></thead>
+      <tbody>
+        <tr><td><b>Units</b></td><td>Modified Fibonacci</td><td>XS · S · M · L · XL · XXL</td><td>Count of similarly-sized stories</td></tr>
+        <tr><td><b>Pros</b></td><td>Captures uncertainty; enables velocity and forecasting</td><td>Fast; great for epics and roadmaps</td><td>No estimation time at all</td></tr>
+        <tr><td><b>Cons</b></td><td>Takes time; misused as productivity score</td><td>Not granular enough for sprint planning</td><td>Needs a mature team that splits consistently</td></tr>
+        <tr><td><b>Best for</b></td><td>Sprint-level work (the standard)</td><td>Epic sizing in Product Refinement</td><td>Very mature Kanban teams</td></tr>
+      </tbody>
+    </table></div>
+    <p>The planning poker deck. Points measure <b>size: complexity, volume, uncertainty</b>, not hours. Compare against a reference story everyone agrees is a "3".</p>
+    <div class="fib" aria-label="Planning poker cards"><span>1</span><span>2</span><span>3</span><span>5</span><span>8</span><span>13</span><span>20</span><span class="q">?</span><span class="q">☕</span></div>
+    <div class="callout tip"><strong>Planning poker in four moves</strong>
+      <p>1) PO reads the story and acceptance criteria. 2) Everyone votes privately. 3) Highest and lowest voters explain. 4) Re-vote once. Still split? Take the higher number or split the story. Anything at 13 or above should usually be split. The sandbox's <b>FLY-36</b> (13 points) has a comment suggesting exactly that.</p>
+    </div>
+
+    <h3>Capacity basics</h3>
+    <p>Start from <b>average velocity over the last 3 sprints</b>, then adjust for availability. If the team averages 30 points and one of five engineers is out for half the sprint, plan about 27. Leave room for unplanned work. If production support usually eats about 10%, plan about 24.</p>
+<pre data-jql data-label="What's committed to the next sprint?">project = FLY AND sprint in futureSprints() AND sprint = "JET-2026.q4.4"
+ORDER BY Rank ASC</pre>
+
+    <h3>Sprint goals</h3>
+    <p>A goal is one sentence describing the <b>outcome</b>, not a list of tickets. The sandbox's active sprint goal is <i>"Gate change push alerts end-to-end in staging."</i> When scope has to change mid-sprint, protect the goal and drop the work that doesn't serve it.</p>
+
+    <h3>Carry-over</h3>
+    <p>Unfinished work at sprint end returns to the backlog or moves to the next sprint. Don't "close and recreate" it to make the chart look better. Carry-over is data. <b>FLY-20</b> has carried over from q4.2 into q4.3. JQL can find every case:</p>
+<pre data-jql data-label="Carry-over: in a closed sprint AND the active one">project = FLY AND sprint in closedSprints() AND sprint in openSprints()</pre>
+  </article>
+
+  <!-- ============================== FO-3 ============================== -->
+  <article class="lesson" id="fo-3">
+    <h2><span class="lesson-code">FO-3</span> JQL foundations → intermediate</h2>
+    <div class="meta-row"><span class="chip">60 min</span><span class="chip">Hands-on</span><span class="chip gold">Practice in the JQL Simulator</span></div>
+    <div class="objectives"><h4>Objectives</h4><ul>
+      <li>Write queries with fields, operators, functions and ordering.</li>
+      <li>Avoid the classic EMPTY and quoting traps.</li>
+      <li>Save, share and subscribe to filters.</li></ul></div>
+
+    <h3>The shape of every query</h3>
+    <p><code>field operator value</code>, joined with <code>AND</code> / <code>OR</code>, optionally followed by <code>ORDER BY</code>. Use parentheses whenever you mix AND and OR.</p>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Operator</th><th>Example</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td><code>=</code> / <code>!=</code></td><td><code>type = Bug</code></td><td>One value only</td></tr>
+        <tr><td><code>IN</code> / <code>NOT IN</code></td><td><code>status in ("PO Review", "Ready for Release")</code></td><td>Lists. Quote multi-word values.</td></tr>
+        <tr><td><code>~</code> / <code>!~</code></td><td><code>summary ~ "boarding pass"</code></td><td>Text search with stemming, so it's fuzzy</td></tr>
+        <tr><td><code>IS EMPTY</code> / <code>IS NOT EMPTY</code></td><td><code>"Story Points" is EMPTY</code></td><td>Never <code>= EMPTY</code> on most fields</td></tr>
+        <tr><td><code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code></td><td><code>created &gt;= -7d</code></td><td>Relative dates: <code>-7d</code>, <code>-2w</code>, <code>-1h</code></td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Runnable examples (try each one)</h3>
+<pre data-jql data-label="My open work, most urgent first">project = FLY AND assignee = currentUser() AND statusCategory != Done
+ORDER BY priority DESC, updated DESC</pre>
+<pre data-jql data-label="Everything in the active sprint, grouped by status">project = FLY AND sprint in openSprints()
+ORDER BY status ASC, Rank ASC</pre>
+<pre data-jql data-label="Open bugs reported by customers">project = FLY AND type = Bug AND labels = customer-reported AND statusCategory != Done</pre>
+<pre data-jql data-label="Waiting on quality engineering or PO">project = FLY AND status in ("Ready for eQE", "eQE Testing", "PO Review")</pre>
+<pre data-jql data-label="Text search across summary + description + comments">project = FLY AND text ~ "idempotency"</pre>
+<pre data-jql data-label="Created this week">project = FLY AND created &gt;= startOfWeek()</pre>
+<pre data-jql data-label="Children of one epic that aren't done">parent = FLY-2 AND statusCategory != Done ORDER BY Rank ASC</pre>
+<pre data-jql data-label="Unreleased release scope">project = FLY AND fixVersion in unreleasedVersions() ORDER BY fixVersion ASC, priority DESC</pre>
+<pre data-jql="norun" data-label="Team membership (pattern: needs a real group)">-- membersOf() takes a group name. Ask your admin for your team's group.
+project = FLY AND assignee in membersOf("jira-software-users") AND statusCategory = "In Progress"</pre>
+
+    <div class="callout danger"><strong>The EMPTY trap</strong>
+      <p><code>labels != Blocked</code> does <b>not</b> return items that have no labels at all. Empty values never match <code>!=</code> or <code>NOT IN</code>. Write it as <code>(labels != Blocked OR labels is EMPTY)</code>.</p>
+    </div>
+    <div class="callout warn"><strong>Quote multi-word values</strong>
+      <p><code>status = Ready for eQE</code> fails. <code>status = "Ready for eQE"</code> works. Custom fields with spaces need quotes too: <code>"Story Points"</code>. You can also use the ID: <code>cf[10036]</code>.</p>
+    </div>
+
+    <h3>Save, share, subscribe</h3>
+    <ol>
+      <li>Run the query, then choose <b>Save filter</b>. Name it with the standard prefix, for example <i>FLY - Jetstream - Waiting on PO</i>.</li>
+      <li>In the filter's details, share it with your space or group so dashboards and boards can use it.</li>
+      <li>Add a <b>subscription</b>, such as weekday mornings at 8:00, to get the results by email. It's great for "overdue" or "blocked" lists.</li>
+    </ol>
+  </article>
+
+  <!-- ============================== FO-4 ============================== -->
+  <article class="lesson" id="fo-4">
+    <h2><span class="lesson-code">FO-4</span> Filters, dashboards &amp; built-in reports</h2>
+    <div class="meta-row"><span class="chip">45 min</span><span class="chip">Demo + build</span></div>
+    <div class="objectives"><h4>Objectives</h4><ul>
+      <li>Pick the right built-in report for a question.</li>
+      <li>Read velocity and burndown critically.</li>
+      <li>Build a dashboard from saved filters and gadgets.</li></ul></div>
+
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Report</th><th>Answers the question…</th><th>Watch out for</th></tr></thead>
+      <tbody>
+        <tr><td>Sprint report</td><td>What did we finish, what was added, and what got pushed out?</td><td>Scrum boards only. Sub-task estimates aren't counted.</td></tr>
+        <tr><td>Burndown chart</td><td>Are we on track to finish this sprint?</td><td>Flat line then cliff = work closed in batches, not flowing</td></tr>
+        <tr><td>Velocity</td><td>How much do we usually finish? (input to capacity)</td><td>Board-specific; depends on column mapping; never compare teams</td></tr>
+        <tr><td>Release burndown</td><td>How many sprints until this version is done?</td><td>Needs fix versions set consistently</td></tr>
+        <tr><td>Cumulative flow</td><td>Where is work piling up?</td><td>Widening bands = bottleneck (watch Ready for eQE)</td></tr>
+        <tr><td>Control / cycle time</td><td>How long does work take from start to done?</td><td>Outliers matter more than the average</td></tr>
+      </tbody>
+    </table></div>
+
+    <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>varoonsahgaltraining.atlassian.net/jira/software/c/projects/FLY/boards/3/reports/velocity</span></div><img src="assets/img/velocity.jpg" alt="Velocity report showing JET-2026.q4.1 commitment 5 completed 31 and JET-2026.q4.2 commitment 0 completed 29, average 30" loading="lazy"></div><figcaption>The sandbox velocity chart. Something is off with "commitment". You'll investigate in mission FO-M5.</figcaption></figure>
+
+    <h3>Dashboard gadgets worth knowing</h3>
+    <div class="grid g2">
+      <div class="card"><h4>Filter Results</h4><p>A live list from any saved filter. Use it for "Blocked now" or "Waiting on PO".</p></div>
+      <div class="card"><h4>Two-Dimensional Filter Statistics</h4><p>A matrix, e.g. Status × Fix version, or Assignee × Status. It's the fastest health check there is.</p></div>
+      <div class="card"><h4>Created vs Resolved</h4><p>Are bugs arriving faster than you fix them? Point it at a "Bugs" filter.</p></div>
+      <div class="card"><h4>Sprint Burndown / Sprint Health</h4><p>Puts the active sprint on the dashboard so leaders don't need board access.</p></div>
+    </div>
+    <div class="callout tip" style="margin-top:22px"><strong>Dashboards are only as good as their filters</strong><p>Build and test the JQL first, save it with a clear name, share it, <i>then</i> add gadgets. If a gadget shows nothing, the filter probably isn't shared with the viewer.</p></div>
+  </article>
+
+  <!-- ============================== FO-5 ============================== -->
+  <article class="lesson" id="fo-5">
+    <h2><span class="lesson-code">FO-5</span> Rovo in the flow of work</h2>
+    <div class="meta-row"><span class="chip">45 min</span><span class="chip">Demo + practice</span></div>
+    <div class="objectives"><h4>Objectives</h4><ul>
+      <li>Use AI search to draft JQL, then verify it.</li>
+      <li>Summarize long work items and improve story quality with Rovo.</li></ul></div>
+    <p>At Level 2 you use Rovo <i>inside</i> the standard: to draft JQL, summarize threads before refinement, and tighten stories before they reach Ready. The full playbook, including chat vs agents, prompt patterns and governance, is on the <a href="rovo.html">Rovo page</a>.</p>
+    <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>varoonsahgaltraining.atlassian.net/issues</span></div><img src="assets/img/rovo-nl-jql-ready.jpg" alt="Jira AI search turning a plain-English question into JQL with cf[10036] IS EMPTY" loading="lazy"></div><figcaption>Plain English in, JQL out. Here it correctly found FLY-43, the Ready story with no points. Note the "Uses AI. Verify results." line.</figcaption></figure>
+    <div class="callout rovo"><strong>Three Rovo habits for refinement</strong>
+      <p><b>1.</b> Before Team Refinement, click <b>Summarize</b> on any item with a long comment thread. <b>2.</b> Use <b>Improve Story</b> to suggest missing acceptance criteria, then edit the suggestions yourself. <b>3.</b> Ask AI search for hygiene lists ("Ready stories with no points") and <b>read the generated JQL</b> before you trust the results.</p>
+    </div>
+  </article>
+
+  <!-- ============================== FO-6 ============================== -->
+  <article class="lesson" id="fo-6">
+    <h2><span class="lesson-code">FO-6</span> Zephyr essentials</h2>
+    <div class="meta-row"><span class="chip">45 min</span><span class="chip">Demo (needs the app installed)</span><span class="chip red">New topic</span></div>
+    <div class="objectives"><h4>Objectives</h4><ul>
+      <li>Explain test cases, test cycles and executions.</li>
+      <li>Link tests to stories for traceability.</li>
+      <li>Raise a Bug from a failed test step.</li></ul></div>
+    <div class="callout warn"><strong>Before class</strong>
+      <p>Zephyr (by SmartBear) is a <b>Marketplace app</b>, not built-in Jira. Your instance must have it installed and you need a Zephyr license seat. Menu names and screens differ slightly between editions and versions, so the instructor will show the exact path in your instance.</p>
+    </div>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Zephyr concept</th><th>What it is</th><th>Sandbox example</th></tr></thead>
+      <tbody>
+        <tr><td>Test case</td><td>Reusable steps + expected results that check a requirement</td><td>"Push arrives within 60s of a GateChanged event"</td></tr>
+        <tr><td>Test cycle</td><td>A group of test cases run together, e.g. per sprint or release</td><td>"Mobile 5.3 – eQE regression"</td></tr>
+        <tr><td>Execution</td><td>One run of a test case in a cycle, with a result (Pass / Fail / Blocked)</td><td>Run on iOS device lab, 17 Nov</td></tr>
+        <tr><td>Traceability / coverage</td><td>Links between stories ↔ tests ↔ executions ↔ bugs</td><td>FLY-21 is covered by 3 tests, 1 failing</td></tr>
+      </tbody>
+    </table></div>
+    <h3>How it maps to the workflow</h3>
+    <div class="flow">
+      <span class="st prog">Development</span><span class="arr">→ tests written alongside →</span><span class="st prog">Ready for eQE</span><span class="arr">→ cycle executed in →</span><span class="st prog">eQE Testing</span><span class="arr">→ all pass →</span><span class="st prog">PO Review</span>
+    </div>
+    <p>When a step fails, raise the defect <b>from the execution</b> so it's linked automatically. It must be a <b>Bug</b> work type, in line with the standard. Then send the story back to Development. That transition is the bounce-back you'll measure in Level 3.</p>
+  </article>
+
+  <hr>
+  <h2 id="missions">Missions</h2>
+  <p class="lede">Every mission runs on the live FLY sandbox. Mark each complete to bank your miles.</p>
+
+  <!-- ============================== MISSIONS ============================== -->
+  <article class="mission" id="fo-m1" data-miles="400">
+    <div class="mission-head"><div><span class="mcode">MISSION FO-M1</span><h3>Build the two-board model from scratch</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+    <div class="mission-body">
+      <div class="brief"><b>Mission brief</b> A new team, named with your initials (e.g. "VS Team"), joins the FLY space tomorrow. Set up both standard boards for them. No admin rights? Write the full spec on paper: filters, columns, quick filters and WIP limits.</div>
+      <ol class="steps">
+        <li>Create and share a filter <i>FLY - &lt;initials&gt; - Backlog Readiness</i> with <code>project = FLY AND status in ("New Idea", "Product Refinement", "Team Refinement", "Ready") ORDER BY Rank ASC</code>.</li>
+        <li>Create a <b>Kanban</b> board from that filter. Map columns New Idea | Product Refinement | Team Refinement | Ready. Leave delivery statuses unmapped.</li>
+        <li>Set WIP max limits: Product Refinement 10, Team Refinement 15. Add swimlanes by epic.</li>
+        <li>Create a second filter <i>FLY - &lt;initials&gt; - Sprint Board</i> scoped to sprint work, then a <b>Scrum</b> board on it with the seven delivery columns. Map <b>Ready</b> into the first column so sprint planning can see it.</li>
+        <li>Add quick filters: My items, Impediments, Blocked, Bugs, Waiting on PO. Add a "🚧 Blocked" swimlane by query.</li>
+        <li>Name your next sprint correctly for your initials team, quarter 4.</li>
+      </ol>
+      <details class="reveal"><summary>Debrief</summary><div>
+        <p>Checks: (1) Unmapped statuses are invisible on a board. If a Ready item disappears from sprint planning, Ready isn't mapped on the Scrum board. (2) The Kanban board must <i>not</i> include delivery statuses, or it becomes a second sprint board. (3) Sprint name example for initials VS: <code>VS-2026.q4.1</code>. (4) Boards inherit the filter's sharing. If a teammate sees "no work items", share the filter.</p>
+        <p>Bonus: why might a Team-field filter (<code>Team = "VS Team"</code>) be better than a component or label? It survives re-orgs, shows in Plans, and the standard uses it.</p>
+      </div></details>
+    </div>
+    <div class="mission-foot"><span class="miles-tag">+400 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+  </article>
+
+  <article class="mission" id="fo-m2" data-miles="300">
+    <div class="mission-head"><div><span class="mcode">MISSION FO-M2</span><h3>Refinement triage: who's not really Ready?</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+    <div class="mission-body">
+      <div class="brief"><b>Mission brief</b> The PO says the Ready column holds "two clean sprints". Use the Definition of Ready in FO-1 to audit every item in <b>Ready</b> on the Jetstream – Backlog Readiness board, and find the items that shouldn't be there.</div>
+      <ol class="steps">
+        <li>Open the Backlog Readiness board and go to the Ready column (7 items).</li>
+        <li>Open each item. Check acceptance criteria, Story Points, links and parent epic.</li>
+        <li>Confirm your suspicions with JQL:
+<pre data-jql data-label="Ready but no estimate">project = FLY AND status = Ready AND "Story Points" is EMPTY</pre>
+<pre data-jql data-label="Ready items with an unresolved blocker">project = FLY AND status = Ready AND issueLinkType = "is blocked by"</pre></li>
+        <li>For each failing item, write the refinement action: who does what before it can be Ready again.</li>
+      </ol>
+      <details class="reveal"><summary>Debrief: the three suspects</summary><div>
+        <p><b>FLY-42</b> (audit log of gate changes): 5 points, but <b>no acceptance criteria</b>. Text search can't reliably find a missing section, which is why the DoR is a human checklist. Action: PO adds AC, then it goes back through Team Refinement.</p>
+        <p><b>FLY-43</b> (dynamic type / large fonts): has AC but <b>no Story Points</b>. Action: estimate in the next Team Refinement.</p>
+        <p><b>FLY-31</b> (bag's last scan location): looks complete but <b>is blocked by spike FLY-33</b>, which isn't done. The spike's findings, polling vs streaming, could change the solution and the estimate. Under a strict DoR, a story blocked by an unfinished spike isn't Ready. A pragmatic team may keep it Ready but plan the spike first. Either way, say it out loud in planning.</p>
+      </div></details>
+    </div>
+    <div class="mission-foot"><span class="miles-tag">+300 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+  </article>
+
+  <article class="mission" id="fo-m3" data-miles="450">
+    <div class="mission-head"><div><span class="mcode">MISSION FO-M3</span><h3>Sprint planning simulation: JET-2026.q4.4</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+    <div class="mission-body">
+      <div class="brief"><b>Mission brief</b> Team capacity for JET-2026.q4.4 is <b>24 points</b>, after holidays and a support rotation. Draft a sprint goal and a commitment. Respect dependencies, and don't ignore anything urgent sitting in the backlog.</div>
+      <ol class="steps">
+        <li>Open the Backlog and expand <b>JET-2026.q4.4</b>. Total its Story Points.</li>
+        <li>Check for urgent work outside the sprint:
+<pre data-jql data-label="Urgent work not planned in any sprint">project = FLY AND priority in (Highest, High) AND statusCategory != Done AND sprint is EMPTY ORDER BY priority DESC, duedate ASC</pre></li>
+        <li>Note the dependency: <b>FLY-33</b> (spike) blocks <b>FLY-31</b>.</li>
+        <li>Write a one-sentence sprint goal, list your committed items with points, and list what you deferred and why.</li>
+      </ol>
+      <details class="reveal"><summary>Debrief: one defensible plan (there are others)</summary><div>
+        <p>The sprint holds FLY-31 (8), FLY-32 (5), FLY-33 (3), FLY-34 (5) and FLY-35 (2) = <b>23 points</b>. It fits, but two things should change the plan:</p>
+        <ul>
+          <li><b>FLY-50</b> is a Highest-priority, customer-reported <b>crash</b> (names with apostrophes), already <b>overdue</b> (due 14 Nov), 3 points, not in any sprint. It's also duplicated by FLY-51. It should almost certainly come in.</li>
+          <li>FLY-31 depends on a spike in the same sprint. If the spike lands late, FLY-31 carries over.</li>
+        </ul>
+        <p><b>Option A (24 pts):</b> FLY-50, FLY-33, FLY-31, FLY-32, FLY-34. Defer FLY-35. Goal: <i>"Fix the boarding-pass name crash and ship bag-tracker MVP basics."</i> Sequence FLY-33 first.<br>
+        <b>Option B (18 pts + buffer):</b> FLY-50, FLY-33, FLY-32, FLY-34, FLY-35. Defer FLY-31 to q1.1, once the spike has answered the design question. This plan has lower risk and a clearer goal.</p>
+        <p>Don't pull <b>FLY-42</b> (no AC) or <b>FLY-43</b> (no points). They aren't Ready, whatever column they're in.</p>
+      </div></details>
+    </div>
+    <div class="mission-foot"><span class="miles-tag">+450 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+  </article>
+
+  <article class="mission" id="fo-m4" data-miles="400">
+    <div class="mission-head"><div><span class="mcode">MISSION FO-M4</span><h3>Release readiness dashboard: Mobile 5.3</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+    <div class="mission-body">
+      <div class="brief"><b>Mission brief</b> Leadership wants one page answering "Can Mobile 5.3 ship on 15 Dec?" Build a dashboard with four gadgets. Each gadget needs a saved, shared filter.</div>
+      <ol class="steps">
+        <li><b>Scope by status</b>: Two-Dimensional Filter Statistics (Status × Type) on:
+<pre data-jql data-label="F1 · Mobile 5.3 scope">project = FLY AND fixVersion = "Mobile 5.3"</pre></li>
+        <li><b>Still open</b>: Filter Results on:
+<pre data-jql data-label="F2 · Mobile 5.3 not ready to release">project = FLY AND fixVersion = "Mobile 5.3" AND status not in ("Ready for Release", Done) ORDER BY priority DESC</pre></li>
+        <li><b>Quality</b>: Created vs Resolved on:
+<pre data-jql data-label="F3 · Mobile 5.3 bugs">project = FLY AND fixVersion = "Mobile 5.3" AND type = Bug</pre></li>
+        <li><b>Risks and blockers</b>: Filter Results on:
+<pre data-jql data-label="F4 · Blocked or flagged in the release">project = FLY AND fixVersion = "Mobile 5.3" AND (labels = Blocked OR Flagged = Impediment OR issueLinkType = "is blocked by")</pre></li>
+        <li>Share the dashboard with the space, then view it in a private window, or ask a peer, to confirm the gadgets render.</li>
+      </ol>
+      <details class="reveal"><summary>Debrief</summary><div>
+        <p>Ask whether anything that should be in the release is missing. <b>FLY-50</b> (crash) is tagged Mobile 5.3, but its duplicate <b>FLY-51</b> has no fix version. Release scope is only as good as the fix-version discipline. Second question: does F2 include sub-tasks? Sub-tasks don't inherit fix versions, so add <code>OR parent in (…)</code> logic or rely on parent status.</p>
+      </div></details>
+    </div>
+    <div class="mission-foot"><span class="miles-tag">+400 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+  </article>
+
+  <article class="mission" id="fo-m5" data-miles="300">
+    <div class="mission-head"><div><span class="mcode">MISSION FO-M5</span><h3>Velocity forensics</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+    <div class="mission-body">
+      <div class="brief"><b>Mission brief</b> A director looks at the velocity chart (FO-4 screenshot): <b>q4.1 committed 5, completed 31; q4.2 committed 0, completed 29.</b> "Amazing! The team does 6× what it promises." Before anyone repeats that in a steering meeting, work out what the chart is really telling you.</div>
+      <ol class="steps">
+        <li>Open Reports → Velocity for the Jetstream Sprint Board. Then open the <b>Sprint report</b> for each closed sprint and look for items marked as added after the sprint started.</li>
+        <li>List at least three things that could make <i>commitment</i> look this low.</li>
+        <li>Write the two-sentence note you'd send the director.</li>
+      </ol>
+      <details class="reveal"><summary>Debrief</summary><div>
+        <p>Commitment = the estimate of work in the sprint <b>at the moment it started</b>. It looks tiny when: (1) items were added to the sprint <b>after</b> it started; (2) story points were filled in <b>after</b> start, so the at-start estimate was empty; (3) the board's estimation field differs from the field the team fills in; (4) sprints were started before planning was finished. In this sandbox, the data was loaded by script right around sprint start, which produces exactly this pattern.</p>
+        <p>Sample note: <i>"The 6× gap is a data artifact. Work and estimates were added after the sprints started, so commitment is understated. Completed is about 30 points per sprint, and that's the number to plan with."</i> The habit: finish planning, then start the sprint.</p>
+      </div></details>
+    </div>
+    <div class="mission-foot"><span class="miles-tag">+300 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+  </article>
+
+  <article class="mission" id="fo-m6" data-miles="350">
+    <div class="mission-head"><div><span class="mcode">MISSION FO-M6</span><h3>Zephyr traceability drill</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+    <div class="mission-body">
+      <div class="brief"><b>Mission brief</b> <b>FLY-21</b> ("push notification when my gate changes") is in eQE Testing and has already bounced once. Write three Zephyr test cases from its acceptance criteria so the next run is airtight. If Zephyr isn't installed, write them in the table format below.</div>
+      <ol class="steps">
+        <li>Open FLY-21 and read the four acceptance criteria and the comments. The comments describe the Android failure.</li>
+        <li>Write three test cases, each with a <b>name, precondition, steps, expected result</b>. At least one must target the bug that caused the bounce.</li>
+        <li>In Zephyr: link each test case to FLY-21, add them to a cycle "Mobile 5.3 – eQE", and execute one.</li>
+        <li>Fail one step on purpose and raise a <b>Bug</b> from the execution. Confirm it's linked to FLY-21.</li>
+      </ol>
+      <details class="reveal"><summary>Debrief: example test cases</summary><div>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Test</th><th>Steps</th><th>Expected</th></tr></thead>
+          <tbody>
+            <tr><td>TC1 · Alert latency</td><td>Publish GateChanged for a booked flight; start timer</td><td>Push received on device in ≤ 60s</td></tr>
+            <tr><td>TC2 · Old → new gate (backgrounded app, Android 15)</td><td>Background the app; change gate C17 → C22</td><td>Notification reads "C17 → C22" with walking time. Never "C17 → C17". This is the bounce-back cause.</td></tr>
+            <tr><td>TC3 · No duplicates</td><td>Save the same gate change twice within 2s</td><td>Exactly one notification (pairs with FLY-25)</td></tr>
+          </tbody>
+        </table></div>
+        <p>Good test cases quote the acceptance criterion they cover. That's how coverage reports stay meaningful.</p>
+      </div></details>
+    </div>
+    <div class="mission-foot"><span class="miles-tag">+350 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+  </article>
+
+  <hr>
+  <!-- ============================== CHECKRIDE ============================== -->
+  <h2 id="fo-checkride">Level 2 checkride</h2>
+  <p>Score 80% or higher to be cleared for Captain training. Answers lock once chosen. Read the explanations.</p>
+  <div class="quiz" data-id="fo" data-pass="80" data-miles="800">
+    <div class="q"><p class="prompt">1. What is the Backlog Readiness Kanban board's goal?</p><div class="opts">
+      <button class="opt" type="button">Track the active sprint's progress</button>
+      <button class="opt" data-right type="button">Keep roughly 2–3 sprints of Ready work at all times</button>
+      <button class="opt" type="button">Replace the sprint board for Scrum teams</button></div>
+      <div class="why">The readiness board feeds sprint planning. It holds no sprint and covers refinement statuses only.</div></div>
+    <div class="q"><p class="prompt">2. eQE Testing fails. Where does the work go?</p><div class="opts">
+      <button class="opt" type="button">PO Review, with a note</button>
+      <button class="opt" data-right type="button">Back to Development, with feedback</button>
+      <button class="opt" type="button">Done, and a new Bug is created</button></div>
+      <div class="why">Fail → Development. That transition is the bounce-back signal you'll measure in Level 3.</div></div>
+    <div class="q"><p class="prompt">3. Which sprint name follows the standard?</p><div class="opts">
+      <button class="opt" type="button">Jetstream Sprint 14</button>
+      <button class="opt" type="button">2026-Q4-S3-JET</button>
+      <button class="opt" data-right type="button">JET-2026.q4.3</button></div>
+      <div class="why">&lt;TeamCode&gt;-&lt;Year&gt;.q&lt;Quarter&gt;.&lt;Sprint&gt;.</div></div>
+    <div class="q"><p class="prompt">4. A tester logs a problem as a Task with label "defect". What's wrong?</p><div class="opts">
+      <button class="opt" type="button">Nothing, as long as the label is spelled consistently</button>
+      <button class="opt" data-right type="button">It should be a Bug, or it disappears from bug dashboards and quality metrics</button>
+      <button class="opt" type="button">It should be a Sub-task of the story</button></div>
+      <div class="why">The standard is to use the Bug work type, not custom Defect types or labels.</div></div>
+    <div class="q"><p class="prompt">5. Which query returns FLY items that are not labeled Blocked, <i>including</i> items with no labels?</p><div class="opts">
+      <button class="opt" type="button"><code>project = FLY AND labels != Blocked</code></button>
+      <button class="opt" type="button"><code>project = FLY AND labels NOT IN (Blocked)</code></button>
+      <button class="opt" data-right type="button"><code>project = FLY AND (labels != Blocked OR labels is EMPTY)</code></button></div>
+      <div class="why">Empty values never match != or NOT IN. You have to add the EMPTY case explicitly.</div></div>
+    <div class="q"><p class="prompt">6. Why might a velocity chart show tiny commitment but large completed numbers?</p><div class="opts">
+      <button class="opt" data-right type="button">Work or estimates were added after the sprint started</button>
+      <button class="opt" type="button">The team is highly productive</button>
+      <button class="opt" type="button">Sub-tasks were estimated</button></div>
+      <div class="why">Commitment is measured at sprint start. Late additions count as completed but not committed.</div></div>
+    <div class="q"><p class="prompt">7. Which is the correct JQL for the "Ready for eQE" status?</p><div class="opts">
+      <button class="opt" type="button"><code>status = Ready for eQE</code></button>
+      <button class="opt" data-right type="button"><code>status = "Ready for eQE"</code></button>
+      <button class="opt" type="button"><code>status ~ Ready for eQE</code></button></div>
+      <div class="why">Multi-word values need quotes.</div></div>
+    <div class="q"><p class="prompt">8. Which report best reveals a bottleneck in Ready for eQE?</p><div class="opts">
+      <button class="opt" type="button">Velocity chart</button>
+      <button class="opt" data-right type="button">Cumulative flow diagram</button>
+      <button class="opt" type="button">Sprint report</button></div>
+      <div class="why">A widening band in the CFD shows work piling up in that status.</div></div>
+    <div class="q"><p class="prompt">9. A story is estimated with AC, but it's blocked by an unfinished spike. Under a strict Definition of Ready, it is…</p><div class="opts">
+      <button class="opt" type="button">Ready. Estimates are all that matter.</button>
+      <button class="opt" data-right type="button">Not Ready until the blocking spike is done, or the dependency is explicitly planned</button>
+      <button class="opt" type="button">A Risk, and should be converted</button></div>
+      <div class="why">Unresolved dependencies make the estimate and solution uncertain. That's FLY-31 and FLY-33 in the sandbox.</div></div>
+    <div class="q"><p class="prompt">10. In Zephyr, where should you raise a Bug for a failed test step?</p><div class="opts">
+      <button class="opt" data-right type="button">From the test execution, so it's linked to the test and the story</button>
+      <button class="opt" type="button">As a comment on the story</button>
+      <button class="opt" type="button">In a spreadsheet for the eQE lead</button></div>
+      <div class="why">Raising from the execution keeps traceability (story ↔ test ↔ execution ↔ bug) intact.</div></div>
+    <div class="quiz-score"><div><b>0 / 10</b> <span class="msg"></span></div><button class="btn btn-sm btn-primary retry" type="button">Retake</button></div>
+  </div>
+
+  <div class="cta-band" style="margin-top:40px">
+    <div><h3>Cleared for Captain training ✈</h3><p style="margin:0">Next up: advanced JQL and flow metrics, Plans, eazyBI, Zephyr at scale, automation and Rovo agents, Claude + MCP, and Git.</p></div>
+    <div class="btn-row" style="margin:0"><a class="btn btn-primary" href="captain.html">Continue to Level 3 →</a><a class="btn btn-ghost" href="jql-simulator.html">Practice in the JQL Simulator</a></div>
+  </div>
+  </div>
+</div>
+</section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

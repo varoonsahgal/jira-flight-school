@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 3 · Captain · Jira Flight School</title>
+<meta name="description" content="Level 3 Captain: advanced JQL and flow metrics, Plans and capacity planning, eazyBI reporting, Zephyr at scale, Automation and Rovo agents, Claude + Atlassian MCP, and Jira ↔ Git.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="assets/img/favicon.svg">
+<style>
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin: 16px 0 22px; }
+  .metric { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .metric h4 { margin: 0 0 6px; font-size: .8rem; }
+  .metric p { margin: 0; font-size: .93rem; color: var(--ink-2); }
+  .metric .formula { display: block; margin-top: 8px; font-family: var(--font-mono); font-size: .78rem; color: var(--navy-800); background: var(--sky-100); padding: 6px 8px; border-radius: 6px; }
+  .capstone-card { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 20px; align-items: center; background: linear-gradient(120deg, var(--navy-900), var(--blue-600)); color: #dbe6f7; border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow-2); margin: 40px 0; }
+  .capstone-card h2 { color: var(--white); margin-bottom: .3em; }
+  @media (max-width: 700px) { .capstone-card { grid-template-columns: minmax(0,1fr); } }
+  .rule { background: var(--white); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0 20px; }
+  .rule div { padding: 10px 16px; border-top: 1px solid var(--line); font-size: .95rem; }
+  .rule div:first-child { border-top: 0; }
+  .rule b { font-family: var(--font-display); letter-spacing: .1em; text-transform: uppercase; font-size: .78rem; display: inline-block; min-width: 92px; color: var(--blue-600); }
+  .rule .when b { color: var(--beacon-ink); }
+  .rule .then b { color: var(--go); }
+</style>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+
+<section class="hero compact">
+  <div class="clouds" aria-hidden="true">
+    <div class="cloud" style="top:22%;width:180px;height:44px;animation-duration:70s"></div>
+    <div class="cloud" style="top:58%;width:260px;height:60px;animation-duration:95s;animation-delay:-40s"></div>
+    <div class="cloud" style="top:12%;width:120px;height:30px;animation-duration:60s;animation-delay:-20s"></div>
+  </div>
+  <div class="wrap" style="position:relative;z-index:2">
+    <span class="eyebrow">Level 3 · Captain</span>
+    <h1>Advanced Operations</h1>
+    <p class="lede">You can already fly the aircraft. Now you'll run the operation: measure flow with JQL, plan capacity across teams, build real reports, keep quality traceable, automate the routine work, and bring AI co-pilots on board safely.</p>
+    <div class="meta-row" style="margin-top:18px">
+      <span class="chip navy">Full day · ~7 hours live</span>
+      <span class="chip gold">Prereq: First Officer checkride (80%+)</span>
+      <span class="chip">Live + hands-on sandbox</span>
+      <span class="chip red">Some tools need Premium or Marketplace apps</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap layout">
+    <aside class="toc" aria-label="On this page">
+      <h4>Flight plan</h4>
+      <ol>
+        <li><a href="#cp-1">CP-1 Advanced JQL &amp; flow</a></li>
+        <li><a href="#cp-2">CP-2 Plans &amp; capacity</a></li>
+        <li><a href="#cp-3">CP-3 eazyBI reporting</a></li>
+        <li><a href="#cp-4">CP-4 Zephyr at scale</a></li>
+        <li><a href="#cp-5">CP-5 Automation &amp; agents</a></li>
+        <li><a href="#cp-6">CP-6 Claude + MCP</a></li>
+        <li><a href="#cp-7">CP-7 Jira ↔ Git</a></li>
+      </ol>
+      <h4 style="margin-top:16px">Missions</h4>
+      <ol>
+        <li><a href="#cp-m1">CP-M1 Flow dashboard</a></li>
+        <li><a href="#cp-m2">CP-M2 Capacity crunch</a></li>
+        <li><a href="#cp-m3">CP-M3 eazyBI bounce report</a></li>
+        <li><a href="#cp-m4">CP-M4 Release gate</a></li>
+        <li><a href="#cp-m5">CP-M5 Blocked escalation</a></li>
+        <li><a href="#cp-m6">CP-M6 Git demo script</a></li>
+        <li><a href="#capstone">Capstone: IROPS Day</a></li>
+        <li><a href="#checkride">Captain checkride</a></li>
+      </ol>
+    </aside>
+
+    <div>
+      <div class="callout united">
+        <strong>Before you take off</strong>
+        <p>Level 3 assumes you know the Golden Template workflow (New Idea → Product Refinement → Team Refinement → Ready → To Do → Development → Ready for eQE → eQE Testing → PO Review → Ready for Release → Done) and basic JQL. If either is new to you, take a lap through <a href="first-officer.html">First Officer</a> first.</p>
+      </div>
+
+      <div class="callout warn">
+        <strong>Equipment check</strong>
+        <p>The training sandbox runs on <b>Jira Standard</b>. <b>Plans</b> (CP-2) needs Jira <b>Premium</b>; the sandbox currently shows "We couldn't load your plans". <b>eazyBI</b> (CP-3) and <b>Zephyr</b> (CP-4) are Marketplace apps that aren't installed yet. Those lessons run as instructor demos on a Premium training site with the apps installed, or as a walkthrough until that site exists.</p>
+      </div>
+
+      <!-- ================= CP-1 ================= -->
+      <article class="lesson" id="cp-1">
+        <h2><span class="lesson-code">CP-1</span> Advanced JQL &amp; flow metrics</h2>
+        <div class="meta-row"><span class="chip">60 min</span><span class="chip">Live + lab</span><span class="chip green">Works in sandbox today</span></div>
+        <div class="objectives">
+          <h4>Objectives</h4>
+          <ul>
+            <li>Query <em>history</em>, not just the current state, using <code>WAS</code> and <code>CHANGED</code> with their predicates.</li>
+            <li>Use sprint, link and personal functions to answer planning questions in one query.</li>
+            <li>Turn JQL into four flow metrics: bounce-back rate, carry-over, aging WIP and blocked work.</li>
+            <li>Know where JQL stops and a reporting tool has to take over.</li>
+          </ul>
+        </div>
+
+        <h3>History operators: the time machine</h3>
+        <p>Most people only query where work <em>is</em>. Captains also ask where work has <em>been</em>. Jira keeps a change history, and two operators read it:</p>
+        <div class="table-wrap"><table class="data">
+          <tr><th>Operator</th><th>Asks</th><th>Predicates you can add</th></tr>
+          <tr><td><code>WAS</code> / <code>WAS NOT</code> / <code>WAS IN</code></td><td>Did this field ever have this value?</td><td><code>BY</code>, <code>DURING</code>, <code>BEFORE</code>, <code>AFTER</code>, <code>ON</code></td></tr>
+          <tr><td><code>CHANGED</code></td><td>Did this field change, optionally from X to Y?</td><td><code>FROM</code>, <code>TO</code>, <code>BY</code>, <code>DURING</code>, <code>BEFORE</code>, <code>AFTER</code>, <code>ON</code></td></tr>
+        </table></div>
+        <div class="callout danger">
+          <strong>The trap everyone hits</strong>
+          <p>History operators only work on a few fields: <b>Status, Assignee, Priority, Reporter, Resolution and Fix Version</b>. You <em>cannot</em> run <code>labels WAS Blocked</code> or <code>"Story Points" CHANGED</code>. To track history on other fields, use automation to stamp a date field, or a reporting tool such as eazyBI that imports full change history (CP-3).</p>
+        </div>
+
+        <pre data-jql data-label="Bounce-backs: failed eQE and sent back to Development">-- Every item that failed testing at least once
+project = FLY AND status CHANGED FROM "eQE Testing" TO "Development"
+ORDER BY priority DESC</pre>
+        <p class="muted">Sandbox answer: <b>FLY-19, FLY-21, FLY-25</b>. FLY-25 bounced <em>twice</em>, but JQL can't count how many times. It's a yes/no filter, and counting is a job for eazyBI.</p>
+
+        <pre data-jql data-label="Bounce-backs in the last 14 days, by a specific tester">project = FLY
+AND status CHANGED FROM "eQE Testing" TO "Development" AFTER -14d
+-- add: BY "account-id-or-name" to scope to one tester
+ORDER BY updated DESC</pre>
+
+        <pre data-jql data-label="What was in eQE Testing at any point during the last two weeks">project = FLY AND status WAS "eQE Testing" DURING (startOfDay(-14d), now())</pre>
+
+        <h3>Sprint, link and personal functions</h3>
+        <pre data-jql data-label="Carry-over: in a closed sprint AND the active sprint">project = FLY AND sprint in closedSprints() AND sprint in openSprints()</pre>
+        <p class="muted">Sandbox answer: <b>FLY-20</b>, the rest-rule warning story that slipped out of JET-2026.q4.2.</p>
+
+        <pre data-jql data-label="Everything FLY-24 is blocking">issue in linkedIssues("FLY-24", "blocks")</pre>
+        <pre data-jql data-label="Unresolved work that is blocked by anything (inward 'is blocked by')">project = FLY AND statusCategory != Done
+AND issueLinkType = "is blocked by"</pre>
+        <pre data-jql data-label="Items I looked at recently (great for 'where was that ticket?')">issue in issueHistory() ORDER BY lastViewed DESC</pre>
+        <pre data-jql data-label="Next sprint's commitment that still isn't Ready">project = FLY AND sprint in futureSprints()
+AND status not in ("Ready", "To Do")</pre>
+
+        <h3>Four flow metrics you can pull from JQL today</h3>
+        <div class="metric-grid">
+          <div class="metric"><h4>Bounce-back rate</h4><p>Share of items that failed eQE at least once.</p><span class="formula">count(CHANGED FROM "eQE Testing" TO "Development") ÷ count(status WAS "eQE Testing")</span></div>
+          <div class="metric"><h4>Carry-over</h4><p>Work that didn't finish in the sprint it was planned for.</p><span class="formula">sprint in closedSprints() AND sprint in openSprints()</span></div>
+          <div class="metric"><h4>Aging WIP</h4><p>In progress but untouched for 5+ days. Looks like it's moving, but it isn't.</p><span class="formula">statusCategory = "In Progress" AND NOT status CHANGED AFTER -5d</span></div>
+          <div class="metric"><h4>Blocked now</h4><p>Flagged or labeled blocked. (Use automation to measure <em>how long</em> work stays blocked; see CP-5.)</p><span class="formula">Flagged is not EMPTY OR labels = Blocked</span></div>
+        </div>
+        <pre data-jql data-label="Aging WIP in the active sprint">project = FLY AND sprint in openSprints()
+AND statusCategory = "In Progress"
+AND NOT status CHANGED AFTER -5d
+ORDER BY updated ASC</pre>
+        <div class="callout tip">
+          <strong>Make it a habit</strong>
+          <p>Save each metric query as a filter named with the team code (e.g. <code>JET · Bounce-backs 14d</code>) and put them on a dashboard with the <em>Filter Results</em> and <em>Two Dimensional Filter Statistics</em> gadgets. You'll build exactly this in <a href="#cp-m1">CP-M1</a>. For 20 graded challenges, fly the <a href="jql-simulator.html">JQL Simulator</a>.</p>
+        </div>
+        <figure class="shot">
+          <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>varoonsahgaltraining.atlassian.net/issues/?jql=…CHANGED FROM "eQE Testing"…</span></div>
+          <img src="assets/img/rovo-nl-jql-bounce.jpg" alt="Jira search showing a Rovo-generated JQL query for items that changed from eQE Testing to Development, returning FLY-25, FLY-21 and FLY-19" loading="lazy"></div>
+          <figcaption>Rovo turned "work that failed QA and was sent back to developers" into a history query. It also quietly added <code>"In Progress"</code>, a status nobody on this team uses. Always read the JQL before you trust the count.</figcaption>
+        </figure>
+      </article>
+
+      <!-- ================= CP-2 ================= -->
+      <article class="lesson" id="cp-2">
+        <h2><span class="lesson-code">CP-2</span> Plans &amp; capacity planning</h2>
+        <div class="meta-row"><span class="chip">60 min</span><span class="chip">Instructor demo + lab</span><span class="chip red">Requires Jira Premium</span></div>
+        <div class="objectives">
+          <h4>Objectives</h4>
+          <ul>
+            <li>Build a plan from the boards and projects a program actually uses.</li>
+            <li>Set team capacity per sprint and spot overload before it happens.</li>
+            <li>Use scenarios to test "what if" without touching real work items.</li>
+            <li>Map and resolve cross-team dependencies, then commit changes back to Jira on purpose.</li>
+          </ul>
+        </div>
+        <div class="callout warn">
+          <strong>Premium only</strong>
+          <p>Plans is part of Jira Premium and Enterprise. To run this module hands-on, United needs a <b>Premium training site</b> (or a Premium trial on the sandbox) with the FLY project imported. Without it, CP-2 runs as an instructor demo.</p>
+        </div>
+
+        <h3>The pre-flight: build the plan</h3>
+        <ol>
+          <li><b>Create a plan</b> from the Plans menu. Choose sources: boards (best, because sprints come along), projects, or saved filters. For FLY, add the <em>Jetstream - Sprint Board</em>.</li>
+          <li><b>Set hierarchy and scope</b>: Epic → Story/Task/Bug/Spike. Exclude Done older than 30 days to keep it fast.</li>
+          <li><b>Add teams</b>: map each source board to a team. Plans can use shared Atlassian teams, which line up with the Team field the standards deck recommends.</li>
+          <li><b>Configure capacity</b>: for Scrum teams, set capacity in story points per sprint. Start with the trailing three-sprint average from the Velocity report, not a hopeful number.</li>
+          <li><b>Pick a scheduling mode</b>: story points with sprints for Scrum teams; days or hours for Kanban teams.</li>
+        </ol>
+
+        <h3>Fly the plan</h3>
+        <div class="table-wrap"><table class="data">
+          <tr><th>Feature</th><th>What it answers</th><th>Captain's move</th></tr>
+          <tr><td>Timeline + capacity bars</td><td>Which sprint is over-committed?</td><td>Red capacity bars mean move work or cut scope. Don't ignore them.</td></tr>
+          <tr><td>Scenarios</td><td>What if we lose 30% of a team for holiday cover?</td><td>Duplicate the baseline, change capacity in the scenario only, compare.</td></tr>
+          <tr><td>Dependencies view</td><td>What crosses team or sprint boundaries?</td><td>Fix any dependency scheduled <em>after</em> the work that needs it.</td></tr>
+          <tr><td>Auto-schedule</td><td>What's the fastest feasible order?</td><td>Preview first, accept selectively. Never accept blind.</td></tr>
+          <tr><td>Releases</td><td>Will Mobile 5.3 land on 15 Dec?</td><td>Compare the release date to the projected finish of its work.</td></tr>
+          <tr><td>Review changes</td><td>What will I actually write back to Jira?</td><td>Changes in Plans stay in the plan until you <em>Save to Jira</em>. Review every row.</td></tr>
+        </table></div>
+
+        <h3>How this connects to the Golden Template</h3>
+        <p>The standard asks teams to keep <b>2–3 sprints of Ready work</b> on the Backlog Readiness board. Plans turns that from a gut feeling into a number:</p>
+        <pre data-jql data-label="Ready runway in story points (compare to capacity x 2-3)">project = FLY AND status = "Ready" AND issuetype in (Story, Task, Bug, Spike)</pre>
+        <p>Sum the story points (use the <em>Story Points</em> column sum in the list view, or the plan's roll-up). If the Ready total is below 2× team capacity, refinement is the bottleneck, not delivery.</p>
+        <figure class="shot">
+          <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>varoonsahgaltraining.atlassian.net/jira/software/c/projects/FLY/boards/3/timeline</span></div>
+          <img src="assets/img/timeline.jpg" alt="Jira timeline for project FLY showing six epics across quarters with releases Mobile 5.2, Mobile 5.3, Gate Ops 1.0 and Bag Tracker Beta" loading="lazy"></div>
+          <figcaption>The single-project Timeline works on Standard. Plans adds what a program needs on top: multiple teams, capacity, scenarios and cross-project releases.</figcaption>
+        </figure>
+      </article>
+
+      <!-- ================= CP-3 ================= -->
+      <article class="lesson" id="cp-3">
+        <h2><span class="lesson-code">CP-3</span> Reporting with eazyBI</h2>
+        <div class="meta-row"><span class="chip">60 min</span><span class="chip">Instructor demo + spec lab</span><span class="chip red">Requires eazyBI app</span></div>
+        <div class="objectives">
+          <h4>Objectives</h4>
+          <ul>
+            <li>Import Jira data into eazyBI with the right custom fields and change history.</li>
+            <li>Read a report as measures × dimensions × filters.</li>
+            <li>Build velocity, cycle time, bounce-back and created-vs-resolved reports, and share them on a dashboard.</li>
+          </ul>
+        </div>
+        <div class="callout warn">
+          <strong>Prerequisite</strong>
+          <p>eazyBI for Jira is a Marketplace app. It's not installed in the sandbox yet. Ask the Jira admins to install it on the training site, and to grant attendees a role that can create reports in a training account.</p>
+        </div>
+
+        <h3>The mental model</h3>
+        <div class="split">
+          <div class="vs"><h4>Measures (the numbers)</h4><p>Counts and sums: issues created, issues resolved, story points resolved, and with history imported, transition counts and days in status.</p></div>
+          <div class="vs"><h4>Dimensions (the slices)</h4><p>Time, Project, Issue Type, Status, Sprint, Fix Version, Label, Assignee, Transition and Transition Status. Put one on rows, one on columns, and filter with pages.</p></div>
+        </div>
+
+        <h3>Import settings that make or break your reports</h3>
+        <ul class="checklist" data-id="cp3-import">
+          <li><input type="checkbox" id="c31"><label for="c31">Select the FLY project (and any others in the program).</label></li>
+          <li><input type="checkbox" id="c32"><label for="c32">Import <b>Story Points</b> as a measure and <b>Sprint</b>, <b>Team</b>, <b>Components</b> and <b>Labels</b> as dimensions.</label></li>
+          <li><input type="checkbox" id="c33"><label for="c33">Turn on <b>change history</b>. Without it there are no transitions, time in status, or bounce-backs.</label></li>
+          <li><input type="checkbox" id="c34"><label for="c34">Schedule incremental imports (e.g. hourly) so dashboards stay current.</label></li>
+          <li><input type="checkbox" id="c35"><label for="c35">Agree on what "done" means for the report (Done only, or Ready for Release too?) and write it in the report description.</label></li>
+        </ul>
+
+        <h3>Four reports every DT team should have</h3>
+        <div class="table-wrap"><table class="data">
+          <tr><th>Report</th><th>Rows × columns</th><th>Why it beats the built-in chart</th></tr>
+          <tr><td>Velocity, committed vs completed</td><td>Sprint × sprint story-point measures</td><td>Cross-team and cross-project on one chart; filter by component.</td></tr>
+          <tr><td>Cycle time by type</td><td>Time (weeks) × average days from Development to Done, split by Issue Type</td><td>Separates bug flow from story flow, which the Control Chart blends.</td></tr>
+          <tr><td>eQE bounce-back rate</td><td>Sprint × (transitions eQE Testing → Development ÷ items entering eQE Testing)</td><td>Counts <em>every</em> bounce, including FLY-25's two. JQL can't do that.</td></tr>
+          <tr><td>Created vs resolved</td><td>Time (weeks) × issues created, issues resolved</td><td>Shows whether the backlog grows faster than the team can absorb.</td></tr>
+        </table></div>
+        <pre data-code="mdx" data-label="Illustrative calculated measure: eQE bounce-back rate (check member names in your account)">CASE WHEN ([Measures].[Transitions to status], [Transition Status].[eQE Testing]) > 0
+THEN
+  ([Measures].[Transitions from status], [Transition].[eQE Testing => Development])
+  /
+  ([Measures].[Transitions to status], [Transition Status].[eQE Testing])
+END</pre>
+        <div class="callout captain">
+          <strong>From the flight deck</strong>
+          <p>Measure names and the transition member format vary by eazyBI version and import settings. Treat the MDX as a pattern: find the real member names in the dimension picker, then adapt. Format the result as a percentage.</p>
+        </div>
+      </article>
+
+      <!-- ================= CP-4 ================= -->
+      <article class="lesson" id="cp-4">
+        <h2><span class="lesson-code">CP-4</span> Zephyr at scale: traceability &amp; release gates</h2>
+        <div class="meta-row"><span class="chip">45 min</span><span class="chip">Instructor demo + design lab</span><span class="chip red">Requires Zephyr app</span></div>
+        <div class="objectives">
+          <h4>Objectives</h4>
+          <ul>
+            <li>Trace any requirement through test case, execution and defect, in both directions.</li>
+            <li>Read coverage per epic and per release.</li>
+            <li>Define a release-readiness gate that fits the Golden Template's <em>Ready for Release</em> state.</li>
+          </ul>
+        </div>
+        <div class="callout warn">
+          <strong>Know your edition</strong>
+          <p>SmartBear sells more than one Zephyr product for Jira Cloud, and they model tests differently. One keeps test cases, cycles and plans as its own objects inside Jira; the other makes a "Test" a Jira work type. Confirm which edition United licenses before class. Screens and terms in this lesson follow the first model.</p>
+        </div>
+
+        <h3>The traceability chain</h3>
+        <div class="flow">
+          <span class="st todo">Story FLY-21</span><span class="arr">→</span>
+          <span class="st prog">Test cases (coverage)</span><span class="arr">→</span>
+          <span class="st prog">Test cycle: Mobile 5.3 regression</span><span class="arr">→</span>
+          <span class="st prog">Executions: Pass / Fail / Blocked</span><span class="arr">→</span>
+          <span class="st todo">Bug FLY-25 (from failed step)</span>
+        </div>
+        <p>When eQE fails a story, they log the defect <em>from the failed execution</em>, so the bug links to the test and the story automatically. That's the difference between "we found a bug" and "we can prove which requirement is at risk".</p>
+
+        <h3>Coverage questions to ask before every release</h3>
+        <ul>
+          <li>Which stories in <b>Mobile 5.3</b> have <em>no</em> linked test case?</li>
+          <li>Which linked test cases have <em>no</em> execution in the current cycle?</li>
+          <li>Which executions failed, and does each failure have a linked Bug?</li>
+          <li>Are any linked Bugs still open at <b>High</b> or <b>Highest</b> priority?</li>
+        </ul>
+        <pre data-jql data-label="The Jira half of the gate: open high-priority bugs on the release">project = FLY AND fixVersion = "Mobile 5.3"
+AND type = Bug AND statusCategory != Done
+AND priority in (Highest, High)</pre>
+        <div class="callout united">
+          <strong>Where this fits the template</strong>
+          <p>The exit criteria for <b>Ready for Release</b> say testing is complete, the PO has approved, and every acceptance criterion is met. Zephyr provides the evidence for "testing complete": 100% of linked tests executed in the release cycle, zero failed without a linked defect, and zero open Highest or High bugs.</p>
+        </div>
+      </article>
+
+      <!-- ================= CP-5 ================= -->
+      <article class="lesson" id="cp-5">
+        <h2><span class="lesson-code">CP-5</span> Automation &amp; Rovo agents</h2>
+        <div class="meta-row"><span class="chip">45 min</span><span class="chip">Live + design lab</span><span class="chip green">Automation works in sandbox</span></div>
+        <div class="objectives">
+          <h4>Objectives</h4>
+          <ul>
+            <li>Design rules as Trigger → Condition → Action with smart values.</li>
+            <li>Automate the Golden Template's housekeeping so humans don't have to remember it.</li>
+            <li>Decide when a Rovo agent belongs in the loop, and how to govern and audit it.</li>
+          </ul>
+        </div>
+
+        <h3>Anatomy of a rule</h3>
+        <div class="rule">
+          <div class="when"><b>When</b> Trigger: field value changed, work item transitioned, scheduled (with JQL), manual, incoming webhook…</div>
+          <div><b>If</b> Conditions: JQL condition, field condition, "related work items" condition…</div>
+          <div class="then"><b>Then</b> Actions: edit field, transition, comment, send message, create work item, branch to parent or sub-tasks…</div>
+        </div>
+        <p>Smart values put live data into actions, e.g. <code>{{issue.key}}</code>, <code>{{issue.summary}}</code>, <code>{{issue.status.name}}</code>, <code>{{issue.assignee.displayName}}</code>, <code>{{issue.url}}</code>, <code>{{now}}</code>.</p>
+
+        <h3>Three rules that enforce the template</h3>
+        <div class="table-wrap"><table class="data">
+          <tr><th>Rule</th><th>Trigger</th><th>Condition</th><th>Action</th></tr>
+          <tr><td>Blocked means flagged</td><td>Field value changed: Labels</td><td>Labels contains <code>Blocked</code></td><td>Set Flagged = Impediment; comment "Blocked at {{now}}"</td></tr>
+          <tr><td>Parent follows children</td><td>Work item transitioned to Done</td><td>All sibling items are Done</td><td>Branch to parent epic → transition to Done (or comment for PO review)</td></tr>
+          <tr><td>Aging alert</td><td>Scheduled, daily 08:00</td><td>JQL: <code>sprint in openSprints() AND statusCategory = "In Progress" AND NOT status CHANGED AFTER -5d</code></td><td>Comment mentioning the assignee + message to the team channel</td></tr>
+        </table></div>
+        <div class="callout tip">
+          <strong>Test like a pilot</strong>
+          <p>Build rules in the sandbox first, scope them to one project, and read the <b>audit log</b> after every test run. A rule that loops (for example, an edit that triggers itself) can burn through your automation limit in minutes. Leave "allow other rules to trigger this rule" <em>off</em> unless you really need it.</p>
+        </div>
+
+        <h3>Rovo agents in the workflow</h3>
+        <p><b>Agents in Jira</b> (generally available since Team '26) let teams assign work items to Rovo or third-party agents, work with them in comments, and trigger them from automation rules or board columns. Every agent action is logged.</p>
+        <div class="split">
+          <div class="vs"><h4>Good agent jobs</h4><ul><li>Draft acceptance criteria when an item enters Team Refinement</li><li>Check a story against the Definition of Ready before it moves to Ready</li><li>Summarize a long eQE comment thread into a fix checklist</li><li>Draft release notes from the Ready for Release column</li></ul></div>
+          <div class="vs"><h4>Keep a human in the seat</h4><ul><li>Closing or transitioning work that feeds velocity</li><li>Changing estimates, sprint scope or fix versions</li><li>Anything customer-facing</li><li>Anything that acts on text from outside the org (see FLY-55 in <a href="mcp.html#mcp-m6">MCP-M6</a>)</li></ul></div>
+        </div>
+        <div class="callout rovo">
+          <strong>Governance</strong>
+          <p>Admins can separate <em>using</em> AI from <em>building</em> agents. Only a small group builds agents today, with a submission process planned. Automations and agents built in Rovo Studio <b>inherit the builder's permissions</b>, and Studio-built agents consume Rovo credits per use. Name an owner for every agent, document its purpose and scope, and review its audit trail regularly.</p>
+        </div>
+      </article>
+
+      <!-- ================= CP-6 ================= -->
+      <article class="lesson" id="cp-6">
+        <h2><span class="lesson-code">CP-6</span> Claude + Atlassian MCP</h2>
+        <div class="meta-row"><span class="chip">60 min</span><span class="chip">Live + labs</span><span class="chip gold">Full handbook on its own page</span></div>
+        <div class="objectives">
+          <h4>Objectives</h4>
+          <ul>
+            <li>Connect Claude to Jira and Confluence through the Atlassian Rovo MCP Server.</li>
+            <li>Pick the right jobs for an AI co-pilot, and keep it away from the ones that distort team metrics.</li>
+            <li>Apply the Co-Pilot Protocol: READ → PLAN → CONFIRM → WRITE → VERIFY → LOG.</li>
+          </ul>
+        </div>
+        <p>The Model Context Protocol lets Claude call Jira tools such as JQL search, get work item and create work item <em>as you</em>, with your permissions. That's powerful for triage digests, refinement prep and release notes. It's risky for bulk changes, because AI-created or AI-transitioned work flows straight into velocity, say/do ratio and cycle time.</p>
+        <pre data-code="bash" data-label="Claude Code: add the Atlassian server, then authenticate">claude mcp add --transport http atlassian https://mcp.atlassian.com/v2/mcp
+# then, inside a Claude Code session:
+/mcp</pre>
+        <div class="btn-row"><a class="btn btn-blue" href="mcp.html">Open the Co-Pilot Handbook →</a></div>
+      </article>
+
+      <!-- ================= CP-7 ================= -->
+      <article class="lesson" id="cp-7">
+        <h2><span class="lesson-code">CP-7</span> Jira ↔ Git</h2>
+        <div class="meta-row"><span class="chip">30 min</span><span class="chip">Live demo</span><span class="chip red">Needs a connected demo repo</span></div>
+        <div class="objectives">
+          <h4>Objectives</h4>
+          <ul>
+            <li>Connect a Git host so branches, commits, PRs, builds and deployments show on work items.</li>
+            <li>Use issue keys consistently so the links happen on their own.</li>
+            <li>Use smart commits safely, and query development data with JQL.</li>
+          </ul>
+        </div>
+        <h3>Connect</h3>
+        <p>Install the Atlassian-provided integration for your host (GitHub, GitLab or Bitbucket), connect the organization, and choose the repositories. After the backfill, the work item's <b>Development</b> panel shows branches, commits, pull requests, builds and deployments.</p>
+
+        <h3>The one rule: put the key everywhere</h3>
+        <div class="table-wrap"><table class="data">
+          <tr><th>Where</th><th>Example</th></tr>
+          <tr><td>Branch</td><td><code>feature/FLY-21-gate-change-push</code></td></tr>
+          <tr><td>Commit</td><td><code>FLY-21 Dedupe alerts by event sequence number</code></td></tr>
+          <tr><td>Pull request title</td><td><code>FLY-21: Gate change push notification (iOS + Android)</code></td></tr>
+        </table></div>
+
+        <h3>Smart commits</h3>
+        <pre data-code="bash" data-label="Smart commit: comment + log time + transition">git commit -m "FLY-21 #comment Cache fix for Android 15 double-gate bug #time 1h 30m #ready-for-eqe"</pre>
+        <div class="callout warn">
+          <strong>Read before you fly</strong>
+          <ul>
+            <li>An admin must enable smart commits for the integration, and the committer's email must match a Jira user.</li>
+            <li>The transition command matches a <em>transition name</em>, with spaces written as hyphens. If the name is ambiguous or not allowed from the current status, nothing happens.</li>
+            <li>Smart-commit transitions move work as <em>you</em> and feed cycle time. Don't let them skip eQE or PO Review.</li>
+          </ul>
+        </div>
+        <pre data-jql data-label="Work with an open pull request (needs a connected repo)">project = FLY AND development[pullrequests].open > 0</pre>
+        <pre data-jql data-label="Done but no commits linked (process smell)">project = FLY AND statusCategory = Done AND issuetype in (Story, Bug)
+AND development[commits].all = 0 AND resolved >= -30d</pre>
+        <p class="muted">These development fields return nothing until a repo is connected to the site.</p>
+      </article>
+
+      <hr>
+
+      <h2 id="missions">Captain missions</h2>
+      <p class="lede">These are hard on purpose. Each one mirrors a real decision a Digital Technology lead makes. Work in pairs, compare answers in the debrief, and claim your miles.</p>
+
+      <!-- CP-M1 -->
+      <article class="mission" id="cp-m1" data-miles="400">
+        <div class="mission-head"><div><span class="mcode">MISSION CP-M1</span><h3>Build a flow-metrics dashboard from JQL</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> The Jetstream PO wants one screen that answers: what's stuck, what's bouncing, what's carrying over, and what's overdue. No eazyBI, just Jira.</div>
+          <ol class="steps">
+            <li>Write and save four filters, named <code>JET · Bounce-backs</code>, <code>JET · Carry-over</code>, <code>JET · Aging WIP 5d</code> and <code>JET · Overdue</code>.</li>
+            <li>Check each against the sandbox: bounce-backs should return FLY-19, FLY-21 and FLY-25; carry-over FLY-20; overdue FLY-49 and FLY-50.</li>
+            <li>Create a dashboard, <em>Jetstream Flight Deck</em>, and add a <em>Filter Results</em> gadget for each filter.</li>
+            <li>Add a <em>Two Dimensional Filter Statistics</em> gadget on a filter of the active sprint: rows = Status, columns = Assignee.</li>
+            <li>Share the dashboard with the FLY project, not "public".</li>
+          </ol>
+          <details class="reveal"><summary>Show debrief &amp; reference JQL</summary><div>
+            <pre data-jql data-label="Bounce-backs">project = FLY AND status CHANGED FROM "eQE Testing" TO "Development"</pre>
+            <pre data-jql data-label="Carry-over">project = FLY AND sprint in closedSprints() AND sprint in openSprints()</pre>
+            <pre data-jql data-label="Aging WIP">project = FLY AND statusCategory = "In Progress" AND NOT status CHANGED AFTER -5d</pre>
+            <pre data-jql data-label="Overdue">project = FLY AND duedate < now() AND statusCategory != Done</pre>
+            <p><b>Discussion:</b> In a freshly seeded sandbox, Aging WIP may return nothing because every transition is recent. Explain why that's correct, then name the date when the filter <em>will</em> start returning items. Bonus: why is "Overdue" a weak metric if teams don't set due dates consistently?</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+400 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- CP-M2 -->
+      <article class="mission" id="cp-m2" data-miles="500">
+        <div class="mission-head"><div><span class="mcode">MISSION CP-M2</span><h3>Capacity crunch: holiday season scenario</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> Jetstream loses 30% of its capacity over the holidays. Leadership still wants the <b>Live Bag Tracker</b> beta (FLY-3) and the <b>IROPS rebooking pilot</b> (FLY-4) on time. Use Plans to show what's realistic. <em>Premium training site required; otherwise do the math on paper using the Velocity report.</em></div>
+          <ol class="steps">
+            <li>Create a plan from <em>Jetstream - Sprint Board</em>. Set team capacity to the trailing average from the Velocity report (about 30 points per sprint).</li>
+            <li>Duplicate the baseline into a scenario named <em>Holiday -30%</em>. Set capacity for JET-2026.q4.4 and JET-2027.q1.1 to 21 points.</li>
+            <li>Look at the sprint loads. JET-2026.q4.4 holds FLY-31, 32, 33, 34 and 35; JET-2027.q1.1 holds FLY-36 (13 points) and FLY-37.</li>
+            <li>Check dependencies: FLY-33 (spike) blocks FLY-31. Make sure the spike is scheduled first.</li>
+            <li>Produce a two-option recommendation: (A) split FLY-36 as the comments suggest, or (B) slip Bag Tracker Beta. Show the release-date impact of each.</li>
+            <li>Don't save the scenario changes to Jira. Explain why.</li>
+          </ol>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <p>JET-2026.q4.4 totals 23 points (8+5+3+5+2). That's over a 21-point holiday capacity before any carry-over arrives. FLY-36 alone is 13 points, more than half of a reduced sprint, and its own comment thread proposes a three-way split. A strong answer splits FLY-36 into read-only options / seat hold / confirm, pulls the read-only slice into the pilot, and pushes partner rebooking (FLY-39) out. That matches the mitigation recorded on risk FLY-46.</p>
+            <p><b>Why not save?</b> Scenarios exist so you can explore safely. Saving moves real sprint assignments, which changes commitments and the velocity chart's baseline. Get stakeholder agreement first.</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+500 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- CP-M3 -->
+      <article class="mission" id="cp-m3" data-miles="450">
+        <div class="mission-head"><div><span class="mcode">MISSION CP-M3</span><h3>Spec an eazyBI bounce-back report</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> JQL told you <em>which</em> items bounced. The quality lead wants <em>how often</em>, per sprint, as a trend. Write a report spec precise enough that someone else could build it, then build it if eazyBI is installed.</div>
+          <ol class="steps">
+            <li>List the import settings you need (project, history, custom fields).</li>
+            <li>Define rows, columns, pages (filters) and the measure, including the calculated rate.</li>
+            <li>Decide how to treat FLY-25's two bounces: one item, or two events? Write down your choice.</li>
+            <li>Pick a chart type and an alert threshold (e.g. a bounce rate above 25% triggers a retro topic).</li>
+          </ol>
+          <details class="reveal"><summary>Show model answer</summary><div>
+            <p><b>Import:</b> FLY; change history ON; Story Points as a measure; Sprint and Issue Type as dimensions.</p>
+            <p><b>Rows:</b> Sprint (closed sprints only). <b>Columns:</b> transitions eQE Testing → Development; transitions into eQE Testing; calculated bounce rate. <b>Pages:</b> Project = FLY, Issue Type in Story/Bug.</p>
+            <p><b>Event vs item:</b> Count events for the rate (the quality signal), and add a second "distinct items bounced" measure for the narrative. In this sandbox, FLY-25 has 2 events and FLY-21 and FLY-19 have 1 each: 4 events across 3 items.</p>
+            <p><b>Chart:</b> bars for events plus a line for the rate on a secondary axis. Put the 25% threshold in the report description so nobody has to guess.</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+450 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- CP-M4 -->
+      <article class="mission" id="cp-m4" data-miles="400">
+        <div class="mission-head"><div><span class="mcode">MISSION CP-M4</span><h3>Release-readiness gate for Mobile 5.3</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> Mobile 5.3 ships 15 Dec. Design the go/no-go gate that combines Jira (work state) and Zephyr (test evidence). Run the Jira half live in the sandbox.</div>
+          <ol class="steps">
+            <li>List every unresolved item on the release.</li>
+            <li>Find open Highest or High bugs on the release.</li>
+            <li>Find release items that are <em>not</em> in Ready for Release or Done.</li>
+            <li>Write the Zephyr half: which coverage and execution numbers must be true?</li>
+            <li>Write a one-paragraph go/no-go recommendation for today's sandbox state.</li>
+          </ol>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <pre data-jql data-label="Release items not yet release-ready">project = FLY AND fixVersion = "Mobile 5.3"
+AND status not in ("Ready for Release", Done)</pre>
+            <pre data-jql data-label="Gate blockers: open high-priority bugs">project = FLY AND fixVersion = "Mobile 5.3" AND type = Bug
+AND statusCategory != Done AND priority in (Highest, High)</pre>
+            <p>Today's answer is <b>NO-GO</b>. FLY-21 (Highest) is still in eQE Testing, FLY-25 (High bug) is in PO Review, and FLY-50 (Highest crash on apostrophe names) is on the release but still To Do and overdue. Zephyr half: 100% of release stories have at least one linked test, 100% executed in the "Mobile 5.3 regression" cycle, 0 failed executions without a linked Bug.</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+400 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- CP-M5 -->
+      <article class="mission" id="cp-m5" data-miles="450">
+        <div class="mission-head"><div><span class="mcode">MISSION CP-M5</span><h3>Automation: "Blocked &gt; 2 days escalates"</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> FLY-22 is blocked by FLY-24. Nobody noticed for days. JQL can't see label history, so design an automation pair that measures blocked time and escalates after 2 days, then build it in the sandbox.</div>
+          <ol class="steps">
+            <li>Have an admin create a date field, <code>Blocked since</code>, and add it to FLY screens (or use a short date stamp in a comment if you can't add fields).</li>
+            <li><b>Rule A</b>: Labels changed → if Labels contains <code>Blocked</code> and <code>Blocked since</code> is empty → set <code>Blocked since</code> = <code>{{now}}</code>, set Flagged, comment.</li>
+            <li><b>Rule B</b>: Labels changed → if Labels does not contain <code>Blocked</code> → clear <code>Blocked since</code>, remove the flag.</li>
+            <li><b>Rule C</b>: Scheduled daily, JQL below → comment mentioning the assignee and the Scrum Master; send a message to the team channel.</li>
+            <li>Test on FLY-22. Read the audit log. Confirm nothing loops.</li>
+          </ol>
+          <pre data-jql="norun" data-label="Rule C scheduled JQL (after creating the field)">project = FLY AND labels = Blocked AND "Blocked since" <= -2d AND statusCategory != Done</pre>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <p>Key design points: (1) Rule A only stamps the date if it's empty, so re-adding the label doesn't reset the clock. (2) Rule C uses a <em>scheduled</em> trigger, which runs once a day, not on every edit. (3) Add a comment template like <code>{{issue.key}} has been blocked since {{issue.Blocked since}}. Blocker: check links. @Scrum Master</code>. (4) Bonus: in Rule A, also look up the blocking item from the <em>is blocked by</em> link and mention its assignee.</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+450 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- CP-M6 -->
+      <article class="mission" id="cp-m6" data-miles="350">
+        <div class="mission-head"><div><span class="mcode">MISSION CP-M6</span><h3>Run the Jira ↔ Git live demo</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> Run a five-minute demo that shows one change flowing from branch to PR to Jira, including one smart commit that legitimately moves FLY-23 from Development to Ready for eQE. <em>Needs a demo repo connected to the training site.</em></div>
+          <ol class="steps">
+            <li>Move FLY-23 back to Development in Jira first, so the demo transition is valid.</li>
+            <li>Create the branch and commit:</li>
+          </ol>
+          <pre data-code="bash" data-label="Demo script">git checkout -b feature/FLY-23-deeplink-cold-start
+# ...make a small change...
+git commit -am "FLY-23 #comment Deep link now works from cold start #time 45m"
+git push -u origin feature/FLY-23-deeplink-cold-start
+# open a PR titled: "FLY-23: Deep link to updated boarding pass"
+git commit --allow-empty -m "FLY-23 #ready-for-eqe"
+git push</pre>
+          <ol class="steps" start="3">
+            <li>Refresh FLY-23 and show the Development panel (branch, commits, PR), the comment, the logged time and the new status.</li>
+            <li>Run the JQL for open PRs and show FLY-23 in the results.</li>
+          </ol>
+          <details class="reveal"><summary>Show debrief &amp; failure modes</summary><div>
+            <ul>
+              <li><b>No transition?</b> Check the transition name. In the simplified workflow, transitions are named after their target status, so "Ready for eQE" becomes <code>#ready-for-eqe</code>.</li>
+              <li><b>No comment either?</b> The committer email doesn't match a Jira user, or smart commits aren't enabled.</li>
+              <li><b>Teaching point:</b> the smart commit moved work <em>as the developer</em>, and that shows in history and cycle time. Never use it to skip eQE or PO Review.</li>
+            </ul>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+350 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <div class="capstone-card" id="capstone-pointer">
+        <div>
+          <span class="eyebrow" style="color:var(--beacon)">Capstone</span>
+          <h2>IROPS Day</h2>
+          <p style="margin:0">A winter storm grounds the hub. In 60 minutes your crew triages, re-plans, reports and communicates using everything from Levels 1–3, including Rovo and a Claude co-pilot under the Co-Pilot Protocol.</p>
+        </div>
+        <a class="btn btn-primary" href="missions.html#capstone">Start the capstone →</a>
+      </div>
+
+      <!-- ================= Checkride ================= -->
+      <h2 id="checkride">Captain checkride</h2>
+      <p>Ten questions. Pass with 80% to earn your fourth stripe.</p>
+      <div class="quiz" data-id="cp" data-pass="80" data-miles="1000">
+        <div class="q"><p class="prompt">1. Which query finds items that failed eQE at least once?</p><div class="opts">
+          <button class="opt" type="button"><code>status = "Development" AND status WAS "eQE Testing"</code></button>
+          <button class="opt" data-right type="button"><code>status CHANGED FROM "eQE Testing" TO "Development"</code></button>
+          <button class="opt" type="button"><code>labels WAS "failed-qa"</code></button>
+        </div><div class="why">CHANGED FROM … TO … reads the transition history. The first option only finds items currently in Development. The third fails: label history isn't searchable.</div></div>
+
+        <div class="q"><p class="prompt">2. Why can't JQL tell you that FLY-25 bounced twice?</p><div class="opts">
+          <button class="opt" type="button">The history was deleted.</button>
+          <button class="opt" data-right type="button">JQL filters items (yes/no). It doesn't count events. Use a reporting tool such as eazyBI for counts.</button>
+          <button class="opt" type="button">Bugs don't record history.</button>
+        </div><div class="why">JQL returns a set of work items. Counting transitions needs imported change history in a reporting tool.</div></div>
+
+        <div class="q"><p class="prompt">3. Which fields support the WAS and CHANGED operators?</p><div class="opts">
+          <button class="opt" type="button">Every field, including labels and story points</button>
+          <button class="opt" data-right type="button">Status, Assignee, Priority, Reporter, Resolution, Fix Version</button>
+          <button class="opt" type="button">Only Status</button>
+        </div><div class="why">History search works on a fixed set of system fields. For anything else, stamp dates with automation or use eazyBI.</div></div>
+
+        <div class="q"><p class="prompt">4. In Plans, what does a scenario let you do?</p><div class="opts">
+          <button class="opt" data-right type="button">Try changes (capacity, dates, scope) without changing real work items until you save.</button>
+          <button class="opt" type="button">Automatically move all overdue items into the next sprint.</button>
+          <button class="opt" type="button">Create a copy of the Jira project.</button>
+        </div><div class="why">Changes in a plan stay in the plan until you review and save them to Jira. Scenarios let you compare options side by side.</div></div>
+
+        <div class="q"><p class="prompt">5. The Golden Template asks for 2–3 sprints of Ready work. With capacity of 30 points per sprint, what's the minimum Ready runway?</p><div class="opts">
+          <button class="opt" type="button">30 points</button>
+          <button class="opt" data-right type="button">60 points</button>
+          <button class="opt" type="button">There is no relationship.</button>
+        </div><div class="why">2 sprints × 30 points = 60 points of Ready work at minimum, and 90 at the top of the range.</div></div>
+
+        <div class="q"><p class="prompt">6. Which eazyBI import setting is required for bounce-back and time-in-status reports?</p><div class="opts">
+          <button class="opt" type="button">Import attachments</button>
+          <button class="opt" data-right type="button">Import change history</button>
+          <button class="opt" type="button">Import comments</button>
+        </div><div class="why">Transitions and time-in-status come from change history. Without it, you only see current values.</div></div>
+
+        <div class="q"><p class="prompt">7. An eQE tester finds a failure while executing a Zephyr test. What's the best way to log the bug?</p><div class="opts">
+          <button class="opt" type="button">Create a Task with label "defect"</button>
+          <button class="opt" data-right type="button">Create the Bug from the failed execution, so it's linked to the test and the story</button>
+          <button class="opt" type="button">Add a comment on the story and move on</button>
+        </div><div class="why">Logging from the execution keeps traceability intact. The standards also say to standardize on the Bug type, not a "defect" label. See FLY-44 for the anti-pattern.</div></div>
+
+        <div class="q"><p class="prompt">8. Your scheduled automation rule edits a field, and another rule triggers on that field. What's the risk?</p><div class="opts">
+          <button class="opt" data-right type="button">A loop that burns through executions and spams the audit log</button>
+          <button class="opt" type="button">None. Rules can never trigger each other.</button>
+          <button class="opt" type="button">The project gets archived.</button>
+        </div><div class="why">Rules can trigger other rules if you allow it. Keep that option off unless you need it, and check the audit log after every test.</div></div>
+
+        <div class="q"><p class="prompt">9. What's true about automations built in Rovo Studio?</p><div class="opts">
+          <button class="opt" type="button">They run with admin permissions.</button>
+          <button class="opt" data-right type="button">They inherit the permissions of the person who built them.</button>
+          <button class="opt" type="button">They can't be audited.</button>
+        </div><div class="why">Studio-built automations inherit the builder's permissions. Another reason to name an owner for each one and review it.</div></div>
+
+        <div class="q"><p class="prompt">10. A smart commit <code>FLY-21 #ready-for-eqe</code> doesn't move the item. What's the most likely cause?</p><div class="opts">
+          <button class="opt" type="button">Smart commits only work on Bugs.</button>
+          <button class="opt" data-right type="button">Smart commits are disabled, the committer email doesn't match a Jira user, or the transition isn't valid from the current status.</button>
+          <button class="opt" type="button">The branch name had no key.</button>
+        </div><div class="why">Smart commits need to be enabled, a matching user, and a valid transition name for the current status. Branch names help linking, but they don't drive commands.</div></div>
+
+        <div class="quiz-score"><div><b>0 / 10</b> <span class="msg"></span></div><button class="btn btn-sm btn-primary retry" type="button">Retake</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/js/site.js"></script>
+</body>
+</html>
