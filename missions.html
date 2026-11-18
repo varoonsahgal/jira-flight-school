@@ -7,7 +7,7 @@
 <meta name="description" content="Every hands-on mission in Jira Flight School in one place, plus the IROPS Day capstone scenario.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/site.css?v=2">
 <link rel="icon" href="assets/img/favicon.svg">
 <style>
   .filters { display:flex; flex-wrap:wrap; gap:8px; margin: 0 0 18px; }
@@ -58,6 +58,7 @@
       <button type="button" data-f="all" aria-pressed="true">All</button>
       <button type="button" data-f="ground-school.html" aria-pressed="false">L1 Ground School</button>
       <button type="button" data-f="first-officer.html" aria-pressed="false">L2 First Officer</button>
+      <button type="button" data-f="velocity.html" aria-pressed="false">Velocity Lab</button>
       <button type="button" data-f="captain.html" aria-pressed="false">L3 Captain</button>
       <button type="button" data-f="rovo.html" aria-pressed="false">Rovo</button>
       <button type="button" data-f="mcp.html" aria-pressed="false">Claude + MCP</button>
@@ -86,66 +87,69 @@
 
 <section>
   <div class="wrap">
-    <div class="callout captain"><strong>Rules of the air</strong>Work in crews of 2 or 3. Pick a crew code (for example <code>T1</code>) and prefix everything you create with <code>[T1]</code>. Add the label <code>irops-T1</code> so the instructor can review your work with one query. Don't edit items you don't own: comment and link instead. Plans steps need the Premium site; otherwise do the math by hand and show your working.</div>
+    <div class="callout captain"><strong>Rules of the air (20 pilots, one airspace)</strong>Work in crews of 2 or 3. Your crew flies from its <b>lowest seat number</b>, called <b>NN</b> below. If that's you, NN is <b><span data-seat-label></span></b>, and the blocks below fill it in as <code>{SEAT}</code>. <b>FLY is read-only</b>: query it, summarize it, plan against it, but don't create, edit, link, flag or comment there. Everything your crew creates goes in the <b>Hangar (HGR)</b>: summary prefix <code>SNN · </code>, labels <code>seat-NN</code> and <code>irops-NN</code>, parent = the crew seat's epic. Mention FLY keys in descriptions instead of linking them. Plans steps need the Premium site; otherwise do the math by hand and show your working.</div>
 
     <div class="station"><span class="num">STATION 1 · 10 MIN · 15 PTS</span>
       <h3>Situation report</h3>
-      <p>Build one saved filter, <code>[T1] IROPS sitrep</code>, that shows every unresolved item under FLY-2 and FLY-4, plus every open Risk in FLY, sorted so the scariest items are on top.</p>
+      <p>Build one saved filter, <code>SNN · IROPS sitrep</code>, that shows every unresolved item under FLY-2 and FLY-4, plus every open Risk in FLY, sorted so the scariest items are on top.</p>
       <pre data-jql data-label="Starter (improve it)">project = FLY
 AND (parent in (FLY-2, FLY-4) OR type = Risk)
 AND statusCategory != Done
 ORDER BY priority DESC, duedate ASC</pre>
       <ul><li>Bonus (+3): add a second filter showing what in that set is <b>blocked or flagged</b>.</li>
-      <li>Bonus (+2): use Rovo <b>Ask AI</b> to generate the same filter from plain English, then note one difference between its JQL and yours.</li></ul>
+      <li>Bonus (+2): use Rovo <b>Ask AI</b> to generate the same filter from plain English, then note one difference between its JQL and yours.</li>
+      <li>Bonus (+2): spot the item in your sitrep that <em>regressed</em> or was <em>escalated</em> this week. Hint: FLY-26's priority history.</li></ul>
     </div>
 
     <div class="station"><span class="num">STATION 2 · 10 MIN · 15 PTS</span>
       <h3>Turn a risk into work</h3>
-      <p>Risk FLY-47 (push provider rate limits during mass IROPS events) is now likely. Create a <b>Spike</b> <code>[T1] Spike: surge test push provider at 200k alerts / 10 min</code> under FLY-2 with acceptance criteria and a 2-day time box. Link it so that it <b>relates to</b> FLY-47 and <b>blocks</b> FLY-21. Flag it if it needs a decision today.</p>
-      <details class="reveal"><summary>Debrief: what good looks like</summary><div><p>A spike has a question, a time box and a decision output, not a deliverable feature. Good acceptance criteria might be: “Measured throughput and error rate at 50k / 100k / 200k alerts”, “Recommendation: batch vs. priority queue”, “Decision recorded on FLY-47”. Check your links from FLY-21's side: it should now say <i>is blocked by</i> your spike.</p></div></details>
+      <p>Risk FLY-47 (push provider rate limits during mass IROPS events) is now likely. In the Hangar, create a <b>Spike</b> <code>SNN · Spike: surge test push provider at 200k alerts / 10 min</code> with labels <code>seat-NN</code>, <code>irops-NN</code> and <code>spike</code>, acceptance criteria and a 2-day time box. In the description, record the relationships you'd link in real life: <i>relates to FLY-47, blocks FLY-21</i>. Flag your task if it needs a decision today.</p>
+      <details class="reveal"><summary>Debrief: what good looks like</summary><div><p>A spike has a question, a time box and a decision output, not a deliverable feature. Good acceptance criteria might be: “Measured throughput and error rate at 50k / 100k / 200k alerts”, “Recommendation: batch vs. priority queue”, “Decision recorded on the risk”. Why text instead of links? A link would show on FLY-21 for everyone and change verified answers such as <code>issueLinkType = "is blocked by"</code>. In your real space, you'd link it, then check from FLY-21's side that it says <i>is blocked by</i> your spike.</p></div></details>
     </div>
 
     <div class="station"><span class="num">STATION 3 · 15 MIN · 20 PTS</span>
       <h3>Re-plan under pressure</h3>
-      <p>FLY-36 (13 points) is too big. Split it into three stories: read-only options, seat hold, and one-tap confirm. The Scrum Master's comment on FLY-36 hints at this. Then build a plan for <b>JET-2026.q4.4</b> assuming the crew loses <b>30% capacity</b> to storm support: from 24 points down to about 17.</p>
+      <p>FLY-36 (13 points) is too big. Read its comments (the Scrum Master hints at the split), then create the three slices <b>in the Hangar</b>: <code>SNN · IROPS · read-only options</code>, <code>SNN · IROPS · seat hold</code> and <code>SNN · IROPS · one-tap confirm</code>, labeled <code>seat-NN</code> + <code>irops-NN</code>. Then build a plan for <b>JET-2026.q4.4</b> assuming the crew loses <b>30% capacity</b> to storm support: from 24 points down to about 17.</p>
       <ol><li>Decide what moves out of JET-2026.q4.4 to make room for the IROPS slice and your spike.</li>
-      <li><b>Premium:</b> in Plans, create a scenario called <code>T1 storm</code>, reduce team capacity, and screenshot the impact on <i>Mobile 5.3</i> and <i>Bag Tracker Beta</i>.</li>
-      <li><b>Standard:</b> write the same reasoning as a comment on FLY-4 (sprint, points in, points out, release risk).</li></ol>
-      <details class="reveal"><summary>Debrief: the trade-offs</summary><div><p>Strong answers keep the spike (it de-risks the whole surge), pull in only the read-only IROPS slice (smallest valuable increment), defer the accessibility work with a note on the regulatory date, and respect FLY-33 → FLY-31. The best crews check the result against the Backlog Readiness rule: is there still 2–3 sprints of Ready work after the re-plan?</p></div></details>
+      <li><b>Premium:</b> in Plans, create a scenario called <code>SNN storm</code>, reduce team capacity, and screenshot the impact on <i>Mobile 5.3</i> and <i>Bag Tracker Beta</i>. <b>Never press “Save to Jira”</b>: it would rewrite FLY's sprints for every crew.</li>
+      <li><b>Standard:</b> write the same reasoning (sprint, points in, points out, release risk) as a comment on your crew's spike.</li></ol>
+      <details class="reveal"><summary>Debrief: the trade-offs</summary><div><p>Strong answers keep the spike (it de-risks the whole surge), pull in only the read-only IROPS slice (smallest valuable increment), defer the accessibility work with a note on the regulatory date (careful: FLY-26 was just escalated to Highest after an audit, so deferring it needs an explicit decision), and respect FLY-33 → FLY-31. The best crews check the result against the Backlog Readiness rule: is there still 2–3 sprints of Ready work after the re-plan?</p></div></details>
     </div>
 
     <div class="station"><span class="num">STATION 4 · 10 MIN · 15 PTS</span>
       <h3>Quality gate for the surge</h3>
-      <p>Write the release-readiness query for <b>Mobile 5.3</b>: anything in the release that is not yet <i>Ready for Release</i> or <i>Done</i>, plus any open Bug of High priority or above in FLY-2. With Zephyr installed, also create a test cycle <code>[T1] IROPS surge</code> with at least three test cases linked to FLY-21 and FLY-25.</p>
+      <p>Write the release-readiness query for <b>Mobile 5.3</b>: anything in the release that is not yet <i>Ready for Release</i> or <i>Done</i>, plus any open Bug of High priority or above in FLY-2. Bonus: also list anything that <em>left</em> the release. With Zephyr installed, also create a test cycle <code>SNN · IROPS surge</code> with at least three test cases linked to your crew's IROPS slices in the Hangar. Mention FLY-21 and FLY-25 in the test cases as the behavior under test, but don't link to them.</p>
       <pre data-jql data-label="Release gate (check it)">project = FLY AND fixVersion = "Mobile 5.3"
 AND status not in ("Ready for Release", Done)
 ORDER BY status ASC</pre>
+      <details class="reveal"><summary>Debrief: expected results</summary><div><p>Not release-ready: FLY-21, FLY-24, FLY-25, FLY-26, FLY-34, FLY-35, FLY-50. High/Highest open bugs under FLY-2: FLY-25. Left the release: FLY-23 (moved to Gate Ops 1.0), found with <code>fixVersion WAS "Mobile 5.3" AND (fixVersion != "Mobile 5.3" OR fixVersion is EMPTY)</code>.</p></div></details>
     </div>
 
     <div class="station"><span class="num">STATION 5 · 5 MIN · 10 PTS</span>
       <h3>Automate the next storm</h3>
-      <p>Design (on paper or in Automation if you have rights) a rule: <i>When a Risk in FLY is changed to priority Highest, create a linked Spike under the same parent, flag the Risk, and notify the space lead.</i> Write the trigger, conditions, actions and smart values.</p>
-      <details class="reveal"><summary>Debrief: a reference design</summary><div><p><b>Trigger:</b> Field value changed (Priority). <b>Conditions:</b> issue type = Risk; priority = Highest; project = FLY. <b>Actions:</b> Create work item (Spike) with summary <code>Spike: mitigate {{issue.summary}}</code> and parent <code>{{issue.parent.key}}</code>; Link work items (relates to trigger); Edit Flagged = Impediment; Send notification with <code>{{issue.url}}</code>. <b>Guardrail:</b> add a condition that no Spike already relates to the Risk, so re-triggering doesn't create duplicates.</p></div></details>
+      <p>Design on paper a rule for FLY: <i>When a Risk is changed to priority Highest, create a linked Spike under the same parent, flag the Risk, and notify the space lead.</i> Write the trigger, conditions, actions and smart values. If you have rights and want to build it, build it in <b>HGR</b> only, with the condition <code>labels = irops-NN</code>, and test it on one of your own tasks.</p>
+      <details class="reveal"><summary>Debrief: a reference design</summary><div><p><b>Trigger:</b> Field value changed (Priority). <b>Conditions:</b> issue type = Risk; priority = Highest; project = FLY. <b>Actions:</b> Create work item (Spike) with summary <code>Spike: mitigate {{issue.summary}}</code> and parent <code>{{issue.parent.key}}</code>; Link work items (relates to trigger); Edit Flagged = Impediment; Send notification with <code>{{issue.url}}</code>. <b>Guardrail:</b> add a condition that no Spike already relates to the Risk, so re-triggering doesn't create duplicates. In a shared practice space, the crew-label condition is the guardrail that keeps 20 rules from firing on each other's work.</p></div></details>
     </div>
 
     <div class="station"><span class="num">STATION 6 · 10 MIN · 25 PTS</span>
       <h3>Co-pilot briefing (Claude + MCP or Rovo)</h3>
-      <p>Using Claude connected through the Atlassian MCP server (or Rovo Chat if MCP isn't set up), draft a 5-bullet leadership update from your Station 1 filter. Follow the <a href="mcp.html" style="color:var(--blue-600)">Co-Pilot Protocol</a>:</p>
+      <p>Using Claude connected through the Atlassian MCP server (or Rovo Chat if MCP isn't set up), draft a 5-bullet leadership update from your Station 1 filter. Post it as a comment on your crew's spike in the Hangar. Follow the <a href="mcp.html" style="color:var(--blue-600)">Co-Pilot Protocol</a>:</p>
       <ul class="checklist" data-id="capstone-copilot">
         <li><input type="checkbox" id="cc1"><label for="cc1">Read-only first: Claude only searches and reads.</label></li>
         <li><input type="checkbox" id="cc2"><label for="cc2">Every number in the draft is checked with <b>Run in Jira</b> (counts match).</label></li>
-        <li><input type="checkbox" id="cc3"><label for="cc3">Claude showed the exact comment text and target item before posting, and you confirmed.</label></li>
-        <li><input type="checkbox" id="cc4"><label for="cc4">The comment on FLY-4 says it was AI-assisted, and your items carry the <code>ai-assisted</code> label.</label></li>
+        <li><input type="checkbox" id="cc3"><label for="cc3">Claude showed the exact comment text and target item (an HGR key, never FLY) before posting, and you confirmed.</label></li>
+        <li><input type="checkbox" id="cc4"><label for="cc4">The comment on your spike task says it was AI-assisted, and your items carry the <code>ai-assisted</code> label.</label></li>
         <li><input type="checkbox" id="cc5"><label for="cc5">Nothing was transitioned, re-estimated or moved between sprints by the AI.</label></li>
       </ul>
     </div>
 
     <div class="station"><span class="num">DEBRIEF · 10 PTS</span>
       <h3>Metrics integrity check</h3>
-      <p>Prove you didn't damage the team's numbers. Run these and explain anything surprising:</p>
-      <pre data-jql data-label="What did my crew touch?">project = FLY AND labels = irops-T1 ORDER BY created ASC</pre>
-      <pre data-jql data-label="Any AI-driven status changes in the last hour?">project = FLY AND status CHANGED AFTER -1h ORDER BY updated DESC</pre>
-      <p>Then open the sprint report for JET-2026.q4.3 and check whether your work showed up as <b>scope added after sprint start</b>. If it did, say whether that was intended.</p>
+      <p>Prove you didn't damage anyone's numbers. Run these from the crew-lead's seat (or replace the number) and explain anything surprising:</p>
+      <pre data-jql data-label="What did my crew touch?">project = HGR AND labels = irops-{SEAT} ORDER BY created ASC</pre>
+      <pre data-jql data-label="Did anything in FLY change in the last hour? (should be empty)">project = FLY AND updated >= -1h ORDER BY updated DESC</pre>
+      <pre data-jql data-label="Did any crew work land in a sprint by accident?">project = HGR AND labels = irops-{SEAT} AND sprint is not EMPTY</pre>
+      <p>If the FLY query returns anything, someone wrote to the reference aircraft. Find out who and how, then tell the instructor. That's a real-world incident review in miniature.</p>
     </div>
 
     <h3 style="margin-top:34px">Crew scoreboard</h3>
@@ -160,12 +164,12 @@ ORDER BY status ASC</pre>
 
 </main>
 <div id="site-footer"></div>
-<script src="assets/js/site.js"></script>
+<script src="assets/js/site.js?v=2"></script>
 <script>
 (function () {
   const S = window.JFS.store;
   /* -------- Mission index, built from the level pages -------- */
-  const PAGES = [["ground-school.html","L1 Ground School"],["rovo.html","Rovo"],["first-officer.html","L2 First Officer"],["captain.html","L3 Captain"],["mcp.html","Claude + MCP"]];
+  const PAGES = [["ground-school.html","L1 Ground School"],["rovo.html","Rovo"],["first-officer.html","L2 First Officer"],["velocity.html","Velocity Lab"],["captain.html","L3 Captain"],["mcp.html","Claude + MCP"]];
   const list = document.getElementById("mlist");
   let rows = [];
   Promise.all(PAGES.map(([p, label]) => fetch(p).then(r => r.ok ? r.text() : "").then(html => {
@@ -210,14 +214,14 @@ ORDER BY status ASC</pre>
   /* -------- Scoreboard -------- */
   const tbody = document.querySelector("#scores tbody");
   const MAX = [15, 15, 20, 15, 10, 25, 10];
-  let crews = S.get("cap:crews", [{ name: "T1", s: [0,0,0,0,0,0,0] }]);
+  let crews = S.get("cap:crews", [{ name: "Crew 01", s: [0,0,0,0,0,0,0] }]);
   function drawScores() {
     tbody.innerHTML = crews.map((c, i) => '<tr><td><input type="text" value="' + c.name.replace(/"/g, "&quot;") + '" data-i="' + i + '" data-k="name" aria-label="Crew name"></td>' +
       c.s.map((v, j) => '<td><input type="number" min="0" max="' + MAX[j] + '" value="' + v + '" data-i="' + i + '" data-k="' + j + '" aria-label="Score"></td>').join("") +
       "<td><b>" + c.s.reduce((a, b) => a + (+b || 0), 0) + "</b></td></tr>").join("");
   }
   tbody.addEventListener("input", e => { const t = e.target, i = +t.dataset.i; if (t.dataset.k === "name") crews[i].name = t.value; else crews[i].s[+t.dataset.k] = Math.min(MAX[+t.dataset.k], Math.max(0, +t.value || 0)); S.set("cap:crews", crews); if (t.dataset.k !== "name") { const tot = t.closest("tr").lastElementChild.firstElementChild; tot.textContent = crews[i].s.reduce((a, b) => a + (+b || 0), 0); } });
-  document.getElementById("add-crew").onclick = () => { crews.push({ name: "T" + (crews.length + 1), s: [0,0,0,0,0,0,0] }); S.set("cap:crews", crews); drawScores(); };
+  document.getElementById("add-crew").onclick = () => { crews.push({ name: "Crew " + String(crews.length + 1).padStart(2, "0"), s: [0,0,0,0,0,0,0] }); S.set("cap:crews", crews); drawScores(); };
   document.getElementById("land").onclick = () => {
     const best = crews.slice().sort((a, b) => b.s.reduce((x, y) => x + y, 0) - a.s.reduce((x, y) => x + y, 0))[0];
     window.JFS.confetti(60); window.JFS.toast("🛬 Smooth landing! Top crew: " + best.name);

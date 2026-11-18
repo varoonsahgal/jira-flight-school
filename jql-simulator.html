@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>JQL Flight Simulator · Jira Flight School</title>
-<meta name="description" content="An interactive JQL flight simulator: 24 challenges from taxi to cruise altitude against a live Jira sandbox, with a pre-flight linter, solution checker, spot-the-bug drills and flow metrics you can build with JQL.">
+<meta name="description" content="An interactive JQL flight simulator: 36 challenges from taxi to the stratosphere against a live Jira sandbox, with a pre-flight linter, solution checker, spot-the-bug drills and flow metrics you can build with JQL.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/site.css?v=2">
 <link rel="icon" href="assets/img/favicon.svg">
 <style>
   /* ---------- Cockpit hero instruments ---------- */
@@ -102,7 +102,7 @@
     <div>
       <span class="eyebrow">Interactive · All levels</span>
       <h1>JQL Flight Simulator</h1>
-      <p class="lede">24 challenges flown against the live FLY sandbox, from taxi to cruising altitude. Write your query, run the pre-flight check, compare it with the flight plan, then open it in Jira to see real results. Every challenge you clear climbs the altimeter.</p>
+      <p class="lede">36 challenges flown against the live FLY sandbox, from taxi to the stratosphere. Write your query, run the pre-flight check, compare it with the flight plan, then open it in Jira to see real results. Every challenge you clear climbs the altimeter.</p>
       <div class="sim-stats">
         <div><b data-sim-done>0</b>challenges flown</div>
         <div><b data-sim-total>24</b>on the board</div>
@@ -189,7 +189,7 @@
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">The simulator</span>
-      <h2>Three legs to cruising altitude</h2>
+      <h2>Four legs to the stratosphere</h2>
       <p class="lede">Each challenge gives you a request from the line, hints that unlock one at a time, a pre-flight linter, a checker that compares your query with the flight plan, and a one-click run against the sandbox.</p>
     </div>
     <div class="callout tip"><strong>How checking works</strong>
@@ -203,6 +203,34 @@
 </section>
 
 <!-- ============================== SPOT THE BUG ============================== -->
+<section id="impossible">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Judgement drill</div>
+      <h2>Impossible or not?</h2>
+      <p class="lede">Experts know where JQL stops. For each request, decide: <b>native JQL</b>, <b>JQL with a trick</b>, or <b>not JQL at all</b> (and what to use instead). Commit to an answer before you open the card. These are exactly the requests where an AI assistant will confidently write JQL that looks right and quietly isn't.</p>
+    </div>
+    <div class="grid g2">
+      <div class="card"><h3>1 · “Items that bounced from eQE <i>twice or more</i>”</h3>
+        <details class="reveal"><summary>Reveal the verdict</summary><div><p><span class="chip red">Not JQL</span> JQL can test whether a change happened, but it can't <b>count</b> how many times. <code>status CHANGED FROM "eQE Testing" TO Development</code> returns FLY-25 once, even though it bounced twice.</p><p><b>Instead:</b> add an automation rule that increments a number field <i>Bounce count</i> on that transition, then <code>"Bounce count" &gt;= 2</code>. Or count transition events in eazyBI (Level 3, CP-3).</p></div></details></div>
+      <div class="card"><h3>2 · “Items that were moved out of Mobile 5.3”</h3>
+        <details class="reveal"><summary>Reveal the verdict</summary><div><p><span class="chip green">JQL with a trick</span> <code>fixVersion WAS "Mobile 5.3" AND (fixVersion != "Mobile 5.3" OR fixVersion is EMPTY)</code>. That's challenge S2. The obvious <code>CHANGED FROM … TO …</code> version returned nothing when we tested it live.</p></div></details></div>
+      <div class="card"><h3>3 · “Stories where the reporter is also the assignee”</h3>
+        <details class="reveal"><summary>Reveal the verdict</summary><div><p><span class="chip red">Not JQL</span> Native JQL can't compare one field with another. Each clause compares a field with a value or a function.</p><p><b>Instead:</b> for a known person, <code>reporter = X AND assignee = X</code>. For everyone, use a Marketplace JQL extension, export to a spreadsheet, or use eazyBI.</p></div></details></div>
+      <div class="card"><h3>4 · “Epics where every child is Done but the epic is still open”</h3>
+        <details class="reveal"><summary>Reveal the verdict</summary><div><p><span class="chip red">Not native JQL</span> There's no “all children satisfy X” operator, and no native function returns parents from a child query.</p><p><b>Instead:</b> an automation rule on child transition (“when all children are done, comment on or transition the parent”), the Timeline/Plans view, or a Marketplace function such as <code>parentsOf()</code>-style extensions.</p></div></details></div>
+      <div class="card"><h3>5 · “Items that spent more than 3 days in eQE Testing”</h3>
+        <details class="reveal"><summary>Reveal the verdict</summary><div><p><span class="chip red">Not JQL</span> JQL knows <i>that</i> something was in a status and roughly <i>when</i>, but not <b>for how long</b>.</p><p><b>Instead:</b> the Control Chart filtered to that column, a time-in-status report in eazyBI, or a time-in-status app.</p></div></details></div>
+      <div class="card"><h3>6 · “Everything that was in the sprint when it started”</h3>
+        <details class="reveal"><summary>Reveal the verdict</summary><div><p><span class="chip red">Not JQL</span> The Sprint field doesn't support WAS/CHANGED, so JQL can't reconstruct the starting scope. That's exactly what the <b>Sprint Report</b> does: items added after the start get an asterisk. See the <a href="velocity.html">Velocity Lab</a> for how this goes wrong.</p></div></details></div>
+      <div class="card"><h3>7 · “Open items somebody dropped (had an assignee, now unassigned)”</h3>
+        <details class="reveal"><summary>Reveal the verdict</summary><div><p><span class="chip green">Native JQL</span> <code>assignee CHANGED TO EMPTY AND statusCategory != Done</code>. That's challenge S3.</p></div></details></div>
+      <div class="card"><h3>8 · “Items that used to carry the Blocked label”</h3>
+        <details class="reveal"><summary>Reveal the verdict</summary><div><p><span class="chip red">Not JQL</span> Labels don't support WAS/CHANGED. If blocked history matters, record it in a field that has history (Flagged, or a status), or stamp a date field with automation (Captain CP-M5).</p></div></details></div>
+    </div>
+  </div>
+</section>
+
 <section class="band-white" id="spot-the-bug">
   <div class="wrap">
     <div class="section-head"><span class="eyebrow">Maintenance hangar</span><h2>Spot the bug</h2><p class="lede">Each of these queries is broken or quietly wrong. Find the fault before you open the fix. Paste any of them into a challenge box and run the pre-flight check to see the linter catch it.</p></div>
@@ -265,12 +293,12 @@ project = FLY AND labels != Blocked</div>
 
 </main>
 <div id="site-footer"></div>
-<script src="assets/js/site.js"></script>
+<script src="assets/js/site.js?v=2"></script>
 <script>
 (function () {
   "use strict";
   var JFS = window.JFS || {};
-  var MILES = { taxi: 100, climb: 200, cruise: 350 };
+  var MILES = { taxi: 100, climb: 200, cruise: 350, strato: 500 };
 
   /* ---------------- Challenge data ---------------- */
   var C = [
@@ -287,7 +315,7 @@ project = FLY AND labels != Blocked</div>
       note: "Notice FLY-51, the duplicate crash report, isn't here: it has no label. Labels only work if people use them." },
     { id: "t4", leg: "taxi", title: "Highest priority, not done", q: "The director wants every open Highest-priority item in FLY, whatever its status.",
       hints: ["Priority values are Highest, High, Medium, Low, Lowest.", "Combine with <code>statusCategory != Done</code>."],
-      sol: ["project = FLY AND priority = Highest AND statusCategory != Done"], exp: "FLY-21, FLY-36, FLY-50", verified: true },
+      sol: ["project = FLY AND priority = Highest AND statusCategory != Done"], exp: "FLY-21, FLY-26, FLY-36, FLY-50 (FLY-26 was escalated from High by an accessibility audit; read its comment)", verified: true },
     { id: "t5", leg: "taxi", title: "Waiting on someone else", q: "Which items are waiting on quality engineering or the product owner? (Ready for eQE, eQE Testing, PO Review)",
       hints: ["Several statuses → <code>status in (…)</code>.", "Quote the multi-word status names."],
       sol: ['project = FLY AND status in ("Ready for eQE", "eQE Testing", "PO Review")'], exp: "FLY-21, FLY-23, FLY-25", verified: true },
@@ -310,7 +338,7 @@ project = FLY AND labels != Blocked</div>
       sol: ["project = FLY AND type in (Story, Task, Bug) AND parent is EMPTY"], exp: "FLY-29, FLY-44, FLY-45, FLY-49", verified: true },
     { id: "c4", leg: "climb", title: "Nobody's flying this", q: "Find unassigned, not-done work in the active sprint, including sub-tasks.",
       hints: ["Unassigned = <code>assignee is EMPTY</code>.", "Combine with <code>sprint in openSprints()</code> and <code>statusCategory != Done</code>."],
-      sol: ["project = FLY AND sprint in openSprints() AND assignee is EMPTY AND statusCategory != Done"], exp: "FLY-22, FLY-26, FLY-27, FLY-29, FLY-53, FLY-54", verified: true },
+      sol: ["project = FLY AND sprint in openSprints() AND assignee is EMPTY AND statusCategory != Done"], exp: "FLY-22, FLY-26, FLY-27, FLY-28, FLY-29, FLY-53, FLY-54 (FLY-28 is back: it was reopened after a regression)", verified: true },
     { id: "c5", leg: "climb", title: "The defect in disguise", q: "The standard says problems are Bugs. Find anything that isn't a Bug but is labeled or titled as a defect.",
       hints: ["Exclude Bugs with <code>type != Bug</code>.", "Use OR inside parentheses: label <code>defect</code> or <code>summary ~ \"defect\"</code>."],
       sol: ['project = FLY AND type != Bug AND (labels = defect OR summary ~ "defect")'], exp: "FLY-44", verified: true },
@@ -339,7 +367,7 @@ project = FLY AND labels != Blocked</div>
       sol: ["project = FLY AND issueLinkType = duplicates"], exp: "FLY-51 (duplicates FLY-50)", verified: true },
     { id: "x6", leg: "cruise", title: "Tested but not shipped", q: "Find work that has been in eQE Testing at some point and isn't Done yet.",
       hints: ["<code>WAS</code> matches current <i>or</i> past values.", "Exclude the Done category."],
-      sol: ['project = FLY AND status WAS "eQE Testing" AND statusCategory != Done'], exp: "FLY-21, FLY-25, FLY-27", verified: true },
+      sol: ['project = FLY AND status WAS "eQE Testing" AND statusCategory != Done'], exp: "FLY-21, FLY-25, FLY-27, FLY-28 (FLY-28 passed eQE, reached Done, then regressed)", verified: true },
     { id: "x7", leg: "cruise", title: "My landings this week", q: "Show the items <i>you</i> moved to Done since the start of this week.",
       hints: ["<code>CHANGED TO … BY … DURING (…, …)</code>", "<code>DURING (startOfWeek(), now())</code>"],
       sol: ["project = FLY AND status CHANGED TO Done BY currentUser() DURING (startOfWeek(), now())"], exp: "Depends on who you are. For the instructor account it's every Done item; for attendees it's likely empty until you close something.", verified: false },
@@ -348,16 +376,59 @@ project = FLY AND labels != Blocked</div>
       sol: ['project = FLY AND parent = FLY-2 AND sprint in openSprints() AND status in (Development, "Ready for eQE", "eQE Testing") ORDER BY priority DESC, Rank ASC'], exp: "FLY-21 (Highest), then FLY-22 and FLY-24 (High), then FLY-23 (Medium)", verified: true, order: true },
     { id: "x9", leg: "cruise", title: "Not blocked, really", q: "List open active-sprint work that is NOT labeled Blocked, including items with no labels at all.",
       hints: ["This is the EMPTY trap.", "<code>(labels != Blocked OR labels is EMPTY)</code>"],
-      sol: ["project = FLY AND sprint in openSprints() AND statusCategory != Done AND (labels != Blocked OR labels is EMPTY)"], exp: "Every open active-sprint item except FLY-22", verified: true },
+      sol: ["project = FLY AND sprint in openSprints() AND statusCategory != Done AND (labels != Blocked OR labels is EMPTY)"], exp: "FLY-20, FLY-21, FLY-23 to FLY-29, FLY-53, FLY-54: every open active-sprint item except FLY-22", verified: true },
     { id: "x10", leg: "cruise", title: "Stale WIP alarm", q: "Find in-progress work whose status hasn't changed in the last 7 days, oldest update first.",
       hints: ["Negate a history clause: <code>NOT status CHANGED AFTER -7d</code>.", "Filter with <code>statusCategory = \"In Progress\"</code>."],
-      sol: ['project = FLY AND statusCategory = "In Progress" AND NOT status CHANGED AFTER -7d ORDER BY updated ASC'], exp: "Empty today (the sandbox was seeded on 17 Nov 2026). It starts returning items a week later. Run it again then.", verified: false, order: true }
+      sol: ['project = FLY AND statusCategory = "In Progress" AND NOT status CHANGED AFTER -7d ORDER BY updated ASC'], exp: "Empty today (the sandbox was seeded on 17 Nov 2026). It starts returning items a week later. Run it again then.", verified: false, order: true },
+
+    // ---------- STRATOSPHERE (expert) ----------
+    { id: "s1", leg: "strato", title: "Regression radar", q: "Engineering leadership asks: what reached Done and then came back? These are regressions, and they cost more than bounce-backs.",
+      hints: ["Current status won't tell you. You need history.", "<code>status CHANGED FROM Done</code> catches anything that ever left Done.", "Exclude items that are Done again."],
+      sol: ["project = FLY AND status CHANGED FROM Done AND statusCategory != Done", "project = FLY AND status WAS Done AND status != Done"], exp: "FLY-28 (crew acknowledgement: passed eQE, shipped, then regressed in staging)", verified: true },
+    { id: "s2", leg: "strato", title: "The release slip (with an EMPTY trap)", q: "Which items were planned for Mobile 5.3 at some point but aren't in it now? Include anything whose release was cleared completely.",
+      hints: ["Fix Version supports <code>WAS</code>.", "\"Not in it now\" needs <code>!=</code>, and != never matches EMPTY.", "<code>(fixVersion != \"Mobile 5.3\" OR fixVersion is EMPTY)</code>"],
+      sol: ['project = FLY AND fixVersion WAS "Mobile 5.3" AND (fixVersion != "Mobile 5.3" OR fixVersion is EMPTY)'], exp: "FLY-23 (moved to Gate Ops 1.0)", verified: true,
+      note: "Gotcha we found live: <code>fixVersion CHANGED FROM \"Mobile 5.3\" TO \"Gate Ops 1.0\"</code> returns <b>nothing</b> on this site, even though FLY-23 made exactly that move. Multi-value fields record the removal and the addition as separate changes. <code>WAS</code> plus a current-value check is the reliable pattern. Always test history queries against a case you know." },
+    { id: "s3", leg: "strato", title: "Abandoned in flight", q: "Find open work that somebody picked up and then dropped: it had an assignee and was set back to unassigned.",
+      hints: ["Assignee supports <code>CHANGED</code>.", "<code>CHANGED TO EMPTY</code> means \"was unassigned by someone\". Items created unassigned don't count."],
+      sol: ["project = FLY AND assignee CHANGED TO EMPTY AND statusCategory != Done"], exp: "FLY-29 (Node 22 upgrade: picked up, then dropped)", verified: true },
+    { id: "s4", leg: "strato", title: "Escalation watch", q: "Which open items were escalated to Highest priority since 1 November 2026?",
+      hints: ["Priority supports history operators.", "<code>CHANGED TO Highest AFTER \"2026-11-01\"</code>"],
+      sol: ['project = FLY AND priority CHANGED TO Highest AFTER "2026-11-01" AND statusCategory != Done'], exp: "FLY-26 (seat map screen-reader story, escalated after an accessibility audit)", verified: true,
+      note: "Compare with Taxi T4 (\"Highest, not done\"), which also returns FLY-21, FLY-36 and FLY-50. Those were born Highest. Only history tells you what <i>changed</i>." },
+    { id: "s5", leg: "strato", title: "Query on a query", q: "Reuse the board's own saved filter: from the Jetstream Sprint Board's filter, show active-sprint items waiting for PO Review.",
+      hints: ["The <code>filter</code> field lets one saved filter build on another.", "The saved filter's name is <code>FLY - Jetstream - Sprint Board</code>."],
+      sol: ['filter = "FLY - Jetstream - Sprint Board" AND sprint in openSprints() AND status = "PO Review"'], exp: "FLY-25", verified: true,
+      note: "Building on a team's board filter means your dashboard follows the board automatically when its scope changes." },
+    { id: "s6", leg: "strato", title: "Spike-gated future work", q: "Which items scheduled in a future sprint are waiting on the bag-latency spike FLY-33?",
+      hints: ["<code>linkedIssues(KEY, \"description\")</code> uses the description from the <i>given</i> item's side.", "From FLY-33's side, the link reads <i>blocks</i>.", "Add <code>sprint in futureSprints()</code>."],
+      sol: ['project = FLY AND sprint in futureSprints() AND issue in linkedIssues(FLY-33, "blocks")'], exp: "FLY-31 (planned for JET-2026.q4.4 but blocked until the spike lands)", verified: true },
+    { id: "s7", leg: "strato", title: "Quality escape candidates", q: "Bugs under the Boarding Pass or Gate Alerts epics that have been through eQE Testing but still aren't Done.",
+      hints: ["<code>parent in (FLY-1, FLY-2)</code>", "<code>status WAS \"eQE Testing\"</code> catches current and past values."],
+      sol: ['project = FLY AND type = Bug AND parent in (FLY-1, FLY-2) AND status WAS "eQE Testing" AND statusCategory != Done'], exp: "FLY-25, FLY-27", verified: true },
+    { id: "s8", leg: "strato", title: "Double EMPTY trap", q: "Release manager: open, non-sub-task work in the active sprint that is NOT shipping in Mobile 5.3, including work with no release at all.",
+      hints: ["Exclude sub-tasks: <code>type != Sub-task</code>.", "fixVersion != … skips EMPTY, so OR it with <code>fixVersion is EMPTY</code>."],
+      sol: ['project = FLY AND sprint in openSprints() AND type != Sub-task AND statusCategory != Done AND (fixVersion != "Mobile 5.3" OR fixVersion is EMPTY)'], exp: "FLY-20, FLY-22, FLY-23, FLY-28, FLY-29", verified: true,
+      note: "Drop the <code>OR fixVersion is EMPTY</code> and FLY-20, FLY-28 and FLY-29 vanish without any warning. That's the most expensive JQL mistake in release planning." },
+    { id: "s9", leg: "strato", title: "Rework radar", q: "One list of all rework: items that bounced from eQE Testing to Development, OR left Done after shipping. Most urgent first.",
+      hints: ["Two history clauses joined by OR, in parentheses.", "<code>ORDER BY priority DESC</code>"],
+      sol: ['project = FLY AND (status CHANGED FROM "eQE Testing" TO Development OR status CHANGED FROM Done) ORDER BY priority DESC'], exp: "FLY-21, FLY-25, FLY-19, FLY-28", verified: true, order: true },
+    { id: "s10", leg: "strato", title: "Risk blast radius", q: "Which open work is linked to either of the two Risks (FLY-46, FLY-47)?",
+      hints: ["Call <code>linkedIssues()</code> once per risk.", "With no description, every link type counts."],
+      sol: ["project = FLY AND (issue in linkedIssues(FLY-46) OR issue in linkedIssues(FLY-47)) AND statusCategory != Done"], exp: "FLY-25, FLY-36", verified: true },
+    { id: "s11", leg: "strato", title: "Phrase, not words", q: "Find bugs that mention the exact phrase \"gate change\", not just \"gate\" and \"change\" somewhere.",
+      hints: ["<code>text ~ \"gate change\"</code> matches the words in any order.", "Escape inner quotes for a phrase: <code>text ~ \"\\\"gate change\\\"\"</code>"],
+      sol: ['project = FLY AND text ~ "\\"gate change\\"" AND type = Bug'], exp: "FLY-19, FLY-25", verified: true },
+    { id: "s12", leg: "strato", title: "Key range forensics", q: "Among FLY-20 to FLY-30 (the active sprint's core), whose priority has ever changed?",
+      hints: ["Keys support range comparisons: <code>key &gt;= FLY-20 AND key &lt;= FLY-30</code>.", "<code>priority CHANGED</code> with no FROM/TO means any change."],
+      sol: ["project = FLY AND key >= FLY-20 AND key <= FLY-30 AND priority CHANGED"], exp: "FLY-26", verified: true }
   ];
 
   var LEGS = [
     { key: "taxi", name: "Leg 1 · Taxi", badge: "EASY · " + MILES.taxi + " mi each", blurb: "Single-clause thinking: spaces, types, labels, statuses, epics." },
     { key: "climb", name: "Leg 2 · Climb", badge: "MEDIUM · " + MILES.climb + " mi each", blurb: "EMPTY, dates, OR logic, flags, and sorting." },
-    { key: "cruise", name: "Leg 3 · Cruise at altitude", badge: "HARD · " + MILES.cruise + " mi each", blurb: "History operators, sprint set logic, link functions, and the gotchas that fool AI-generated JQL." }
+    { key: "cruise", name: "Leg 3 · Cruise at altitude", badge: "HARD · " + MILES.cruise + " mi each", blurb: "History operators, sprint set logic, link functions, and the gotchas that fool AI-generated JQL." },
+    { key: "strato", name: "Leg 4 · Stratosphere", badge: "EXPERT · " + MILES.strato + " mi each", blurb: "Regressions, release slips, abandoned work, filter-on-filter, double EMPTY traps and a history gotcha we caught live. All answers verified on the sandbox." }
   ];
 
   /* ---------------- Helpers ---------------- */
@@ -411,7 +482,7 @@ project = FLY AND labels != Blocked</div>
     }
     if (/\bduring\b/i.test(stripped) && !/\bduring\s*\(/i.test(stripped)) out.push({ lvl: "err", msg: "DURING needs two dates in parentheses: DURING (start, end)." });
     if (/\band\b/i.test(main) && /\bor\b/i.test(main) && !/\(/.test(main)) out.push({ lvl: "warn", msg: "You mix AND and OR without parentheses. AND binds first, so this probably isn't what you mean." });
-    if (!/\b(project|parent|issue|key|issuekey)\b/i.test(stripped)) out.push({ lvl: "warn", msg: "No project clause, so this searches every space you can see. Add \"project = FLY\"." });
+    if (!/\b(project|parent|issue|key|issuekey|filter)\b/i.test(stripped)) out.push({ lvl: "warn", msg: "No project clause, so this searches every space you can see. Add \"project = FLY\"." });
     if (!out.length) out.push({ lvl: "ok", msg: "Pre-flight check clean. Cleared to taxi! Now compare it with the flight plan or open it in Jira." });
     return out;
   }
@@ -580,7 +651,7 @@ project = FLY AND labels != Blocked</div>
     document.querySelectorAll("[data-sim-miles]").forEach(function (el) { el.textContent = miles.toLocaleString(); });
     if (done === total && !(JFS.store && JFS.store.get("sim:cruise-msg", false))) {
       JFS.store && JFS.store.set("sim:cruise-msg", true);
-      JFS.toast && JFS.toast("Cruising altitude reached: all 24 challenges flown 🛫");
+      JFS.toast && JFS.toast("Cruising altitude reached: all 36 challenges flown 🛫");
       JFS.confetti && JFS.confetti(60);
     }
   }

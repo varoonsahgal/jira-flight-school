@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/site.css?v=2">
 <link rel="icon" href="assets/img/favicon.svg">
 <style>
   .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin: 16px 0 22px; }
@@ -77,7 +77,7 @@
     </aside>
 
     <div>
-      <div class="callout united">
+      <div class="callout standard">
         <strong>Before you take off</strong>
         <p>Level 3 assumes you know the Golden Template workflow (New Idea → Product Refinement → Team Refinement → Ready → To Do → Development → Ready for eQE → eQE Testing → PO Review → Ready for Release → Done) and basic JQL. If either is new to you, take a lap through <a href="first-officer.html">First Officer</a> first.</p>
       </div>
@@ -85,6 +85,11 @@
       <div class="callout warn">
         <strong>Equipment check</strong>
         <p>The training sandbox runs on <b>Jira Standard</b>. <b>Plans</b> (CP-2) needs Jira <b>Premium</b>; the sandbox currently shows "We couldn't load your plans". <b>eazyBI</b> (CP-3) and <b>Zephyr</b> (CP-4) are Marketplace apps that aren't installed yet. Those lessons run as instructor demos on a Premium training site with the apps installed, or as a walkthrough until that site exists.</p>
+      </div>
+
+      <div class="callout captain">
+        <strong>20 pilots, one airspace</strong>
+        <p>Pick your seat in the top bar (you're on <b><span data-seat-label></span></b>). <b>FLY is read-only</b>: query it, report on it, plan against it in scenarios, but never create, edit, move, link, flag or comment there. Everything you build goes in <b>your seat on the Hangar</b> (<a data-seat-board>open my seat board ↗</a>): summary prefix <code>S{SEAT} · </code>, label <code>seat-{SEAT}</code>. Filters, dashboards, plans and automation rules you create start with <code>S{SEAT}</code>, and rules are scoped to your seat label. Never touch another seat.</p>
       </div>
 
       <!-- ================= CP-1 ================= -->
@@ -136,6 +141,8 @@ AND issueLinkType = "is blocked by"</pre>
         <pre data-jql data-label="Next sprint's commitment that still isn't Ready">project = FLY AND sprint in futureSprints()
 AND status not in ("Ready", "To Do")</pre>
 
+        <div class="callout tip"><strong>Flow metrics need honest sprint data</strong><p>Carry-over and velocity are only as good as the way sprints are run. Before you build a flow dashboard, fly the <a href="velocity.html">Velocity Lab</a>. It covers six engineered failure modes on the read-only <em>Velocity Forensics</em> board (scope creep, re-estimating, carry-over, the Ready-for-Release trap, sub-task points, backdated starts) and a Monte Carlo forecast.</p></div>
+
         <h3>Four flow metrics you can pull from JQL today</h3>
         <div class="metric-grid">
           <div class="metric"><h4>Bounce-back rate</h4><p>Share of items that failed eQE at least once.</p><span class="formula">count(CHANGED FROM "eQE Testing" TO "Development") ÷ count(status WAS "eQE Testing")</span></div>
@@ -173,7 +180,7 @@ ORDER BY updated ASC</pre>
         </div>
         <div class="callout warn">
           <strong>Premium only</strong>
-          <p>Plans is part of Jira Premium and Enterprise. To run this module hands-on, United needs a <b>Premium training site</b> (or a Premium trial on the sandbox) with the FLY project imported. Without it, CP-2 runs as an instructor demo.</p>
+          <p>Plans is part of Jira Premium and Enterprise. To run this module hands-on, your organization needs a <b>Premium training site</b> (or a Premium trial on the sandbox) with the FLY project imported. Without it, CP-2 runs as an instructor demo.</p>
         </div>
 
         <h3>The pre-flight: build the plan</h3>
@@ -273,7 +280,7 @@ END</pre>
         </div>
         <div class="callout warn">
           <strong>Know your edition</strong>
-          <p>SmartBear sells more than one Zephyr product for Jira Cloud, and they model tests differently. One keeps test cases, cycles and plans as its own objects inside Jira; the other makes a "Test" a Jira work type. Confirm which edition United licenses before class. Screens and terms in this lesson follow the first model.</p>
+          <p>SmartBear sells more than one Zephyr product for Jira Cloud, and they model tests differently. One keeps test cases, cycles and plans as its own objects inside Jira; the other makes a "Test" a Jira work type. Confirm which edition your organization licenses before class. Screens and terms in this lesson follow the first model.</p>
         </div>
 
         <h3>The traceability chain</h3>
@@ -296,7 +303,7 @@ END</pre>
         <pre data-jql data-label="The Jira half of the gate: open high-priority bugs on the release">project = FLY AND fixVersion = "Mobile 5.3"
 AND type = Bug AND statusCategory != Done
 AND priority in (Highest, High)</pre>
-        <div class="callout united">
+        <div class="callout standard">
           <strong>Where this fits the template</strong>
           <p>The exit criteria for <b>Ready for Release</b> say testing is complete, the PO has approved, and every acceptance criterion is met. Zephyr provides the evidence for "testing complete": 100% of linked tests executed in the release cycle, zero failed without a linked defect, and zero open Highest or High bugs.</p>
         </div>
@@ -416,11 +423,11 @@ AND development[commits].all = 0 AND resolved >= -30d</pre>
         <div class="mission-body">
           <div class="brief"><b>Mission brief</b> The Jetstream PO wants one screen that answers: what's stuck, what's bouncing, what's carrying over, and what's overdue. No eazyBI, just Jira.</div>
           <ol class="steps">
-            <li>Write and save four filters, named <code>JET · Bounce-backs</code>, <code>JET · Carry-over</code>, <code>JET · Aging WIP 5d</code> and <code>JET · Overdue</code>.</li>
+            <li>Write and save four filters, named <code>S{SEAT} · Bounce-backs</code>, <code>S{SEAT} · Carry-over</code>, <code>S{SEAT} · Aging WIP 5d</code> and <code>S{SEAT} · Overdue</code>. With 20 people, unprefixed names become impossible to find.</li>
             <li>Check each against the sandbox: bounce-backs should return FLY-19, FLY-21 and FLY-25; carry-over FLY-20; overdue FLY-49 and FLY-50.</li>
-            <li>Create a dashboard, <em>Jetstream Flight Deck</em>, and add a <em>Filter Results</em> gadget for each filter.</li>
+            <li>Create a dashboard, <em>S{SEAT} · Jetstream Flight Deck</em>, and add a <em>Filter Results</em> gadget for each filter. Filters and dashboards only read FLY, so this is safe for everyone at once.</li>
             <li>Add a <em>Two Dimensional Filter Statistics</em> gadget on a filter of the active sprint: rows = Status, columns = Assignee.</li>
-            <li>Share the dashboard with the FLY project, not "public".</li>
+            <li>Share the dashboard with the HGR project (your classmates), not "public".</li>
           </ol>
           <details class="reveal"><summary>Show debrief &amp; reference JQL</summary><div>
             <pre data-jql data-label="Bounce-backs">project = FLY AND status CHANGED FROM "eQE Testing" TO "Development"</pre>
@@ -439,12 +446,12 @@ AND development[commits].all = 0 AND resolved >= -30d</pre>
         <div class="mission-body">
           <div class="brief"><b>Mission brief</b> Jetstream loses 30% of its capacity over the holidays. Leadership still wants the <b>Live Bag Tracker</b> beta (FLY-3) and the <b>IROPS rebooking pilot</b> (FLY-4) on time. Use Plans to show what's realistic. <em>Premium training site required; otherwise do the math on paper using the Velocity report.</em></div>
           <ol class="steps">
-            <li>Create a plan from <em>Jetstream - Sprint Board</em>. Set team capacity to the trailing average from the Velocity report (about 30 points per sprint).</li>
+            <li>Create a plan named <em>S{SEAT} · Holiday plan</em> from <em>Jetstream - Sprint Board</em>. Set team capacity to the trailing average from the Velocity report (about 30 points per sprint). Read the <a href="velocity.html">Velocity Lab</a> first: the sandbox's own commitment numbers are distorted, so use <em>completed</em>.</li>
             <li>Duplicate the baseline into a scenario named <em>Holiday -30%</em>. Set capacity for JET-2026.q4.4 and JET-2027.q1.1 to 21 points.</li>
             <li>Look at the sprint loads. JET-2026.q4.4 holds FLY-31, 32, 33, 34 and 35; JET-2027.q1.1 holds FLY-36 (13 points) and FLY-37.</li>
             <li>Check dependencies: FLY-33 (spike) blocks FLY-31. Make sure the spike is scheduled first.</li>
             <li>Produce a two-option recommendation: (A) split FLY-36 as the comments suggest, or (B) slip Bag Tracker Beta. Show the release-date impact of each.</li>
-            <li>Don't save the scenario changes to Jira. Explain why.</li>
+            <li><b>Never press "Save to Jira".</b> FLY is read-only, and 20 plans saving changes would rewrite its sprints. Explain why you'd also refuse in real life.</li>
           </ol>
           <details class="reveal"><summary>Show debrief</summary><div>
             <p>JET-2026.q4.4 totals 23 points (8+5+3+5+2). That's over a 21-point holiday capacity before any carry-over arrives. FLY-36 alone is 13 points, more than half of a reduced sprint, and its own comment thread proposes a three-way split. A strong answer splits FLY-36 into read-only options / seat hold / confirm, pulls the read-only slice into the pilot, and pushes partner rebooking (FLY-39) out. That matches the mitigation recorded on risk FLY-46.</p>
@@ -492,7 +499,7 @@ AND development[commits].all = 0 AND resolved >= -30d</pre>
 AND status not in ("Ready for Release", Done)</pre>
             <pre data-jql data-label="Gate blockers: open high-priority bugs">project = FLY AND fixVersion = "Mobile 5.3" AND type = Bug
 AND statusCategory != Done AND priority in (Highest, High)</pre>
-            <p>Today's answer is <b>NO-GO</b>. FLY-21 (Highest) is still in eQE Testing, FLY-25 (High bug) is in PO Review, and FLY-50 (Highest crash on apostrophe names) is on the release but still To Do and overdue. Zephyr half: 100% of release stories have at least one linked test, 100% executed in the "Mobile 5.3 regression" cycle, 0 failed executions without a linked Bug.</p>
+            <p>Expected results: not release-ready = FLY-21, FLY-24, FLY-25, FLY-26, FLY-34, FLY-35, FLY-50; open High/Highest bugs = FLY-25, FLY-50. Today's answer is <b>NO-GO</b>. FLY-21 (Highest) is still in eQE Testing, FLY-25 (High bug) is in PO Review, FLY-50 (Highest crash on apostrophe names) is on the release but still To Do and overdue, and FLY-26 (seat map screen-reader story) was <em>escalated</em> to Highest after an accessibility audit and hasn't started. Also ask what <em>left</em> the release: FLY-23 moved to Gate Ops 1.0 (<code>fixVersion WAS "Mobile 5.3" AND (fixVersion != "Mobile 5.3" OR fixVersion is EMPTY)</code>). Zephyr half: 100% of release stories have at least one linked test, 100% executed in the "Mobile 5.3 regression" cycle, 0 failed executions without a linked Bug.</p>
           </div></details>
         </div>
         <div class="mission-foot"><span class="miles-tag">+400 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
@@ -502,15 +509,15 @@ AND statusCategory != Done AND priority in (Highest, High)</pre>
       <article class="mission" id="cp-m5" data-miles="450">
         <div class="mission-head"><div><span class="mcode">MISSION CP-M5</span><h3>Automation: "Blocked &gt; 2 days escalates"</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i class="on"></i></span></div>
         <div class="mission-body">
-          <div class="brief"><b>Mission brief</b> FLY-22 is blocked by FLY-24. Nobody noticed for days. JQL can't see label history, so design an automation pair that measures blocked time and escalates after 2 days, then build it in the sandbox.</div>
+          <div class="brief"><b>Mission brief</b> In FLY, FLY-22 is blocked by FLY-24 and nobody noticed for days. JQL can't see label history, so design an automation set that measures blocked time and escalates after 2 days. Build and test it on <b>your seat</b> in the Hangar, never on FLY.</div>
           <ol class="steps">
-            <li>Have an admin create a date field, <code>Blocked since</code>, and add it to FLY screens (or use a short date stamp in a comment if you can't add fields).</li>
+            <li>Have an admin create a date field, <code>Blocked since</code>, and add it to HGR screens (or use a short date stamp in a comment if you can't add fields). Name your rules <code>S{SEAT} · …</code> and add the condition <b>Labels contains seat-{SEAT}</b> to every rule. Otherwise 20 people's rules all fire on every Hangar item.</li>
             <li><b>Rule A</b>: Labels changed → if Labels contains <code>Blocked</code> and <code>Blocked since</code> is empty → set <code>Blocked since</code> = <code>{{now}}</code>, set Flagged, comment.</li>
             <li><b>Rule B</b>: Labels changed → if Labels does not contain <code>Blocked</code> → clear <code>Blocked since</code>, remove the flag.</li>
             <li><b>Rule C</b>: Scheduled daily, JQL below → comment mentioning the assignee and the Scrum Master; send a message to the team channel.</li>
-            <li>Test on FLY-22. Read the audit log. Confirm nothing loops.</li>
+            <li>Test on two of your own seat stories: label one <code>Blocked</code>, then remove it. Read the audit log. Confirm nothing loops and nothing outside your seat changed.</li>
           </ol>
-          <pre data-jql="norun" data-label="Rule C scheduled JQL (after creating the field)">project = FLY AND labels = Blocked AND "Blocked since" <= -2d AND statusCategory != Done</pre>
+          <pre data-jql="norun" data-label="Rule C scheduled JQL (after creating the field)">project = HGR AND labels = seat-{SEAT} AND labels = Blocked AND "Blocked since" <= -2d AND statusCategory != Done</pre>
           <details class="reveal"><summary>Show debrief</summary><div>
             <p>Key design points: (1) Rule A only stamps the date if it's empty, so re-adding the label doesn't reset the clock. (2) Rule C uses a <em>scheduled</em> trigger, which runs once a day, not on every edit. (3) Add a comment template like <code>{{issue.key}} has been blocked since {{issue.Blocked since}}. Blocker: check links. @Scrum Master</code>. (4) Bonus: in Rule A, also look up the blocking item from the <em>is blocked by</em> link and mention its assignee.</p>
           </div></details>
@@ -522,25 +529,26 @@ AND statusCategory != Done AND priority in (Highest, High)</pre>
       <article class="mission" id="cp-m6" data-miles="350">
         <div class="mission-head"><div><span class="mcode">MISSION CP-M6</span><h3>Run the Jira ↔ Git live demo</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
         <div class="mission-body">
-          <div class="brief"><b>Mission brief</b> Run a five-minute demo that shows one change flowing from branch to PR to Jira, including one smart commit that legitimately moves FLY-23 from Development to Ready for eQE. <em>Needs a demo repo connected to the training site.</em></div>
+          <div class="brief"><b>Mission brief</b> Run a five-minute demo that shows one change flowing from branch to PR to Jira, including smart commits that legitimately move <b>one of your own seat stories</b> through the Hangar workflow (To Do → In Progress → Ready for Release). <em>Needs a demo repo connected to the training site.</em> FLY stays read-only, so the demo never touches FLY items.</div>
           <ol class="steps">
-            <li>Move FLY-23 back to Development in Jira first, so the demo transition is valid.</li>
-            <li>Create the branch and commit:</li>
+            <li>Pick a story from <a data-seat-board>your seat board ↗</a>, for example <em>S{SEAT} · As a traveler, I get a reminder to pre-order my meal</em>, and note its key (we'll call it <code>HGR-NN</code>). Make sure it's in To Do.</li>
+            <li>Create the branch and commit, replacing <code>HGR-NN</code> with your key:</li>
           </ol>
-          <pre data-code="bash" data-label="Demo script">git checkout -b feature/FLY-23-deeplink-cold-start
+          <pre data-code="bash" data-label="Demo script">git checkout -b feature/HGR-NN-s{SEAT}-meal-reminder
 # ...make a small change...
-git commit -am "FLY-23 #comment Deep link now works from cold start #time 45m"
-git push -u origin feature/FLY-23-deeplink-cold-start
-# open a PR titled: "FLY-23: Deep link to updated boarding pass"
-git commit --allow-empty -m "FLY-23 #ready-for-eqe"
+git commit -am "HGR-NN #in-progress #comment Reminder job scheduled 24h before departure #time 45m"
+git push -u origin feature/HGR-NN-s{SEAT}-meal-reminder
+# open a PR titled: "HGR-NN: Meal pre-order reminder"
+git commit --allow-empty -m "HGR-NN #ready-for-release"
 git push</pre>
           <ol class="steps" start="3">
-            <li>Refresh FLY-23 and show the Development panel (branch, commits, PR), the comment, the logged time and the new status.</li>
-            <li>Run the JQL for open PRs and show FLY-23 in the results.</li>
+            <li>Refresh your story and show the Development panel (branch, commits, PR), the comment, the logged time and the new status.</li>
+            <li>Run the JQL for open PRs on your seat and show your story in the results:
+          <pre data-jql data-label="My seat's work with an open PR">project = HGR AND labels = seat-{SEAT} AND development[pullrequests].open > 0</pre></li>
           </ol>
           <details class="reveal"><summary>Show debrief &amp; failure modes</summary><div>
             <ul>
-              <li><b>No transition?</b> Check the transition name. In the simplified workflow, transitions are named after their target status, so "Ready for eQE" becomes <code>#ready-for-eqe</code>.</li>
+              <li><b>No transition?</b> Check the transition name. In the simplified workflow, transitions are named after their target status, so "Ready for Release" becomes <code>#ready-for-release</code> (and in FLY's full template, "Ready for eQE" would be <code>#ready-for-eqe</code>).</li>
               <li><b>No comment either?</b> The committer email doesn't match a Jira user, or smart commits aren't enabled.</li>
               <li><b>Teaching point:</b> the smart commit moved work <em>as the developer</em>, and that shows in history and cycle time. Never use it to skip eQE or PO Review.</li>
             </ul>
@@ -630,6 +638,6 @@ git push</pre>
 
 </main>
 <div id="site-footer"></div>
-<script src="assets/js/site.js"></script>
+<script src="assets/js/site.js?v=2"></script>
 </body>
 </html>

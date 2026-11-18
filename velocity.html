@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Velocity Lab · Jira Flight School</title>
+<meta name="description" content="Velocity Lab: The Black Box Recorder. How Jira really computes velocity, sprint reports and burndowns, six crash investigations measured on a live sandbox, a sprint simulator, a Monte Carlo release forecaster and hands-on missions for 20 pilots in parallel.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css?v=2">
+<link rel="icon" href="assets/img/favicon.svg">
+<style>
+  .bb-strip { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-top: 22px; }
+  @media (max-width: 760px) { .bb-strip { grid-template-columns: minmax(0,1fr); } }
+  .bb-strip div { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); border-radius: 12px; padding: 12px 14px; }
+  .bb-strip b { display: block; font-family: var(--font-display); font-size: 1.6rem; color: var(--beacon); line-height: 1.1; }
+  .bb-strip span { color: #c9d8f2; font-size: .9rem; }
+  .rule-box { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin: 16px 0 22px; }
+  @media (max-width: 760px) { .rule-box { grid-template-columns: minmax(0,1fr); } }
+  .rule { border-radius: var(--radius); padding: 18px 20px; border: 1px solid var(--line); background: var(--white); }
+  .rule h4 { margin-bottom: 6px; }
+  .rule.commit { border-top: 5px solid #8b93a7; }
+  .rule.done { border-top: 5px solid #7cb342; }
+  .timeline-svg { width: 100%; height: auto; display: block; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); margin: 14px 0 20px; }
+  .case-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; margin: 18px 0; }
+  @media (max-width: 860px) { .case-grid { grid-template-columns: minmax(0,1fr); } }
+  .case { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-1); }
+  .case-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 16px; background: var(--navy-900); color: var(--white); }
+  .case-head h3 { color: var(--white); margin: 0; font-size: 1.15rem; }
+  .case-head .num { font-family: var(--font-mono); font-size: .85rem; color: var(--beacon); white-space: nowrap; }
+  .case-body { padding: 14px 16px 6px; font-size: .95rem; }
+  .case-body dl { display: grid; grid-template-columns: minmax(0,110px) minmax(0,1fr); gap: 6px 12px; margin: 0 0 10px; }
+  .case-body dt { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .06em; font-size: .78rem; color: var(--blue-600); padding-top: 3px; }
+  .case-body dd { margin: 0; color: var(--ink-2); }
+  .debate { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin: 16px 0; }
+  @media (max-width: 760px) { .debate { grid-template-columns: minmax(0,1fr); } }
+  .debate .side { border-radius: var(--radius); padding: 18px; border: 1px solid var(--line); background: var(--white); }
+  .debate .side.a { border-left: 5px solid var(--blue-500); }
+  .debate .side.b { border-left: 5px solid var(--beacon); }
+  /* simulator */
+  .sim { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-2); overflow: hidden; }
+  .sim-head { background: linear-gradient(90deg, #0a0d14, var(--navy-800)); color: #fff; padding: 16px 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+  .sim-head h3 { color: #fff; margin: 0; }
+  .sim-head .led { font-family: var(--font-mono); font-size: .8rem; color: #3ce38f; letter-spacing: .1em; }
+  .sim-body { padding: 18px 20px; }
+  .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .presets button { font: 600 .85rem var(--font-body); border: 1.5px solid var(--line); background: var(--ice-50); color: var(--navy-800); padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+  .presets button.on { background: var(--navy-900); color: #fff; border-color: var(--navy-900); }
+  .sim table { width: 100%; border-collapse: collapse; font-size: .9rem; min-width: 720px; }
+  .sim th { text-align: left; font-family: var(--font-display); letter-spacing: .05em; font-size: .8rem; text-transform: uppercase; color: var(--ink-3); padding: 6px 6px; border-bottom: 2px solid var(--line); }
+  .sim td { padding: 5px 6px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .sim input[type=text], .sim input[type=number], .sim select { font: inherit; padding: 5px 7px; border: 1px solid var(--line); border-radius: 6px; background: #fff; width: 100%; }
+  .sim input[type=number] { width: 70px; }
+  .sim .rm { background: none; border: 0; color: var(--alert); font-size: 1.1rem; cursor: pointer; }
+  .sim-out { display: grid; grid-template-columns: minmax(0,260px) minmax(0,1fr); gap: 20px; margin-top: 18px; align-items: start; }
+  @media (max-width: 760px) { .sim-out { grid-template-columns: minmax(0,1fr); } }
+  .sim-chart { background: var(--ice-50); border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+  .sim-chart svg { width: 100%; height: auto; display: block; }
+  .explain { font-size: .9rem; max-height: 320px; overflow: auto; background: var(--ice-50); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .explain .ln { padding: 4px 0; border-bottom: 1px dashed var(--line); display: flex; gap: 8px; }
+  .explain .ln:last-child { border-bottom: 0; }
+  .explain .tag { font-family: var(--font-mono); font-size: .72rem; border-radius: 5px; padding: 2px 6px; white-space: nowrap; height: fit-content; }
+  .explain .tag.c { background: #e9edf3; color: #42526e; }
+  .explain .tag.d { background: #dcf3e7; color: #146c45; }
+  .explain .tag.x { background: var(--alert-bg); color: var(--alert); }
+  .totals { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+  .totals div { flex: 1; min-width: 120px; background: var(--navy-900); color: #fff; border-radius: 10px; padding: 10px 14px; }
+  .totals b { display: block; font-family: var(--font-display); font-size: 2rem; color: var(--beacon); line-height: 1; }
+  .totals span { font-size: .78rem; text-transform: uppercase; letter-spacing: .1em; color: #9fb2d3; }
+  .predict { display: none; margin-top: 14px; padding: 14px; border: 2px dashed var(--beacon); border-radius: 12px; background: var(--warn-bg); }
+  .predict.show { display: block; }
+  .predict label { font-weight: 700; margin-right: 6px; }
+  .predict input { width: 80px; font: inherit; padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; margin-right: 12px; }
+  .hidden-nums .totals b, .hidden-nums .sim-chart, .hidden-nums .explain { filter: blur(7px); pointer-events: none; user-select: none; }
+  .switch { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: #fff; cursor: pointer; }
+  .switch input { width: 18px; height: 18px; accent-color: var(--beacon); }
+  /* forecaster */
+  .fc-grid { display: grid; grid-template-columns: minmax(0,320px) minmax(0,1fr); gap: 20px; }
+  @media (max-width: 860px) { .fc-grid { grid-template-columns: minmax(0,1fr); } }
+  .fc-in label { display: block; font-weight: 700; margin: 10px 0 4px; }
+  .fc-in input { width: 100%; font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; }
+  .fc-res { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 12px; }
+  @media (max-width: 600px) { .fc-res { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+  .fc-res div { background: var(--ice-50); border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; }
+  .fc-res b { display: block; font-family: var(--font-display); font-size: 1.7rem; color: var(--blue-600); line-height: 1.1; }
+  .fc-res span { font-size: .75rem; color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; }
+  .fc-res .avg b { color: var(--alert); }
+  #fc-hist { width: 100%; height: auto; display: block; background: var(--white); border: 1px solid var(--line); border-radius: 12px; }
+  .answer-table td:first-child { font-family: var(--font-mono); white-space: nowrap; }
+</style>
+</head>
+<body>
+<header id="site-header"></header>
+<main id="main">
+
+<section class="hero compact">
+  <div class="clouds" aria-hidden="true">
+    <div class="cloud" style="top:16%;width:220px;height:48px;animation-duration:88s;animation-delay:-14s"></div>
+    <div class="cloud" style="top:62%;width:160px;height:38px;animation-duration:66s;animation-delay:-30s"></div>
+    <div class="cloud" style="top:80%;width:120px;height:30px;animation-duration:54s;animation-delay:-5s"></div>
+  </div>
+  <div class="wrap">
+    <div class="eyebrow">Level 2–3 · Expert lab</div>
+    <h1>Velocity Lab: The Black Box Recorder</h1>
+    <p class="lede">Every sprint leaves a flight recorder: the sprint report, the burndown and the velocity chart. Most teams read the headline number and move on. In this lab you'll open the recorder, learn exactly how Jira computes each number, and investigate six engineered "incidents" that we flew on the live sandbox and measured.</p>
+    <div class="meta-row" style="margin-top:16px"><span class="chip gold">⏱ ~2.5 h</span><span class="chip">Live lab + self-paced</span><span class="chip">6 crash investigations</span><span class="chip">2 simulators</span><span class="chip red">Turbulence: severe</span></div>
+    <div class="bb-strip">
+      <div><b>0 / 20</b><span>commitment / completed on a sprint where every item was "done". Scenario F.</span></div>
+      <div><b>16 → 29</b><span>story points "completed" after two mid-sprint re-estimates. Scenario C.</span></div>
+      <div><b>10 pts</b><span>of finished work velocity ignored because it was in Ready for Release. Scenario E.</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap layout">
+    <aside class="toc" aria-label="Velocity Lab contents">
+      <h4>Recorder index</h4>
+      <ol>
+        <li><a href="#briefing">Pre-flight briefing</a></li>
+        <li><a href="#vl-1">VL-1 How velocity is computed</a></li>
+        <li><a href="#vl-2">VL-2 Sprint report decoded</a></li>
+        <li><a href="#vl-3">VL-3 Burndown &amp; scope</a></li>
+        <li><a href="#vl-4">VL-4 Six crash investigations</a></li>
+        <li><a href="#vl-5">VL-5 The Ready-for-Release question</a></li>
+        <li><a href="#vl-6">VL-6 CFD &amp; Control Chart</a></li>
+        <li><a href="#vl-7">VL-7 Forecasting honestly</a></li>
+      </ol>
+      <h4 style="margin-top:14px">Simulators</h4>
+      <ol>
+        <li><a href="#simulator">Black Box Simulator</a></li>
+        <li><a href="#forecaster">Release Forecaster</a></li>
+      </ol>
+      <h4 style="margin-top:14px">Missions</h4>
+      <ol>
+        <li><a href="#vl-m1">VL-M1 Forensics walk-through</a></li>
+        <li><a href="#vl-m2">VL-M2 The FLY anomaly</a></li>
+        <li><a href="#vl-m3">VL-M3 Fly your own sprint</a></li>
+        <li><a href="#vl-m4">VL-M4 Carry-over sprint</a></li>
+        <li><a href="#vl-m5">VL-M5 Sub-task trap</a></li>
+        <li><a href="#vl-m6">VL-M6 Leadership brief</a></li>
+      </ol>
+      <h4 style="margin-top:14px">Finish</h4>
+      <ol><li><a href="#checkride">Black box checkride</a></li></ol>
+    </aside>
+
+    <div>
+      <!-- ================= BRIEFING ================= -->
+      <article class="lesson" id="briefing">
+        <h2><span class="lesson-code">00</span> Pre-flight briefing</h2>
+        <div class="callout captain"><strong>From the flight deck</strong>Velocity is a <b>forecasting instrument</b>, not a performance score. An altimeter that reads 2,000 feet too high isn't "optimistic". It's dangerous. Today you'll learn every way Jira's velocity reading can drift, and how to tell drift from reality.</div>
+        <div class="grid g3" style="margin:18px 0">
+          <div class="card"><div class="icon-badge">🔒</div><h3>FLY · reference</h3><p class="muted" style="margin:0">Read-only aircraft. Its first two sprints contain a real velocity anomaly we discovered by accident.</p></div>
+          <div class="card"><div class="icon-badge">🧪</div><h3>Velocity Forensics</h3><p class="muted" style="margin:0">Read-only board in the Hangar space with six sprints, each engineered to show one mechanic. Shared by all 20 pilots.</p></div>
+          <div class="card"><div class="icon-badge">💺</div><h3>Your seat board</h3><p class="muted" style="margin:0">Yours alone (<span data-seat-label></span>): a 60-point backlog where you fly real sprints. <a data-seat-board href="#">Open my seat board ↗</a></p></div>
+        </div>
+        <div class="callout warn"><strong>Shared-space etiquette for 20 pilots</strong>
+          <ul style="margin:6px 0 0;padding-left:20px">
+            <li>Only touch items labeled <code>seat-{SEAT}</code> on <b>your</b> seat board. Never start, complete or edit sprints on another seat's board.</li>
+            <li>The <b>Velocity Forensics</b> board and the <b>FLY</b> space are evidence. Look, don't touch: no edits, no transitions, no comments.</li>
+            <li>Name your sprints <code>S{SEAT}-2026.q4.1</code>, <code>S{SEAT}-2026.q4.2</code> and so on, following the team-code naming standard.</li>
+            <li>Starting and completing sprints needs the <b>Manage Sprints</b> permission in the Hangar space. If the buttons are greyed out, raise your hand.</li>
+          </ul>
+        </div>
+        <pre data-jql data-label="My seat's work, right now">project = HGR AND labels = seat-{SEAT} ORDER BY Rank ASC</pre>
+      </article>
+
+      <!-- ================= VL-1 ================= -->
+      <article class="lesson" id="vl-1">
+        <h2><span class="lesson-code">VL-1</span> How Jira actually computes velocity</h2>
+        <div class="meta-row"><span class="chip">⏱ 20 min</span><span class="chip">Concept + demo</span></div>
+        <div class="objectives"><h4>After this lesson you can</h4><ul>
+          <li>State the exact rule for <b>Commitment</b> and for <b>Completed</b>.</li>
+          <li>Explain why the sprint start <b>timestamp</b> decides what counts as committed.</li>
+          <li>Predict the effect of re-estimates, removals, carry-over and sub-tasks before looking at the chart.</li>
+        </ul></div>
+        <div class="rule-box">
+          <div class="rule commit"><h4>⬛ Commitment (grey bar)</h4><p>The sum of the board's estimate (here, <b>Story Points</b>) of every item that was in the sprint <b>at the sprint's start date/time</b>, using the estimate as it stood <b>at that moment</b>.</p><p class="muted" style="margin:0">Items removed later still count. Items added after the start don't. Sub-task estimates aren't included.</p></div>
+          <div class="rule done"><h4>🟩 Completed (green bar)</h4><p>The sum of the estimates of items that were in the board's <b>done column</b> (the right-most column) <b>when the sprint was completed</b>, using the estimate <b>at completion</b>, not the original.</p><p class="muted" style="margin:0">Finished work sitting in any other column, such as Ready for Release, scores zero.</p></div>
+        </div>
+        <h3>The start timestamp is everything</h3>
+        <p>We measured this on the sandbox: Jira stores a sprint's start <b>to the minute</b>. If a sprint starts at <code>18:20:37</code>, the recorder writes <code>18:20:00</code>. Anything added to the sprint after that stored timestamp is <i>added after start</i>. It gets an asterisk in the sprint report and is excluded from commitment, even if it was added ten seconds later in the same minute.</p>
+        <svg class="timeline-svg" viewBox="0 0 900 220" role="img" aria-label="Timeline: sprint start stored at 18:20:00; items added at 18:20:07 count as added after start">
+          <line x1="40" y1="120" x2="860" y2="120" stroke="#8cbcf0" stroke-width="3"/>
+          <g font-family="JetBrains Mono, monospace" font-size="13" fill="#3a4a66">
+            <line x1="120" y1="108" x2="120" y2="132" stroke="#3a4a66" stroke-width="2"/><text x="120" y="152" text-anchor="middle">18:19:40</text>
+            <text x="120" y="92" text-anchor="middle" fill="#146c45">FLY-7 added ✓</text>
+            <line x1="330" y1="70" x2="330" y2="170" stroke="#d6203a" stroke-width="3" stroke-dasharray="6 5"/>
+            <text x="330" y="190" text-anchor="middle" fill="#d6203a" font-weight="600">18:20:00 stored start</text>
+            <text x="330" y="60" text-anchor="middle" fill="#d6203a">everything right of this line = *</text>
+            <line x1="480" y1="108" x2="480" y2="132" stroke="#3a4a66" stroke-width="2"/><text x="480" y="152" text-anchor="middle">18:20:07</text>
+            <text x="480" y="92" text-anchor="middle" fill="#d6203a">FLY-8 … FLY-14 added *</text>
+            <line x1="690" y1="108" x2="690" y2="132" stroke="#3a4a66" stroke-width="2"/><text x="690" y="152" text-anchor="middle">18:20:37</text>
+            <text x="690" y="92" text-anchor="middle" fill="#0b2a5b">"Start sprint" clicked</text>
+          </g>
+          <text x="40" y="30" font-family="Barlow Condensed, sans-serif" font-size="20" font-weight="700" fill="#061a40">What really happened in FLY's first sprint: commitment 5 instead of 36</text>
+        </svg>
+        <div class="callout tip"><strong>Field rule</strong>Load the sprint, then <b>wait for the clock's minute to roll over</b> before you add late changes, so there's no ambiguity about what was committed. Most real teams never hit this because planning ends minutes before the start. Scripts, imports and "start the sprint then drag the rest in" habits hit it every time.</div>
+        <h3>What the velocity chart is (and isn't)</h3>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Property</th><th>What it means for you</th></tr></thead>
+          <tbody>
+            <tr><td>Board-specific</td><td>Two boards over the same space can show different velocity. The board's <b>estimation statistic</b> and <b>column mapping</b> define the numbers.</td></tr>
+            <tr><td>Last 7 sprints</td><td>The chart shows up to the seven most recent completed sprints, and its average line uses what's shown.</td></tr>
+            <tr><td>Story-level only</td><td>Sub-task estimates don't appear in the velocity chart. Put points on the story.</td></tr>
+            <tr><td>Snapshot at completion</td><td>Completed uses the estimate when the sprint closed. Re-estimating finished work changes history.</td></tr>
+            <tr><td>Not comparable</td><td>Points are a team-local currency. Comparing Team A's 40 with Team B's 25 is comparing yen with dollars.</td></tr>
+          </tbody>
+        </table></div>
+      </article>
+
+      <!-- ================= VL-2 ================= -->
+      <article class="lesson" id="vl-2">
+        <h2><span class="lesson-code">VL-2</span> The Sprint Report, decoded</h2>
+        <div class="meta-row"><span class="chip">⏱ 20 min</span><span class="chip">Screenshot walk-through</span></div>
+        <p>The velocity chart tells you <i>that</i> something odd happened. The Sprint Report tells you <i>what</i>. Read it in four sections:</p>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Signal</th><th>Where you see it</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td><b>*</b> after a key</td><td>Any section</td><td>Added to the sprint after the start timestamp, so it isn't part of commitment.</td></tr>
+            <tr><td><b>3 → 8</b></td><td>Estimate column</td><td>Re-estimated during the sprint. The header shows totals the same way, e.g. <i>Story Points (16 → 29)</i>.</td></tr>
+            <tr><td>Completed Issues</td><td>Section 1</td><td>In the board's done column at completion. The only work that reaches the green bar.</td></tr>
+            <tr><td>Issues Not Completed</td><td>Section 2</td><td>Anything else at completion, including <b>Ready for Release</b>.</td></tr>
+            <tr><td>Issues Removed From Sprint</td><td>Section 3</td><td>Was in the sprint at start, pulled out later. Still counted in commitment.</td></tr>
+            <tr><td>Completed outside of this sprint</td><td>Extra section when present</td><td>Done in another sprint or before it started. Shown, but not credited here.</td></tr>
+          </tbody>
+        </table></div>
+        <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/projects/HGR/boards/7/reports/sprint-retrospective?sprint=FOR-2026.q3.2</span></div><img src="assets/img/vf-b-scope-creep.jpg" alt="Sprint report for scenario B showing two issues marked with asterisks as added after start" loading="lazy"></div><figcaption>Scenario B: HGR-76* and HGR-78* joined after the start, so 13 points never entered commitment.</figcaption></figure>
+        <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/reports/sprint-retrospective?sprint=FOR-2026.q3.3</span></div><img src="assets/img/vf-c-reestimate.jpg" alt="Sprint report for scenario C showing Story Points 16 to 29 and per-row arrows 3 to 8 and 5 to 13" loading="lazy"></div><figcaption>Scenario C: two re-estimates inflated "completed" from 16 to 29 with no extra scope.</figcaption></figure>
+        <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/reports/sprint-retrospective?sprint=FOR-2026.q3.5</span></div><img src="assets/img/vf-e-ready-for-release.jpg" alt="Sprint report for scenario E: Completed 16, Not Completed 10 in Ready for Release, Removed 5" loading="lazy"></div><figcaption>Scenario E: three finished items in READY FOR RELEASE score zero, one removed item still sits in commitment, and the story whose points live on sub-tasks shows "-".</figcaption></figure>
+      </article>
+
+      <!-- ================= VL-3 ================= -->
+      <article class="lesson" id="vl-3">
+        <h2><span class="lesson-code">VL-3</span> Burndown &amp; scope</h2>
+        <div class="meta-row"><span class="chip">⏱ 15 min</span></div>
+        <ul>
+          <li><b>Guideline</b>: the grey diagonal from total committed work to zero across the sprint's working days. It's a reference, not a target.</li>
+          <li><b>Remaining values</b> (red): steps down when items reach the done column, and up when scope is added or re-estimated upward.</li>
+          <li><b>Non-working days</b>: the hatched blocks come from the board's working-days settings. Set them, or every weekend looks like a stall.</li>
+          <li><b>Scope change</b>: a red line climbing mid-sprint is scope creep or re-estimation. Open the sprint report to see which.</li>
+        </ul>
+        <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/reports/sprint-retrospective?sprint=FOR-2026.q3.6</span></div><img src="assets/img/vf-f-backdated.jpg" alt="Burndown for scenario F: line at zero from Nov 15 then jumps to 20 on Nov 17; all four items marked with asterisks" loading="lazy"></div><figcaption>Scenario F, the backdated start: the sprint "began" on Nov 15, so the burndown sits at zero for two days, then jumps to 20 when the items arrive on Nov 17. Every item carries an asterisk and commitment reads 0.</figcaption></figure>
+        <div class="callout danger"><strong>Accident report</strong>Editing a sprint's start date into the past, to "line it up with the calendar", turns every planned item into scope creep after the fact. The velocity chart then shows a team that "committed to nothing". Fix the dates <i>before</i> starting, never after loading.</div>
+      </article>
+
+      <!-- ================= VL-4 ================= -->
+      <article class="lesson" id="vl-4">
+        <h2><span class="lesson-code">VL-4</span> Six crash investigations</h2>
+        <div class="meta-row"><span class="chip">⏱ 30 min</span><span class="chip">Evidence: Velocity Forensics board</span></div>
+        <p>Each sprint below was flown on purpose on the <b>Velocity Forensics (read-only)</b> board and measured. The numbers are Jira's own output.</p>
+        <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/projects/HGR/boards/7/reports/velocity</span></div><img src="assets/img/vf-velocity.jpg" alt="Velocity chart with six sprints FOR-2026.q3.1 to q3.6 and an average line of 20.83" loading="lazy"></div><figcaption>The recorder's summary: six sprints, average 20.83. Every bar pair tells a different story.</figcaption></figure>
+        <div class="case-grid">
+          <div class="case"><div class="case-head"><h3>A · Clean flight</h3><span class="num">21 / 21</span></div><div class="case-body"><dl>
+            <dt>Pilot saw</dt><dd>Perfect bar pair. Commitment equals completed.</dd>
+            <dt>Reality</dt><dd>Five items (5, 3, 8, 2, 3) loaded before the start and all finished.</dd>
+            <dt>Root cause</dt><dd>None. This is the baseline.</dd>
+            <dt>Prevention</dt><dd>Treat 21/21 as normal, not heroic. Over many sprints it should look boringly similar.</dd></dl></div></div>
+          <div class="case"><div class="case-head"><h3>B · Scope creep</h3><span class="num">18 / 31</span></div><div class="case-body"><dl>
+            <dt>Pilot saw</dt><dd>"We beat our commitment by 72%!"</dd>
+            <dt>Reality</dt><dd>4 items (18 pts) committed. An exec demo (8) and urgent legal copy (5) were pushed in mid-sprint, marked *.</dd>
+            <dt>Root cause</dt><dd>Unplanned work entered after the start. Completed rose, but so did interruption.</dd>
+            <dt>Prevention</dt><dd>Track added-after-start points as their own metric. Protect the sprint, or plan a buffer explicitly.</dd></dl></div></div>
+          <div class="case"><div class="case-head"><h3>C · Estimate inflation</h3><span class="num">16 / 29</span></div><div class="case-body"><dl>
+            <dt>Pilot saw</dt><dd>Velocity jumped 81% with the same four items.</dd>
+            <dt>Reality</dt><dd>Two items re-estimated mid-sprint: 3→8 and 5→13. Completed uses the new values.</dd>
+            <dt>Root cause</dt><dd>Re-estimating work in flight rewrites history. Sometimes it's honest learning; often it's padding.</dd>
+            <dt>Prevention</dt><dd>Don't re-estimate committed items. Split or create a follow-up instead. Watch for "→" in the sprint report.</dd></dl></div></div>
+          <div class="case"><div class="case-head"><h3>D · Carry-over cliff</h3><span class="num">26 / 8</span></div><div class="case-body"><dl>
+            <dt>Pilot saw</dt><dd>Velocity crashed to 8.</dd>
+            <dt>Reality</dt><dd>Two items finished (5 + 3). Two were in progress, two never started. 18 points carried to the next sprint.</dd>
+            <dt>Root cause</dt><dd>Overcommitment plus parallel starts. Too much WIP, not enough finishing.</dd>
+            <dt>Prevention</dt><dd>Stop starting, start finishing. Plan to recent completed, not to hope.</dd></dl></div></div>
+          <div class="case"><div class="case-head"><h3>E · The triple trap</h3><span class="num">31 / 16</span></div><div class="case-body"><dl>
+            <dt>Pilot saw</dt><dd>Another weak sprint: 16 of 31.</dd>
+            <dt>Reality</dt><dd>18 carried points were committed <i>again</i>. 10 finished points sat in Ready for Release. 8 sub-task points were invisible. A 5-pointer removed mid-sprint still inflated commitment.</dd>
+            <dt>Root cause</dt><dd>The chart measured "reached Done", not "work finished by the team".</dd>
+            <dt>Prevention</dt><dd>Points on stories, not sub-tasks. Decide what Done means (VL-5). Remove scope before the start, not after.</dd></dl></div></div>
+          <div class="case"><div class="case-head"><h3>F · Backdated start</h3><span class="num">0 / 20</span></div><div class="case-body"><dl>
+            <dt>Pilot saw</dt><dd>"The team committed to nothing and delivered 20?"</dd>
+            <dt>Reality</dt><dd>The sprint was started with a start date two days in the past. Every item was added after that date, so every item is *.</dd>
+            <dt>Root cause</dt><dd>The start timestamp (VL-1) preceded the load.</dd>
+            <dt>Prevention</dt><dd>Set dates correctly when you start the sprint. Never backdate after loading. Also the root cause of FLY's 5/31 and 0/29.</dd></dl></div></div>
+        </div>
+        <pre data-jql data-label="Evidence locker: scenario E items">project = HGR AND labels = forensics AND labels = scenario-E ORDER BY key ASC</pre>
+        <pre data-jql data-label="Everything in the forensics evidence locker">project = HGR AND labels = forensics ORDER BY key ASC</pre>
+        <div class="callout standard"><strong>The double-count you can't see on the chart</strong>Scenario D left 18 points unfinished, and scenario E committed them again. Add up "commitment" across D and E and you get 57, but only 39 points of distinct work were ever planned. Never sum commitments across sprints to describe a quarter's plan.</div>
+      </article>
+
+      <!-- ================= VL-5 ================= -->
+      <article class="lesson" id="vl-5">
+        <h2><span class="lesson-code">VL-5</span> The Ready-for-Release question</h2>
+        <div class="meta-row"><span class="chip">⏱ 20 min</span><span class="chip">Structured debate</span></div>
+        <p>In a standard-template workflow, the sprint board's columns run <code>… → PO Review → Ready for Release → Done</code>, and the right-most column, <b>Done</b>, means <i>in production</i>. Velocity therefore only credits work that has <b>shipped</b>. When releases lag behind sprints, velocity under-reports, and teams are tempted to "fix" it by moving Done earlier.</p>
+        <div class="debate">
+          <div class="side a"><h3>✈ Team "Shipped"</h3><p>Keep Done = in production.</p><ul><li>Velocity measures value delivered, not work parked.</li><li>Release bottlenecks become visible instead of hidden.</li><li>Forecasts answer the real question: "when will customers have it?"</li></ul></div>
+          <div class="side b"><h3>🛠 Team "Accepted"</h3><p>Map Ready for Release into the done column.</p><ul><li>Velocity reflects what the team controls.</li><li>Release trains outside the team don't punish sprint metrics.</li><li>Sprint reviews match what the sprint board shows.</li></ul></div>
+        </div>
+        <div class="callout captain"><strong>Recommendation</strong>Keep <b>Done = in production</b> for honesty and forecasting. Then measure <b>accepted throughput</b> (items reaching Ready for Release) separately on the dashboard, so the team's output stays visible and the release gap becomes a metric of its own. Whatever you choose, <b>don't change the column mapping mid-quarter</b>, because it rewrites how every past sprint's chart reads.</div>
+        <pre data-jql data-label="Accepted throughput last week (pattern)">project = FLY AND status CHANGED TO "Ready for Release" DURING (startOfWeek(-1), endOfWeek(-1))</pre>
+        <pre data-jql data-label="The release gap: accepted but not shipped">project = FLY AND status = "Ready for Release" ORDER BY updated ASC</pre>
+        <pre data-jql data-label="Your seat's parked work">project = HGR AND labels = seat-{SEAT} AND status = "Ready for Release"</pre>
+      </article>
+
+      <!-- ================= VL-6 ================= -->
+      <article class="lesson" id="vl-6">
+        <h2><span class="lesson-code">VL-6</span> Cumulative Flow &amp; Control Chart essentials</h2>
+        <div class="meta-row"><span class="chip">⏱ 15 min</span></div>
+        <div class="grid g2">
+          <div class="card"><h3>📈 Cumulative Flow Diagram</h3><ul style="padding-left:18px;margin:0">
+            <li>One colored band per board column, stacked over time.</li>
+            <li><b>Band width</b> is WIP in that column. A widening band means work arrives faster than it leaves.</li>
+            <li><b>Horizontal distance</b> across the bands approximates lead time.</li>
+            <li>Bounce-backs show as the eQE band thinning while Development thickens again.</li>
+            <li>Flat top band with rising lower bands means nothing is finishing. Check WIP limits.</li></ul></div>
+          <div class="card"><h3>⏱ Control Chart</h3><ul style="padding-left:18px;margin:0">
+            <li>Each dot is an item's <b>cycle time</b> across the columns you select.</li>
+            <li>Select <i>Development → PO Review</i> to measure engineering flow, excluding the release wait.</li>
+            <li>Outliers above the band are the stories worth a retro. Bounced items usually live there.</li>
+            <li>Use the rolling average to watch trends. Single dots are anecdotes.</li>
+            <li>Board-specific: column selection changes the answer.</li></ul></div>
+        </div>
+        <div class="callout tip"><strong>Pair it with JQL</strong>The Control Chart shows that items were slow. The history query shows which ones bounced. Together they turn "we feel slow" into a specific retro topic.</div>
+        <pre data-jql data-label="Bounce-backs (the dots you'll see high on the control chart)">project = FLY AND status CHANGED FROM "eQE Testing" TO Development</pre>
+      </article>
+
+      <!-- ================= VL-7 ================= -->
+      <article class="lesson" id="vl-7">
+        <h2><span class="lesson-code">VL-7</span> Forecasting honestly</h2>
+        <div class="meta-row"><span class="chip">⏱ 20 min</span><span class="chip">Pairs with the Release Forecaster</span></div>
+        <ol>
+          <li><b>Use a range, not a point.</b> Report "3–4 sprints, likely 3", not "2.88 sprints".</li>
+          <li><b>Use the last 3–7 comparable sprints.</b> Drop sprints you know are broken (backdated, re-mapped), and say that you did.</li>
+          <li><b>Adjust for capacity.</b> Holidays and on-call rotations change the next sprint, not the average.</li>
+          <li><b>Never compare teams</b> or rank individuals on points. Points are a local currency.</li>
+          <li><b>Forecast probabilistically.</b> Sampling past sprints thousands of times (Monte Carlo) gives a confidence level leadership can use: "85% confident by sprint 4".</li>
+        </ol>
+        <div class="callout warn"><strong>Why the average lies</strong>The forensics board averages 20.83, but its sprints range from 8 to 31. A 60-point backlog "needs 2.88 sprints" by the average, yet a couple of sprints like D would push it well beyond 3. Averages hide the bad weather. Run the forecaster below and look at the tail.</div>
+      </article>
+
+      <!-- ================= SIMULATOR ================= -->
+      <article class="lesson" id="simulator">
+        <h2><span class="lesson-code">SIM</span> Black Box Simulator</h2>
+        <p>Build a sprint and watch Jira's rules compute commitment and completed, item by item. Load a measured scenario to replay the sandbox exactly. Switch on <b>Predict first</b> to hide the numbers until you've committed to an answer; correct predictions on presets earn miles.</p>
+        <div class="sim" id="sim">
+          <div class="sim-head"><div><span class="led">● RECORDER ONLINE</span><h3>Sprint flight recorder</h3></div>
+            <label class="switch"><input type="checkbox" id="sim-predict"> Predict first</label></div>
+          <div class="sim-body">
+            <div class="presets" id="sim-presets"></div>
+            <div class="table-wrap" style="margin:0"><table>
+              <thead><tr><th>Item</th><th>Points at start</th><th>In sprint at start?</th><th>Re-estimated to</th><th>State at completion</th><th>Sub-task?</th><th></th></tr></thead>
+              <tbody id="sim-rows"></tbody>
+            </table></div>
+            <div class="btn-row" style="margin-top:12px"><button class="btn btn-sm btn-blue" type="button" id="sim-add">+ Add item</button><button class="btn btn-sm" style="color:var(--blue-600)" type="button" id="sim-clear">Clear</button></div>
+            <div class="predict" id="sim-predict-box">
+              <p style="margin:0 0 8px"><b>Predict before you look.</b> Scenario: <span id="sim-scn">custom</span></p>
+              <label for="p-commit">Commitment</label><input id="p-commit" type="number" min="0">
+              <label for="p-done">Completed</label><input id="p-done" type="number" min="0">
+              <button class="btn btn-sm btn-primary" type="button" id="p-go">Reveal &amp; score</button>
+              <p id="p-msg" style="margin:8px 0 0"></p>
+            </div>
+            <div class="sim-out" id="sim-out">
+              <div>
+                <div class="sim-chart"><svg id="sim-svg" viewBox="0 0 240 200" role="img" aria-label="Commitment and completed bars"></svg></div>
+                <div class="totals"><div><span>Commitment</span><b id="t-commit">0</b></div><div><span>Completed</span><b id="t-done">0</b></div></div>
+              </div>
+              <div class="explain" id="sim-explain" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ================= FORECASTER ================= -->
+      <article class="lesson" id="forecaster">
+        <h2><span class="lesson-code">FC</span> Release Forecaster (Monte Carlo)</h2>
+        <p>Enter completed values from past sprints and the remaining backlog. The forecaster compares the naive average with 10,000 simulated futures, each built by re-sampling your past sprints.</p>
+        <div class="card fc-grid">
+          <div class="fc-in">
+            <label for="fc-hist-in">Past completed per sprint (comma-separated)</label>
+            <input id="fc-hist-in" value="21, 31, 29, 8, 16, 20">
+            <label for="fc-rem">Remaining backlog (points)</label>
+            <input id="fc-rem" type="number" value="60" min="1">
+            <div class="btn-row"><button class="btn btn-sm btn-primary" type="button" id="fc-run">▶ Run 10,000 flights</button></div>
+            <p class="muted" style="font-size:.88rem">Prefilled with the forensics board's completed values and one seat backlog (60 points).</p>
+          </div>
+          <div>
+            <div class="fc-res">
+              <div class="avg"><b id="fc-avg">–</b><span>Average says</span></div>
+              <div><b id="fc-50">–</b><span>50% confident</span></div>
+              <div><b id="fc-85">–</b><span>85% confident</span></div>
+              <div><b id="fc-95">–</b><span>95% confident</span></div>
+            </div>
+            <svg id="fc-hist" viewBox="0 0 520 220" role="img" aria-label="Histogram of sprints needed"></svg>
+            <p id="fc-note" class="muted" style="font-size:.9rem;margin-top:8px"></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ================= MISSIONS ================= -->
+      <h2 style="margin-top:20px">Missions</h2>
+      <div class="callout standard"><strong>Your aircraft for these missions</strong>You're flying <span data-seat-label></span>. Board: <a data-seat-board href="#">open my seat board ↗</a>. Everything you create gets the label <code>seat-{SEAT}</code>.</div>
+
+      <article class="mission" id="vl-m1" data-miles="350">
+        <div class="mission-head"><div><span class="mcode">MISSION VL-M1</span><h3>Forensics walk-through</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> Read-only investigation. Open the evidence and fill in the incident log yourself before you read VL-4's answers.</div>
+          <ol class="steps">
+            <li>Open the <a data-jira-path="/jira/software/c/projects/HGR/boards/7/reports/velocity" href="#" target="_blank" rel="noopener">Velocity Forensics velocity chart ↗</a>.</li>
+            <li>For each sprint, open its sprint report: <a data-jira-path="/jira/software/c/projects/HGR/boards/7/reports/sprint-retrospective?sprint=8" href="#" target="_blank" rel="noopener">q3.1</a> · <a data-jira-path="/jira/software/c/projects/HGR/boards/7/reports/sprint-retrospective?sprint=9" href="#" target="_blank" rel="noopener">q3.2</a> · <a data-jira-path="/jira/software/c/projects/HGR/boards/7/reports/sprint-retrospective?sprint=10" href="#" target="_blank" rel="noopener">q3.3</a> · <a data-jira-path="/jira/software/c/projects/HGR/boards/7/reports/sprint-retrospective?sprint=11" href="#" target="_blank" rel="noopener">q3.4</a> · <a data-jira-path="/jira/software/c/projects/HGR/boards/7/reports/sprint-retrospective?sprint=12" href="#" target="_blank" rel="noopener">q3.5</a> · <a data-jira-path="/jira/software/c/projects/HGR/boards/7/reports/sprint-retrospective?sprint=13" href="#" target="_blank" rel="noopener">q3.6</a>.</li>
+            <li>Log for each: commitment, completed, the signal (*, →, Not Completed, Removed) and a one-line root cause.</li>
+            <li>Find the one sprint whose <i>commitment</i> includes points the team had already committed to before.</li>
+          </ol>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <div class="table-wrap"><table class="data answer-table"><thead><tr><th>Sprint</th><th>C / D</th><th>Signal</th><th>Root cause</th></tr></thead><tbody>
+              <tr><td>q3.1</td><td>21 / 21</td><td>none</td><td>Clean baseline</td></tr>
+              <tr><td>q3.2</td><td>18 / 31</td><td>2 × *</td><td>Scope added after start</td></tr>
+              <tr><td>q3.3</td><td>16 / 29</td><td>3 → 8, 5 → 13</td><td>Mid-sprint re-estimates</td></tr>
+              <tr><td>q3.4</td><td>26 / 8</td><td>4 not completed</td><td>Overcommitment, too much WIP</td></tr>
+              <tr><td>q3.5</td><td>31 / 16</td><td>Ready for Release, Removed, "-"</td><td>Carry-over recommitted, done ≠ finished, sub-task points, removed scope</td></tr>
+              <tr><td>q3.6</td><td>0 / 20</td><td>4 × *</td><td>Backdated start</td></tr>
+            </tbody></table></div>
+            <p>Step 4: <b>q3.5</b>, whose 31-point commitment includes the 18 points carried from q3.4.</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+350 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <article class="mission" id="vl-m2" data-miles="400">
+        <div class="mission-head"><div><span class="mcode">MISSION VL-M2</span><h3>Root-cause the FLY anomaly</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> The FLY reference aircraft's velocity chart shows <b>5 / 31</b> for JET-2026.q4.1 and <b>0 / 29</b> for JET-2026.q4.2. A director thinks the team "doesn't plan". Prove or disprove it with evidence only.</div>
+          <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/projects/FLY/boards/3/reports/velocity</span></div><img src="assets/img/velocity.jpg" alt="FLY velocity chart: JET-2026.q4.1 commitment 5 completed 31; q4.2 commitment 0 completed 29" loading="lazy"></div><figcaption>The suspicious chart.</figcaption></figure>
+          <ol class="steps">
+            <li>Open the <a data-jira-path="/jira/software/c/projects/FLY/boards/3/reports/sprint-retrospective?sprint=2" href="#" target="_blank" rel="noopener">JET-2026.q4.1 sprint report ↗</a>.</li>
+            <li>Count the asterisks. Which item has none, and what is its estimate?</li>
+            <li>Explain commitment = 5 in one sentence using VL-1's rule.</li>
+            <li>Predict which items in JET-2026.q4.2 will have asterisks, then check.</li>
+          </ol>
+          <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>…/projects/FLY/boards/3/reports/sprint-retrospective?sprint=JET-2026.q4.1</span></div><img src="assets/img/fly-q41-sprint-report.jpg" alt="FLY sprint report: FLY-7 without asterisk; FLY-8 to FLY-14 with asterisks; FLY-13 not completed" loading="lazy"></div><figcaption>The evidence (open it yourself before reading the debrief).</figcaption></figure>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <p>Only <b>FLY-7</b> (5 points) was in the sprint before its stored start timestamp. FLY-8 to FLY-14 were added seconds later in the same minute, so they carry * and are excluded from commitment. Hence commitment 5. Completed counts everything in Done at completion, so 31. In JET-2026.q4.2 <b>every</b> item has *, so commitment is 0. The team didn't "fail to plan". The recorder's start time preceded the load. Verdict: <b>instrument error, not crew error</b>. Recommend annotating the chart and excluding these two sprints from forecasts.</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+400 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <article class="mission" id="vl-m3" data-miles="600">
+        <div class="mission-head"><div><span class="mcode">MISSION VL-M3</span><h3>Fly your own sprint (predict, then verify)</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> On <a data-seat-board href="#">your seat board ↗</a>, fly a sprint with three deliberate "incidents". Predict the velocity bars <b>before</b> you open the report.</div>
+          <ol class="steps">
+            <li>In the backlog, <b>Create sprint</b> and name it <code>S{SEAT}-2026.q4.1</code>.</li>
+            <li>Drag in exactly <b>18 points</b>: <i>pre-order a meal (5)</i>, <i>allergen info (3)</i>, <i>reminder to pre-order (2)</i>, <i>change my pre-order (3)</i>, <i>premium meal with saved card (5)</i>.</li>
+            <li><b>Start sprint</b>, leaving the start date as now. Look at the clock and <b>wait until the minute changes</b>. This is the whole lesson of VL-1.</li>
+            <li>Incident 1: drag <i>catering pre-order counts (5)</i> into the active sprint.</li>
+            <li>Incident 2: re-estimate <i>allergen info</i> from 3 to <b>5</b>.</li>
+            <li>Incident 3: move <i>change my pre-order</i> to <b>Ready for Release</b>.</li>
+            <li>Move <i>pre-order a meal</i> and <i>allergen info</i> to <b>Done</b>.</li>
+            <li>Write your prediction for commitment and completed, then <b>Complete sprint</b> and choose to move open items to a <b>new sprint</b> (you'll need them in VL-M4).</li>
+            <li>Open your seat board's <b>Reports → Velocity report</b> and sprint report. Compare.</li>
+          </ol>
+          <pre data-jql data-label="What's in my active sprint?">project = HGR AND labels = seat-{SEAT} AND sprint in openSprints() ORDER BY status ASC</pre>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <p><b>Commitment 18</b>: the five items loaded before the stored start. <b>Completed 10</b>: pre-order (5) + allergen info at its <i>new</i> estimate (5). The catering item carries * and isn't committed. <i>Change my pre-order</i> is finished but in Ready for Release, so it scores zero. If commitment shows 23, the catering item went in before you clicked Start: it has no * in the sprint report. If your completed is 8, you re-estimated after completing the sprint. Load the same situation into the Black Box Simulator to confirm.</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+600 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <article class="mission" id="vl-m4" data-miles="600">
+        <div class="mission-head"><div><span class="mcode">MISSION VL-M4</span><h3>Carry-over and removed scope</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> Second sprint on your seat. Watch carry-over get committed twice, and watch a removal stay in commitment.</div>
+          <ol class="steps">
+            <li>Rename the new sprint Jira created to <code>S{SEAT}-2026.q4.2</code>. It should already hold your four open items: reminder (2), change pre-order (3, in Ready for Release), premium meal (5) and catering counts (5).</li>
+            <li>Before starting, add <i>rate my meal (1)</i> and <i>"sold out" (3)</i>.</li>
+            <li>Predict the commitment, then start the sprint and wait for the minute to roll over.</li>
+            <li>Remove <i>"sold out"</i> from the sprint (back to backlog).</li>
+            <li>Move <i>change pre-order</i>, <i>premium meal</i> and <i>reminder</i> to <b>Done</b>. Leave the rest.</li>
+            <li>Predict completed, complete the sprint (open items to backlog), and check the velocity chart, which now has two sprints.</li>
+          </ol>
+          <details class="reveal"><summary>Show debrief</summary><div>
+            <p><b>Commitment 19</b> = 2 + 3 + 5 + 5 + 1 + 3. The catering item, which was * in sprint 1, is committed normally now, and the removed "sold out" still counts. <b>Completed 10</b> = 3 + 5 + 2. Across the two sprints, committed points sum to 37 (18 + 19), but only 27 distinct points of work were ever planned. That's the carry-over double count from scenario E. If you sent open items to the backlog in VL-M3, your commitment will be lower; work out the difference from the sprint report.</p>
+          </div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+600 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <article class="mission" id="vl-m5" data-miles="450">
+        <div class="mission-head"><div><span class="mcode">MISSION VL-M5</span><h3>The sub-task trap experiment</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> Prove to yourself that sub-task points don't reach the velocity chart.</div>
+          <ol class="steps">
+            <li>Open <i>S{SEAT} · As a traveler, I can leave a tip for the cabin crew</i>. It has no estimate. Leave it that way.</li>
+            <li>Create two sub-tasks under it, <i>tip amount UI</i> (3 points) and <i>tip payment</i> (5 points). Add the label <code>seat-{SEAT}</code> to each sub-task, or your board's filter won't show them.</li>
+            <li>Create sprint <code>S{SEAT}-2026.q4.3</code> with the tip story and the <i>meal photos</i> bug (2). Start it and wait for the minute to roll over.</li>
+            <li>Move both sub-tasks, the story and the bug to Done. Complete the sprint.</li>
+            <li>Predict, then check the velocity chart's third bar pair.</li>
+          </ol>
+          <pre data-jql data-label="My sub-tasks (check the labels landed)">project = HGR AND labels = seat-{SEAT} AND type = Sub-task</pre>
+          <details class="reveal"><summary>Show debrief</summary><div><p><b>2 / 2.</b> Eight points of real work vanished, exactly like scenario E's excess-baggage story. Rule: estimate the <b>story</b>; use sub-tasks for tracking, hours or checklists, not points.</p></div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+450 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <article class="mission" id="vl-m6" data-miles="700">
+        <div class="mission-head"><div><span class="mcode">MISSION VL-M6</span><h3>Leadership brief: "Why did velocity drop 50%?"</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+        <div class="mission-body">
+          <div class="brief"><b>Mission brief</b> A director looks at the forensics chart and sees q3.2 at 31 and q3.5 at 16: "velocity halved". Write exactly <b>five sentences</b> they'll read, using evidence from the board, and paste them as a comment on your seat epic <i>S{SEAT} · Meal Pre-order</i>.</div>
+          <ul class="checklist" data-id="vl-m6-rubric">
+            <li><input type="checkbox" id="r1"><label for="r1">Sentence 1 gives the bottom line without jargon ("The drop is mostly measurement, not output").</label></li>
+            <li><input type="checkbox" id="r2"><label for="r2">It names q3.2's 31 as inflated by 13 points of mid-sprint scope.</label></li>
+            <li><input type="checkbox" id="r3"><label for="r3">It quantifies q3.5's hidden work: 10 points in Ready for Release and 8 on sub-tasks.</label></li>
+            <li><input type="checkbox" id="r4"><label for="r4">It proposes one process fix and one measurement fix.</label></li>
+            <li><input type="checkbox" id="r5"><label for="r5">It gives a forecast as a range, not a single number.</label></li>
+          </ul>
+          <details class="reveal"><summary>Show a model answer</summary><div><p><i>"The drop from 31 to 16 is mostly how Jira counts, not how much the team delivered. Sprint q3.2's 31 included 13 points of urgent work added mid-sprint, so it overstated our planned pace. In q3.5 the team also finished 10 points that were waiting for a release and 8 points recorded on sub-tasks, none of which the chart credits. We'll freeze sprint scope after the start and put estimates on stories, and we'll show accepted-but-unreleased work on the dashboard. Our honest planning range is 16–29 points per sprint, which puts the 60-point backlog at 3–4 sprints."</i></p></div></details>
+        </div>
+        <div class="mission-foot"><span class="miles-tag">+700 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
+      </article>
+
+      <!-- ================= CHECKRIDE ================= -->
+      <article class="lesson" id="checkride" style="margin-top:40px">
+        <h2><span class="lesson-code">✓</span> Black box checkride</h2>
+        <p>Ten questions, all grounded in what we measured. 80% to pass.</p>
+        <div class="quiz" data-id="vl" data-pass="80" data-miles="900">
+          <div class="q"><p class="prompt">1. You click <i>Start sprint</i> at 09:00:40, then 10 seconds later drag in one more 5-point story. Is it in the commitment?</p><div class="opts">
+            <button class="opt" type="button">Yes, it was added within the same minute</button>
+            <button class="opt" data-right type="button">No, it's after the stored start timestamp, so it's marked * and excluded</button>
+            <button class="opt" type="button">Only if it reaches Done</button></div>
+            <div class="why">The start is stored at minute precision (09:00:00). Anything added after that timestamp counts as added after start.</div></div>
+          <div class="q"><p class="prompt">2. A committed 3-point story is re-estimated to 8 mid-sprint and finished. What does it add to <b>Completed</b>?</p><div class="opts">
+            <button class="opt" type="button">3</button><button class="opt" data-right type="button">8</button><button class="opt" type="button">0, re-estimated items are excluded</button></div>
+            <div class="why">Completed uses the estimate at completion. That's how scenario C went from 16 to 29.</div></div>
+          <div class="q"><p class="prompt">3. At sprint completion, a finished 5-point story sits in <b>Ready for Release</b> (not the board's right-most column). Its contribution to Completed is…</p><div class="opts">
+            <button class="opt" data-right type="button">0</button><button class="opt" type="button">5</button><button class="opt" type="button">2.5, partial credit</button></div>
+            <div class="why">Only items in the board's done column count. Scenario E lost 10 points this way.</div></div>
+          <div class="q"><p class="prompt">4. A 5-point item in the sprint at start is removed mid-sprint. What happens?</p><div class="opts">
+            <button class="opt" type="button">It disappears from both bars</button><button class="opt" data-right type="button">It stays in Commitment and appears under "Issues Removed From Sprint"</button><button class="opt" type="button">It's added to Completed</button></div>
+            <div class="why">Commitment is a snapshot at the start. The removal shows in the sprint report.</div></div>
+          <div class="q"><p class="prompt">5. A story with no estimate has three Done sub-tasks worth 2 + 3 + 3. What do they add to velocity?</p><div class="opts">
+            <button class="opt" type="button">8</button><button class="opt" type="button">8, but only to Commitment</button><button class="opt" data-right type="button">0</button></div>
+            <div class="why">Sub-task estimates aren't included in the velocity chart. The story shows "-".</div></div>
+          <div class="q"><p class="prompt">6. A sprint is started with a start date two days in the past, after all items were loaded today. Commitment will be…</p><div class="opts">
+            <button class="opt" data-right type="button">0, every item looks added after start</button><button class="opt" type="button">Unchanged</button><button class="opt" type="button">Doubled</button></div>
+            <div class="why">Scenario F: 0 / 20. The same mechanism caused FLY's 5 / 31 and 0 / 29.</div></div>
+          <div class="q"><p class="prompt">7. Sprint D left 18 points unfinished, and they were committed again in sprint E. Summing commitment across D and E to describe "planned work" will…</p><div class="opts">
+            <button class="opt" type="button">Be accurate</button><button class="opt" data-right type="button">Double-count the carried 18 points</button><button class="opt" type="button">Undercount by 18 points</button></div>
+            <div class="why">57 committed points across D and E, but only 39 distinct points of work.</div></div>
+          <div class="q"><p class="prompt">8. Two boards show the same space. One maps Ready for Release into its done column, the other doesn't. Their velocity charts will…</p><div class="opts">
+            <button class="opt" type="button">Be identical, velocity is per space</button><button class="opt" data-right type="button">Differ, velocity is board-specific (estimation statistic and column mapping)</button><button class="opt" type="button">Differ only in commitment</button></div>
+            <div class="why">The board defines what "done" means for its reports.</div></div>
+          <div class="q"><p class="prompt">9. Past completed values are 21, 31, 29, 8, 16, 20, and 60 points remain. Which forecast is most honest?</p><div class="opts">
+            <button class="opt" type="button">"2.88 sprints"</button><button class="opt" type="button">"3 sprints, guaranteed"</button><button class="opt" data-right type="button">A range with confidence, e.g. "likely 3, 85% within 4"</button></div>
+            <div class="why">Averages hide variance. A Monte Carlo forecast gives confidence levels. Run the Release Forecaster to see this team's tail.</div></div>
+          <div class="q"><p class="prompt">10. Which use of velocity is legitimate?</p><div class="opts">
+            <button class="opt" type="button">Ranking teams by points per sprint</button><button class="opt" type="button">Individual performance reviews</button><button class="opt" data-right type="button">Forecasting the same team's future capacity</button></div>
+            <div class="why">Points are a team-local currency. Use velocity to forecast, not to judge.</div></div>
+          <div class="quiz-score"><div><b>0 / 10</b> <span class="msg"></span></div><button class="btn btn-sm btn-primary retry" type="button">Retake checkride</button></div>
+        </div>
+        <div class="btn-row"><a class="btn btn-blue" href="captain.html">Back to Level 3 →</a><a class="btn btn-sm" style="color:var(--blue-600)" href="jql-simulator.html">JQL Simulator →</a></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+</main>
+<div id="site-footer"></div>
+<script src="assets/js/site.js?v=2"></script>
+<script>
+(function () {
+  "use strict";
+  var JFS = window.JFS || {};
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  function site() { return JFS.siteUrl ? JFS.siteUrl() : "https://varoonsahgaltraining.atlassian.net"; }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function done(id) { return !!((JFS.store && JFS.store.get("done", {})) || {})[id]; }
+  function awardOnce(id, miles, label) { if (!done(id) && JFS.award) JFS.award(id, miles, label); }
+
+  /* ---------- Jira deep links ---------- */
+  $$("a[data-jira-path]").forEach(function (a) { a.href = site() + a.getAttribute("data-jira-path"); });
+
+  /* ---------- Black Box Simulator ---------- */
+  // item: { name, pts (number|null), start (bool), re (number|null), state: done|rfr|prog|todo|removed, sub (bool) }
+  var STATES = [["done", "Done"], ["rfr", "Ready for Release"], ["prog", "In Progress"], ["todo", "To Do"], ["removed", "Removed from sprint"]];
+  function it(name, pts, start, state, re, sub) { return { name: name, pts: pts, start: start, re: re == null ? null : re, state: state, sub: !!sub }; }
+  var PRESETS = {
+    A: { label: "A · Clean flight", items: [it("A1 Seat selection API", 5, true, "done"), it("A2 Cache seat map", 3, true, "done"), it("A3 Exit rows", 8, true, "done"), it("A4 Analytics", 2, true, "done"), it("A5 Empty state copy", 3, true, "done")] },
+    B: { label: "B · Scope creep", items: [it("B1 Upgrade banner", 5, true, "done"), it("B2 Upgrade price", 5, true, "done"), it("B3 Confirmation email", 3, true, "done"), it("B4 Eligibility rules", 5, true, "done"), it("B5 Exec demo (added mid-sprint)", 8, false, "done"), it("B6 Legal copy (added mid-sprint)", 5, false, "done")] },
+    C: { label: "C · Estimate inflation", items: [it("C1 Pet booking flag", 3, true, "done", 8), it("C2 Carrier size validation", 5, true, "done", 13), it("C3 Pet fee display", 3, true, "done"), it("C4 Pet policy link", 5, true, "done")] },
+    D: { label: "D · Carry-over cliff", items: [it("D1 Lounge pass purchase", 5, true, "done"), it("D2 Capacity indicator", 3, true, "done"), it("D3 Guest passes", 8, true, "prog"), it("D4 Lounge map", 5, true, "prog"), it("D5 Hours by airport", 2, true, "todo"), it("D6 QR entry", 3, true, "todo")] },
+    E: { label: "E · Triple trap", items: [it("D3 Guest passes (carried)", 8, true, "done"), it("D4 Lounge map (carried)", 5, true, "done"), it("D5 Hours by airport (carried)", 2, true, "rfr"), it("D6 QR entry (carried)", 3, true, "rfr"), it("E1 Fee estimator", 5, true, "rfr"), it("E2 Fee receipt", 3, true, "done"), it("E3 Excess baggage (no points)", null, true, "done"), it("E3a Weight input", 2, true, "done", null, true), it("E3b Fee rules", 3, true, "done", null, true), it("E3c Payment step", 3, true, "done", null, true), it("E4 Partner API", 5, true, "removed")] },
+    F: { label: "F · Backdated start", items: [it("F1 Voucher redemption", 5, false, "done"), it("F2 Plan comparison", 5, false, "done"), it("F3 Speed test link", 5, false, "done"), it("F4 Support chat", 5, false, "done")] }
+  };
+  var MEASURED = { A: [21, 21], B: [18, 31], C: [16, 29], D: [26, 8], E: [31, 16], F: [0, 20] };
+  var rows = [], current = null, revealed = true;
+  var tbody = $("#sim-rows");
+
+  function compute(list) {
+    var c = 0, d = 0, lines = [];
+    list.forEach(function (x) {
+      var p = (x.pts == null || x.pts === "" || isNaN(x.pts)) ? null : +x.pts;
+      var fin = (x.re == null || x.re === "" || isNaN(x.re)) ? p : +x.re;
+      var name = esc(x.name || "Untitled");
+      if (x.sub) { lines.push(["x", name, "Sub-task: its " + (p || 0) + " pts never reach the velocity chart."]); return; }
+      var cAdd = 0, dAdd = 0, why = [];
+      if (x.start) { cAdd = p || 0; why.push(p == null ? "in sprint at start but unestimated, so commits 0" : "committed " + p + " (in sprint at start)"); }
+      else why.push("added after start (*), so not committed");
+      if (x.state === "done") { dAdd = fin || 0; why.push(fin == null ? "Done but unestimated, so completes 0" : "Done, completes " + fin + (x.re != null && x.re !== "" && +x.re !== p ? " (re-estimated from " + (p == null ? "–" : p) + ")" : "")); }
+      else if (x.state === "rfr") why.push("Ready for Release isn't the done column, so completes 0");
+      else if (x.state === "removed") why.push(x.start ? "removed mid-sprint: still committed, completes 0" : "added then removed, so invisible");
+      else why.push((x.state === "prog" ? "In Progress" : "To Do") + " at completion, so completes 0 (carry-over)");
+      c += cAdd; d += dAdd;
+      lines.push([dAdd ? "d" : (cAdd ? "c" : "x"), name, why.join("; ") + "."]);
+    });
+    return { c: c, d: d, lines: lines };
+  }
+
+  function bars(c, d) {
+    var max = Math.max(c, d, 10), h = 150, base = 175;
+    var hc = c / max * h, hd = d / max * h;
+    return '<line x1="20" y1="' + base + '" x2="225" y2="' + base + '" stroke="#b9c6da"/>' +
+      '<rect x="55" y="' + (base - hc) + '" width="55" height="' + hc + '" fill="#8b93a7" rx="3"/>' +
+      '<rect x="125" y="' + (base - hd) + '" width="55" height="' + hd + '" fill="#7cb342" rx="3"/>' +
+      '<text x="82" y="' + (base - hc - 6) + '" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#0d1b33">' + c + '</text>' +
+      '<text x="152" y="' + (base - hd - 6) + '" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#0d1b33">' + d + '</text>' +
+      '<text x="82" y="193" text-anchor="middle" font-size="11" fill="#6a7895">Commitment</text>' +
+      '<text x="152" y="193" text-anchor="middle" font-size="11" fill="#6a7895">Completed</text>';
+  }
+
+  function render() {
+    var r = compute(rows);
+    $("#t-commit").textContent = r.c;
+    $("#t-done").textContent = r.d;
+    $("#sim-svg").innerHTML = bars(r.c, r.d);
+    $("#sim-explain").innerHTML = r.lines.length ? r.lines.map(function (l) {
+      var t = l[0] === "d" ? '<span class="tag d">COMPLETED</span>' : l[0] === "c" ? '<span class="tag c">COMMITTED</span>' : '<span class="tag x">IGNORED</span>';
+      return '<div class="ln">' + t + "<div><b>" + l[1] + "</b>: " + l[2] + "</div></div>";
+    }).join("") : '<p class="muted">Add items or load a scenario.</p>';
+    if (current && MEASURED[current] && revealed) {
+      var m = MEASURED[current];
+      $("#sim-explain").insertAdjacentHTML("afterbegin", '<div class="ln"><span class="tag d">SANDBOX</span><div>Measured on the Velocity Forensics board: <b>' + m[0] + " / " + m[1] + "</b>" + (m[0] === r.c && m[1] === r.d ? " ✓ the simulator matches." : ". You've changed the scenario, so the numbers differ.") + "</div></div>");
+    }
+  }
+
+  function drawRows() {
+    tbody.innerHTML = rows.map(function (x, i) {
+      return '<tr data-i="' + i + '">' +
+        '<td><input type="text" data-k="name" value="' + esc(x.name || "") + '" aria-label="Item name"></td>' +
+        '<td><input type="number" min="0" data-k="pts" value="' + (x.pts == null ? "" : x.pts) + '" aria-label="Points at start" placeholder="–"></td>' +
+        '<td><select data-k="start" aria-label="In sprint at start"><option value="1"' + (x.start ? " selected" : "") + '>Yes</option><option value="0"' + (!x.start ? " selected" : "") + '>No (added after *)</option></select></td>' +
+        '<td><input type="number" min="0" data-k="re" value="' + (x.re == null ? "" : x.re) + '" aria-label="Re-estimated to" placeholder="same"></td>' +
+        '<td><select data-k="state" aria-label="State at completion">' + STATES.map(function (s) { return '<option value="' + s[0] + '"' + (x.state === s[0] ? " selected" : "") + ">" + s[1] + "</option>"; }).join("") + "</select></td>" +
+        '<td style="text-align:center"><input type="checkbox" data-k="sub"' + (x.sub ? " checked" : "") + ' aria-label="Is sub-task"></td>' +
+        '<td><button class="rm" type="button" data-rm="' + i + '" aria-label="Remove row">✕</button></td></tr>';
+    }).join("");
+    render();
+  }
+
+  function onEdit(e) {
+    var t = e.target, tr = t.closest && t.closest("tr"); if (!tr || !t.dataset || !t.dataset.k) return;
+    var x = rows[+tr.dataset.i], k = t.dataset.k;
+    if (k === "name") x.name = t.value;
+    else if (k === "pts" || k === "re") x[k] = t.value === "" ? null : +t.value;
+    else if (k === "start") x.start = t.value === "1";
+    else if (k === "state") x.state = t.value;
+    else if (k === "sub") x.sub = t.checked;
+    current = current && MEASURED[current] ? current : null;
+    render();
+  }
+  tbody.addEventListener("input", onEdit);
+  tbody.addEventListener("change", onEdit);
+  tbody.addEventListener("click", function (e) { var b = e.target.closest("[data-rm]"); if (b) { rows.splice(+b.dataset.rm, 1); current = null; drawRows(); } });
+  $("#sim-add").addEventListener("click", function () { rows.push(it("New item", 3, true, "done")); current = null; $("#sim-scn").textContent = "custom"; drawRows(); });
+  $("#sim-clear").addEventListener("click", function () { rows = []; current = null; $("#sim-scn").textContent = "custom"; drawRows(); });
+
+  var presetBox = $("#sim-presets");
+  Object.keys(PRESETS).forEach(function (k) {
+    var b = document.createElement("button"); b.type = "button"; b.textContent = PRESETS[k].label; b.dataset.k = k;
+    b.addEventListener("click", function () { load(k); });
+    presetBox.appendChild(b);
+  });
+  function load(k) {
+    current = k;
+    rows = PRESETS[k].items.map(function (x) { return Object.assign({}, x); });
+    $$("button", presetBox).forEach(function (b) { b.classList.toggle("on", b.dataset.k === k); });
+    $("#sim-scn").textContent = PRESETS[k].label;
+    $("#p-commit").value = ""; $("#p-done").value = ""; $("#p-msg").textContent = "";
+    setPredict($("#sim-predict").checked);
+    drawRows();
+  }
+  function setPredict(on) {
+    revealed = !on;
+    $("#sim-predict-box").classList.toggle("show", on);
+    $("#sim-out").classList.toggle("hidden-nums", on);
+    render();
+  }
+  $("#sim-predict").addEventListener("change", function (e) { setPredict(e.target.checked); });
+  $("#p-go").addEventListener("click", function () {
+    var r = compute(rows), pc = $("#p-commit").value, pd = $("#p-done").value;
+    if (pc === "" || pd === "") { $("#p-msg").textContent = "Enter both predictions first. No peeking!"; return; }
+    var okC = +pc === r.c, okD = +pd === r.d;
+    revealed = true; $("#sim-out").classList.remove("hidden-nums"); render();
+    if (okC && okD) {
+      $("#p-msg").innerHTML = "✅ Both correct: <b>" + r.c + " / " + r.d + "</b>. You read the recorder like an investigator.";
+      if (current && MEASURED[current]) awardOnce("vl-predict-" + current, 150, "Predicted scenario " + current);
+      if (JFS.confetti) JFS.confetti(16);
+    } else {
+      $("#p-msg").innerHTML = (okC ? "✅ Commitment right. " : "❌ Commitment was <b>" + r.c + "</b>. ") + (okD ? "✅ Completed right." : "❌ Completed was <b>" + r.d + "</b>.") + " Read the line-by-line log to see why, then try another scenario.";
+    }
+  });
+  load("A");
+
+  /* ---------- Release Forecaster ---------- */
+  function pct(sorted, p) { return sorted[Math.min(sorted.length - 1, Math.ceil(p * sorted.length) - 1)]; }
+  $("#fc-run").addEventListener("click", function () {
+    var hist = $("#fc-hist-in").value.split(/[,\s]+/).map(Number).filter(function (n) { return !isNaN(n) && n >= 0; });
+    var rem = +$("#fc-rem").value;
+    var note = $("#fc-note");
+    if (hist.length < 2 || !(rem > 0) || hist.every(function (n) { return n === 0; })) { note.textContent = "Enter at least two past sprints (not all zero) and a positive backlog."; return; }
+    var avg = hist.reduce(function (a, b) { return a + b; }, 0) / hist.length;
+    var RUNS = 10000, CAP = 200, out = [];
+    for (var r = 0; r < RUNS; r++) {
+      var left = rem, n = 0;
+      while (left > 0 && n < CAP) { left -= hist[Math.floor(Math.random() * hist.length)]; n++; }
+      out.push(n);
+    }
+    out.sort(function (a, b) { return a - b; });
+    $("#fc-avg").textContent = (rem / avg).toFixed(2);
+    $("#fc-50").textContent = pct(out, 0.5);
+    $("#fc-85").textContent = pct(out, 0.85);
+    $("#fc-95").textContent = pct(out, 0.95);
+    // histogram
+    var counts = {}; out.forEach(function (n) { counts[n] = (counts[n] || 0) + 1; });
+    var keys = Object.keys(counts).map(Number).sort(function (a, b) { return a - b; });
+    var maxC = Math.max.apply(null, keys.map(function (k) { return counts[k]; }));
+    var W = 520, H = 220, pad = 34, bw = Math.min(70, (W - pad * 2) / keys.length - 8);
+    var svg = '<line x1="' + pad + '" y1="' + (H - 34) + '" x2="' + (W - 10) + '" y2="' + (H - 34) + '" stroke="#b9c6da"/>';
+    var p85 = pct(out, 0.85), cum = 0;
+    keys.forEach(function (k, i) {
+      var x = pad + i * (bw + 8) + 4, h = counts[k] / maxC * (H - 80), y = H - 34 - h;
+      cum += counts[k];
+      var color = k <= pct(out, 0.5) ? "#1a5fd6" : k <= p85 ? "#4a90e2" : "#ffb81c";
+      svg += '<rect x="' + x + '" y="' + y + '" width="' + bw + '" height="' + h + '" rx="3" fill="' + color + '"><title>' + k + " sprints: " + (counts[k] / RUNS * 100).toFixed(1) + "% of runs (cumulative " + (cum / RUNS * 100).toFixed(0) + '%)</title></rect>';
+      svg += '<text x="' + (x + bw / 2) + '" y="' + (H - 18) + '" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#3a4a66">' + k + "</text>";
+      svg += '<text x="' + (x + bw / 2) + '" y="' + (y - 5) + '" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#0d1b33">' + Math.round(counts[k] / RUNS * 100) + "%</text>";
+    });
+    svg += '<text x="' + pad + '" y="16" font-family="Barlow Condensed" font-weight="700" font-size="15" fill="#061a40">Sprints needed across ' + RUNS.toLocaleString() + ' simulated futures</text>';
+    svg += '<text x="' + (W / 2) + '" y="' + (H - 2) + '" text-anchor="middle" font-size="11" fill="#6a7895">sprints to finish ' + rem + " points</text>";
+    $("#fc-hist").innerHTML = svg;
+    note.innerHTML = "The average says <b>" + (rem / avg).toFixed(2) + "</b> sprints, which most people round down to " + Math.floor(rem / avg) + " or up to " + Math.ceil(rem / avg) + ". The simulation says half the futures finish within <b>" + pct(out, 0.5) + "</b>, but to be 85% confident you need <b>" + p85 + "</b>, and the gold bars are the bad-weather tail the average hides. Commit externally to the 85% number.";
+    awardOnce("vl-forecast", 300, "Ran the Release Forecaster");
+  });
+})();
+</script>
+</body>
+</html>

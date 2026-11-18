@@ -7,7 +7,7 @@
 <meta name="description" content="A three-level, hands-on Jira course for Digital Technology teams: Ground School, First Officer and Captain. Golden Template, Rovo, JQL, Plans, eazyBI, Zephyr, Git and Claude + Atlassian MCP.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/site.css?v=2">
 <link rel="icon" href="assets/img/favicon.svg">
 <style>
   .hero-pass { max-width: 440px; justify-self: end; width: 100%; }
@@ -84,6 +84,7 @@
           <tr><td><a href="rovo.html"><span class="flap">JFS150</span></a></td><td><a href="rovo.html"><span class="flap">ROVO FLIGHT MANUAL</span></a></td><td><span class="flap">ALL</span></td><td><span class="flap">1H30</span></td><td class="status-board st-boarding">BOARDING</td></tr>
           <tr><td><a href="first-officer.html"><span class="flap">JFS201</span></a></td><td><a href="first-officer.html"><span class="flap">FIRST OFFICER</span></a></td><td><span class="flap">L2</span></td><td><span class="flap">5H00</span></td><td class="status-board st-ontime">ON TIME</td></tr>
           <tr><td><a href="jql-simulator.html"><span class="flap">JFS250</span></a></td><td><a href="jql-simulator.html"><span class="flap">JQL SIMULATOR</span></a></td><td><span class="flap">L2+</span></td><td><span class="flap">SELF</span></td><td class="status-board st-ontime">ON TIME</td></tr>
+          <tr><td><a href="velocity.html"><span class="flap">JFS260</span></a></td><td><a href="velocity.html"><span class="flap">VELOCITY LAB</span></a></td><td><span class="flap">L2+</span></td><td><span class="flap">1H30</span></td><td class="status-board st-ontime">ON TIME</td></tr>
           <tr><td><a href="captain.html"><span class="flap">JFS301</span></a></td><td><a href="captain.html"><span class="flap">CAPTAIN</span></a></td><td><span class="flap">L3</span></td><td><span class="flap">6H30</span></td><td class="status-board st-ontime">ON TIME</td></tr>
           <tr><td><a href="mcp.html"><span class="flap">JFS350</span></a></td><td><a href="mcp.html"><span class="flap">CLAUDE + MCP</span></a></td><td><span class="flap">L3</span></td><td><span class="flap">1H00</span></td><td class="status-board st-ontime">ON TIME</td></tr>
           <tr><td><a href="missions.html#capstone"><span class="flap">JFS399</span></a></td><td><a href="missions.html#capstone"><span class="flap">CAPSTONE IROPS DAY</span></a></td><td><span class="flap">L3</span></td><td><span class="flap">1H00</span></td><td class="status-board st-final">FINAL CALL</td></tr>
@@ -138,11 +139,12 @@
       <div class="eyebrow">What you'll be able to do</div>
       <h2>Skills that actually move your team's numbers</h2>
     </div>
-    <div class="grid g4">
+    <div class="grid g3">
       <div class="card hover feature"><div class="icon-badge">🧭</div><h3>Work the Golden Template</h3><p>Two-board model, standard statuses with exit criteria, sprint naming and Definition of Ready.</p></div>
       <div class="card hover feature"><div class="icon-badge">✨</div><h3>Fly with Rovo</h3><p>Chat versus agents, summaries, natural-language search and prompt patterns you can trust and verify.</p></div>
-      <div class="card hover feature"><div class="icon-badge">🔎</div><h3>Speak JQL</h3><p>From filters to history operators that measure bounce-backs, carry-over and aging work.</p></div>
+      <div class="card hover feature"><div class="icon-badge">🔎</div><h3>Speak JQL</h3><p>From filters to history operators that measure bounce-backs, regressions, release slips and aging work. 36 challenges up to the Stratosphere.</p></div>
       <div class="card hover feature"><div class="icon-badge">🗺️</div><h3>Plan capacity</h3><p>Use Plans to forecast across teams, model scenarios and expose dependencies early.</p></div>
+      <div class="card hover feature"><div class="icon-badge">📈</div><h3>Read velocity honestly</h3><p>The <a href="velocity.html">Velocity Lab</a>: six engineered sprints show how scope creep, re-estimates and backdated starts fool the chart. Then run your own sprints and forecast.</p></div>
       <div class="card hover feature"><div class="icon-badge">📊</div><h3>Report with eazyBI</h3><p>Build velocity, cycle-time and quality reports that leadership can actually read.</p></div>
       <div class="card hover feature"><div class="icon-badge">🧪</div><h3>Test with Zephyr</h3><p>Trace stories to tests to defects, and gate releases on real coverage.</p></div>
       <div class="card hover feature"><div class="icon-badge">🤖</div><h3>Claude + MCP</h3><p>Connect Claude to Jira safely. Know when it helps, when it hurts metrics and how to verify.</p></div>
@@ -156,13 +158,16 @@
     <div>
       <div class="eyebrow">Your training aircraft</div>
       <h2>The FLY sandbox</h2>
-      <p>Every mission runs against <b>Flight Deck Digital (Training)</b>, a live Jira space set up the way the Golden Template recommends. It has real sprint history, failed eQE rounds, blockers and a few deliberate data-quality problems for you to find.</p>
+      <p>Every mission reads <b>Flight Deck Digital (Training)</b>, a live Jira space set up the way the Golden Template recommends. It has real sprint history, failed eQE rounds, blockers and a few deliberate data-quality problems for you to find.</p>
       <dl class="kv">
         <dt>Space</dt><dd>FLY · company-managed Scrum</dd>
         <dt>Boards</dt><dd>Jetstream - Sprint Board · Jetstream - Backlog Readiness</dd>
         <dt>Epics</dt><dd>Boarding Pass 2.0 · Gate Change Alerts · Bag Tracker · IROPS Rebooking · Crew API · Seat Map Accessibility</dd>
         <dt>Sprints</dt><dd>JET-2026.q4.1 → JET-2027.q1.1</dd>
         <dt>Releases</dt><dd>Mobile 5.2 · Mobile 5.3 · Gate Ops 1.0 · Bag Tracker Beta</dd>
+        <dt>Rule</dt><dd><b>Read-only.</b> 20 pilots share it, so nobody writes to FLY.</dd>
+        <dt>Your seat</dt><dd>Space <b>HGR · Hangar</b>: your own board, epic, 14-item backlog and sprints (<a data-seat-board>open my seat board ↗</a>)</dd>
+        <dt>Forensics</dt><dd><b>Velocity Forensics</b> board: six engineered sprints for the <a href="velocity.html">Velocity Lab</a></dd>
       </dl>
       <div class="btn-row"><a class="btn btn-blue" href="missions.html">Open Mission Control</a><a class="btn btn-sm" style="color:var(--blue-600)" href="jql-simulator.html">Try the JQL Simulator →</a></div>
     </div>
@@ -200,8 +205,8 @@
       <p>Complete these before your first live session. Your progress saves automatically.</p>
       <ul class="checklist" data-id="preflight">
         <li><input type="checkbox" id="pf1"><label for="pf1">I can sign in to Jira and see the <b>FLY</b> space (or my team's training space).</label></li>
-        <li><input type="checkbox" id="pf2"><label for="pf2">I starred the <b>Jetstream - Sprint Board</b> so it shows in my sidebar.</label></li>
-        <li><input type="checkbox" id="pf3"><label for="pf3">I know my two-letter initials code for naming practice items (for example <code>VS</code>).</label></li>
+        <li><input type="checkbox" id="pf2"><label for="pf2">I picked my <b>seat</b> (01–20) in the top bar. I'm on <b><span data-seat-label></span></b>.</label></li>
+        <li><input type="checkbox" id="pf3"><label for="pf3">I starred the <b>Jetstream - Sprint Board</b> (FLY) and <a data-seat-board>my seat board ↗</a> (<b>Seat {SEAT} - Hangar Board</b>) so both show in my sidebar.</label></li>
         <li><input type="checkbox" id="pf4"><label for="pf4">I can see the <b>Ask AI</b> or Rovo button in Jira, or I know I'll get access after the Ground School checkride.</label></li>
         <li><input type="checkbox" id="pf5"><label for="pf5">Level 3 only: I have a Claude account and read the internal MCP setup handout.</label></li>
         <li><input type="checkbox" id="pf6"><label for="pf6">Level 3 only: I have access to a Git repository connected to Jira (or I'll watch the demo).</label></li>
@@ -210,7 +215,7 @@
     <div>
       <div class="eyebrow">Cabin rules</div>
       <h2>How we fly together</h2>
-      <div class="callout captain"><strong>From the flight deck</strong>The sandbox is shared. Prefix anything you create with your initials, for example <code>[VS] Seat map zoom story</code>, and never delete other people's work.</div>
+      <div class="callout captain"><strong>20 pilots, one airspace</strong><b>FLY is the read-only reference aircraft</b>: search it, report on it, ask Rovo about it, but never create, edit, move, link, flag or comment there. Everything you build goes on <b>your seat in the Hangar</b>, with summary prefix <code>S{SEAT} · </code> and label <code>seat-{SEAT}</code>. Never touch another seat, and never delete other people's work.</div>
       <div class="callout tip"><strong>Run in Jira buttons</strong>Every JQL block has a <b>Run in Jira ↗</b> button that opens the query on the sandbox. Point it at your own site from the footer.</div>
       <div class="callout warn"><strong>Trust, then verify</strong>Rovo and Claude are excellent co-pilots, but you're the captain. Always check AI-generated JQL and changes against the real results.</div>
     </div>
@@ -219,6 +224,6 @@
 
 </main>
 <div id="site-footer"></div>
-<script src="assets/js/site.js"></script>
+<script src="assets/js/site.js?v=2"></script>
 </body>
 </html>

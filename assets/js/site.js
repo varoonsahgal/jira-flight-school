@@ -16,11 +16,12 @@
   const PAGES = [
     ["index.html", "Home"],
     ["syllabus.html", "Syllabus"],
-    ["ground-school.html", "L1 Ground School"],
+    ["ground-school.html", "L1 Ground"],
     ["first-officer.html", "L2 First Officer"],
     ["captain.html", "L3 Captain"],
     ["missions.html", "Missions"],
-    ["jql-simulator.html", "JQL Simulator"],
+    ["jql-simulator.html", "JQL Sim"],
+    ["velocity.html", "Velocity Lab"],
     ["rovo.html", "Rovo"],
     ["mcp.html", "Claude + MCP"],
   ];
@@ -55,6 +56,40 @@
     $("#site-form") && $("#site-form").addEventListener("submit", e => { e.preventDefault(); store.set("site", inp.value.trim() || DEFAULT_SITE); toast("Sandbox site saved ✈"); refreshRunLinks(); });
     $("#reset-progress") && $("#reset-progress").addEventListener("click", e => { e.preventDefault(); if (window.confirm("Reset all miles and progress saved in this browser?")) { Object.keys(localStorage).filter(k => k.startsWith("jfs:") && k !== "jfs:site").forEach(k => localStorage.removeItem(k)); location.reload(); } });
   }
+
+  /* ---------------- Lab seats (20 concurrent students) ---------------- */
+  // Each seat has its own label (seat-NN) and its own board in the HGR "Hangar" space.
+  const SEAT_BOARDS = window.JFS_SEAT_BOARDS || { "01": 6, "02": 8, "03": 9, "04": 10, "05": 11, "06": 12, "07": 13, "08": 14, "09": 15, "10": 16, "11": 17, "12": 18, "13": 19, "14": 20, "15": 21, "16": 22, "17": 23, "18": 24, "19": 25, "20": 26 };
+  window.JFS.forensicsBoard = 7;
+  const seat = () => store.get("seat", "");
+  window.JFS.seat = seat;
+  window.JFS.seatBoardUrl = (s) => {
+    s = s || seat();
+    return SEAT_BOARDS[s] ? siteUrl() + "/jira/software/c/projects/HGR/boards/" + SEAT_BOARDS[s] : siteUrl() + "/jira/software/c/projects/HGR/boards";
+  };
+  if (header) {
+    const wrap = $(".wrap", header);
+    const pick = document.createElement("label");
+    pick.className = "seat-pick";
+    pick.title = "Your lab seat. Every {SEAT} in the labs becomes this number.";
+    pick.innerHTML = '💺 <select data-seat-select aria-label="Choose your lab seat"><option value="">Seat?</option>' +
+      Array.from({ length: 20 }, (_, i) => { const v = String(i + 1).padStart(2, "0"); return '<option value="' + v + '"' + (seat() === v ? " selected" : "") + ">Seat " + v + "</option>"; }).join("") + "</select>";
+    wrap.insertBefore(pick, $(".nav-toggle", wrap));
+    $("select", pick).addEventListener("change", e => { store.set("seat", e.target.value); location.reload(); });
+  }
+  (function applySeat() {
+    const s = seat() || "XX";
+    const root = $("main") || document.body;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes = []; while (walker.nextNode()) if (walker.currentNode.nodeValue.indexOf("{SEAT}") > -1) nodes.push(walker.currentNode);
+    nodes.forEach(n => { n.nodeValue = n.nodeValue.replace(/\{SEAT\}/g, s); });
+    $$("[href*='%7BSEAT%7D'], [href*='{SEAT}']", root).forEach(a => { a.href = a.getAttribute("href").replace(/%7BSEAT%7D|\{SEAT\}/g, s); });
+    $$("[data-seat-board]", root).forEach(a => {
+      a.href = window.JFS.seatBoardUrl(); a.target = "_blank"; a.rel = "noopener";
+      if (!seat()) a.addEventListener("click", () => toast("Pick your seat in the top bar first 💺"));
+    });
+    $$("[data-seat-label]", root).forEach(el => { el.textContent = seat() ? "Seat " + seat() : "no seat chosen yet"; });
+  })();
 
   /* ---------------- Toast + confetti ---------------- */
   let toastEl;

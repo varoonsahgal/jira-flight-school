@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/site.css?v=2">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <style>
   .hero .wrap { position: relative; z-index: 2; }
@@ -84,6 +84,10 @@
     </aside>
 
     <div>
+      <div class="callout captain">
+        <strong>20 pilots, one airspace</strong>
+        <p>Pick your seat in the top bar (you're on <b><span data-seat-label></span></b>). <b>FLY is read-only</b>: summarize it, search it, ask Rovo about it, but never apply Rovo suggestions, comment, link or edit there. Anything you write goes in <b>your seat on the Hangar</b> (<a data-seat-board>open my seat board ↗</a>): summary prefix <code>S{SEAT} · </code>, label <code>seat-{SEAT}</code>. Never touch another seat.</p>
+      </div>
       <!-- ============ RV-1 ============ -->
       <article class="lesson" id="rv-1">
         <h2><span class="lesson-code">RV-1</span> What Rovo is</h2>
@@ -309,7 +313,7 @@ Test: quote the phrase from each item that convinced you.</pre>
           <div class="card"><h3>📝 The agent request process</h3><p>Got an idea for an agent? Write a short spec (purpose, inputs, actions, guardrails, success measure) and submit it through your team's agent request process. RV-M4 walks you through it.</p></div>
           <div class="card"><h3>🚫 Never in a prompt</h3><p>Passwords, API tokens, keys, customer personal data or anything you wouldn't put on a Jira ticket. Rovo is a work tool, and the same data rules apply.</p></div>
         </div>
-        <div class="callout united">
+        <div class="callout standard">
           <strong>Why strong Rovo habits matter here</strong>
           <p>Wider Rovo access depends on people using it well. Every verified summary, every reviewed AC set and every well-written agent request makes the case for rolling it out to everyone.</p>
         </div>
@@ -329,7 +333,7 @@ Test: quote the phrase from each item that convinced you.</pre>
             <li>For every pair Rovo flags, open both items. Decide: <em>duplicate</em>, <em>related</em> or <em>different</em>.</li>
             <li>Check the <strong>Linked work items</strong> section of each candidate. Is a duplicate link already there? Which direction does it point?</li>
             <li>Decide which item should survive. Consider which has better detail, the right priority, a fix version and the older history.</li>
-            <li>Write your recommendation as a comment on the item that should be closed, starting with your initials, for example <code>[AK] Recommend closing as duplicate of …</code>. Don't close or relink items yourself; the instructor does that in the shared sandbox.</li>
+            <li>Write your recommendation as a comment on <b>your seat epic</b> (<em>S{SEAT} · Meal Pre-order</em>), for example <code>Recommend closing FLY-51 as duplicate of FLY-50 because …</code>. FLY is read-only: don't comment on, close or relink the FLY items. Twenty identical comments on FLY-51 would bury the real discussion.</li>
             <li>Bonus: did Rovo flag <code>FLY-19</code> and <code>FLY-25</code> as duplicates? Argue why or why not.</li>
           </ol>
           <details class="reveal"><summary>Show debrief</summary><div>
@@ -356,7 +360,7 @@ Test: quote the phrase from each item that convinced you.</pre>
             <li>Now open <code>FLY-36</code> and read the comment thread, especially the architect's note and the Scrum Master's suggestion.</li>
             <li>Compare: did Rovo's split match the Scrum Master's <em>read-only options → hold seat → confirm</em> idea? Did it address the architect's warning that the rebooking engine is synchronous and takes 8–12 s?</li>
             <li>Check each proposed story against INVEST. Which one is <em>not</em> independently valuable?</li>
-            <li>Write your final split (3–4 stories) as a comment on <code>FLY-36</code>, prefixed with your initials. Include one acceptance criterion per story that addresses performance.</li>
+            <li>Create your final split as 3–4 stories <b>on your seat</b> in the Hangar: summary <code>S{SEAT} · IROPS · …</code>, labels <code>seat-{SEAT}</code> and <code>rv-m2</code>, and mention <code>FLY-36</code> in the description (no link). Include one acceptance criterion per story that addresses performance. Check them with <code>project = HGR AND labels = seat-{SEAT} AND labels = rv-m2</code>.</li>
           </ol>
           <details class="reveal"><summary>Show debrief</summary><div>
             <p>A strong split, close to the Scrum Master's suggestion:</p>
@@ -391,10 +395,10 @@ Test: quote the phrase from each item that convinced you.</pre>
           <details class="reveal"><summary>Show debrief</summary><div>
             <ul>
               <li><b>Goal:</b> “Gate change push alerts end-to-end in staging”. This depends on <code>FLY-21</code>, <code>FLY-22</code>, <code>FLY-23</code>, <code>FLY-24</code> and <code>FLY-25</code>.</li>
-              <li><b>Points:</b> about 7 to do / 33 in progress / 5 done. Most work is in flight with little finished. Classic mid-sprint risk.</li>
+              <li><b>Points:</b> about 7 to do / 36 in progress / 2 done. Most work is in flight with little finished. Classic mid-sprint risk. Done shrank because <code>FLY-28</code> was reopened after a regression.</li>
               <li><b>Blocked:</b> <code>FLY-22</code> (flagged, label Blocked), blocked by <code>FLY-24</code>, which is still in Development.</li>
               <li><b>Carry-over:</b> <code>FLY-20</code> (pairing rest-rule warning), now in its second sprint.</li>
-              <li><b>Quality signal:</b> <code>FLY-21</code> and <code>FLY-25</code> both bounced back from eQE in this sprint (<code>FLY-25</code> twice, according to its comments). <code>FLY-19</code> bounced in the previous sprint.</li>
+              <li><b>Quality signal:</b> <code>FLY-21</code> and <code>FLY-25</code> both bounced back from eQE in this sprint (<code>FLY-25</code> twice, according to its comments). <code>FLY-19</code> bounced in the previous sprint. Worse, <code>FLY-28</code> <em>regressed</em>: it reached Done and was reopened to Development. And <code>FLY-26</code> was escalated to Highest after an accessibility audit and hasn't started.</li>
               <li><b>Verdict:</b> the goal is <em>at risk</em>. The blocker chain <code>FLY-24 → FLY-22</code> sits on the critical path, and the core story <code>FLY-21</code> is still in eQE.</li>
             </ul>
             <p class="muted">If Rovo said “on track”, that's exactly why you verify. Totals may change as classmates work in the sandbox.</p>
@@ -446,7 +450,7 @@ Test: quote the phrase from each item that convinced you.</pre>
               <tr><td>1</td><td>Open bugs in FLY that customers reported</td><td><code>FLY-25</code>, <code>FLY-50</code></td><td>0 / 1 / 2</td></tr>
               <tr><td>2</td><td>Work in the current FLY sprint that is blocked or flagged</td><td><code>FLY-22</code></td><td>0 / 1 / 2</td></tr>
               <tr><td>3</td><td>FLY items that are past their due date and not done</td><td><code>FLY-49</code>, <code>FLY-50</code></td><td>0 / 1 / 2</td></tr>
-              <tr><td>4</td><td>Mobile 5.3 work that isn't ready for release yet</td><td>8 items: <code>FLY-21, 23, 24, 25, 26, 34, 35, 50</code></td><td>0 / 1 / 2</td></tr>
+              <tr><td>4</td><td>Mobile 5.3 work that isn't ready for release yet</td><td>7 items: <code>FLY-21, 24, 25, 26, 34, 35, 50</code> (FLY-23 moved to Gate Ops 1.0)</td><td>0 / 1 / 2</td></tr>
               <tr><td>5</td><td>FLY stories that bounced back from eQE more than once</td><td>Trap! See debrief</td><td>0 / 1 / 2</td></tr>
             </tbody>
           </table></div>
@@ -547,6 +551,6 @@ Test: quote the phrase from each item that convinced you.</pre>
 
 </main>
 <div id="site-footer"></div>
-<script src="assets/js/site.js"></script>
+<script src="assets/js/site.js?v=2"></script>
 </body>
 </html>

@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/site.css?v=2">
 <link rel="icon" href="assets/img/favicon.svg">
 <style>
   .status-table td:first-child { white-space: nowrap; font-weight: 700; }
@@ -75,6 +75,11 @@
 
   <div>
   <!-- ============================== FO-1 ============================== -->
+  <div class="callout captain">
+    <strong>20 pilots, one airspace</strong>
+    <p>Pick your seat in the top bar (you're on <b><span data-seat-label></span></b>). <b>FLY is read-only</b>: read it, search it, report on it and run Rovo on it, but never create, edit, move, link, flag or comment there. Everything you build goes in <b>your seat on the Hangar</b> (<a data-seat-board>open my seat board ↗</a>): summary prefix <code>S{SEAT} · </code>, label <code>seat-{SEAT}</code>. Filters, boards and dashboards you create get the <code>S{SEAT}</code> prefix too. Never touch another seat.</p>
+  </div>
+
   <article class="lesson" id="fo-1">
     <h2><span class="lesson-code">FO-1</span> The Golden Template in depth</h2>
     <div class="meta-row"><span class="chip">45 min</span><span class="chip">Live demo + discussion</span><span class="chip gold">Backbone of Level 2</span></div>
@@ -88,7 +93,7 @@
       </ul>
     </div>
 
-    <div class="callout united"><strong>Why this lesson anchors Level 2</strong>
+    <div class="callout standard"><strong>Why this lesson anchors Level 2</strong>
       <p>The Golden Template is your organization's standard way to set up a Jira space. When every team uses the same hierarchy, statuses and naming, cross-team reporting works, people can move between teams without relearning Jira, and AI tools like Rovo and Claude get consistent data. Level 1 previews the vocabulary. Level 2 teaches you to operate it. Level 3 builds metrics on top of it.</p>
     </div>
 
@@ -300,7 +305,8 @@ project = FLY AND assignee in membersOf("jira-software-users") AND statusCategor
       </tbody>
     </table></div>
 
-    <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>varoonsahgaltraining.atlassian.net/jira/software/c/projects/FLY/boards/3/reports/velocity</span></div><img src="assets/img/velocity.jpg" alt="Velocity report showing JET-2026.q4.1 commitment 5 completed 31 and JET-2026.q4.2 commitment 0 completed 29, average 30" loading="lazy"></div><figcaption>The sandbox velocity chart. Something is off with "commitment". You'll investigate in mission FO-M5.</figcaption></figure>
+    <figure class="shot"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>varoonsahgaltraining.atlassian.net/jira/software/c/projects/FLY/boards/3/reports/velocity</span></div><img src="assets/img/velocity.jpg" alt="Velocity report showing JET-2026.q4.1 commitment 5 completed 31 and JET-2026.q4.2 commitment 0 completed 29, average 30" loading="lazy"></div><figcaption>The sandbox velocity chart. Something is off with "commitment". You'll investigate it in mission FO-M5, then go deeper in the <a href="velocity.html">Velocity Lab</a>.</figcaption></figure>
+    <div class="callout tip"><strong>Go deeper: the Velocity Lab</strong><p>Velocity is the most misread chart in Jira. The <a href="velocity.html">Velocity Lab</a> takes it apart with six engineered sprints on the read-only <em>Velocity Forensics</em> board: scope creep, mid-sprint re-estimates, carry-over, the "Ready for Release isn't Done" trap, sub-task points and a backdated start date. Then you run your own sprints on your seat board and predict the chart before you open it.</p></div>
 
     <h3>Dashboard gadgets worth knowing</h3>
     <div class="grid g2">
@@ -355,24 +361,27 @@ project = FLY AND assignee in membersOf("jira-software-users") AND statusCategor
 
   <hr>
   <h2 id="missions">Missions</h2>
-  <p class="lede">Every mission runs on the live FLY sandbox. Mark each complete to bank your miles.</p>
+  <p class="lede">Missions read the live FLY sandbox and write only to your seat in the Hangar (<a data-seat-board>open my seat board ↗</a>). Mark each complete to bank your miles.</p>
 
   <!-- ============================== MISSIONS ============================== -->
   <article class="mission" id="fo-m1" data-miles="400">
     <div class="mission-head"><div><span class="mcode">MISSION FO-M1</span><h3>Build the two-board model from scratch</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i class="on"></i></span></div>
     <div class="mission-body">
-      <div class="brief"><b>Mission brief</b> A new team, named with your initials (e.g. "VS Team"), joins the FLY space tomorrow. Set up both standard boards for them. No admin rights? Write the full spec on paper: filters, columns, quick filters and WIP limits.</div>
+      <div class="brief"><b>Mission brief</b> Your seat is a new team, <b>S{SEAT} Team</b>, joining tomorrow. Set up both standard boards for it. FLY is read-only, so your <b>Readiness</b> board <em>observes</em> FLY's refinement pipeline, and your <b>Sprint</b> board runs on your own seat items in the Hangar. Create both boards with location <b>Hangar (Student Practice)</b>. No board-creation rights? Write the full spec on paper: filters, columns, quick filters and WIP limits.</div>
       <ol class="steps">
-        <li>Create and share a filter <i>FLY - &lt;initials&gt; - Backlog Readiness</i> with <code>project = FLY AND status in ("New Idea", "Product Refinement", "Team Refinement", "Ready") ORDER BY Rank ASC</code>.</li>
-        <li>Create a <b>Kanban</b> board from that filter. Map columns New Idea | Product Refinement | Team Refinement | Ready. Leave delivery statuses unmapped.</li>
-        <li>Set WIP max limits: Product Refinement 10, Team Refinement 15. Add swimlanes by epic.</li>
-        <li>Create a second filter <i>FLY - &lt;initials&gt; - Sprint Board</i> scoped to sprint work, then a <b>Scrum</b> board on it with the seven delivery columns. Map <b>Ready</b> into the first column so sprint planning can see it.</li>
-        <li>Add quick filters: My items, Impediments, Blocked, Bugs, Waiting on PO. Add a "🚧 Blocked" swimlane by query.</li>
-        <li>Name your next sprint correctly for your initials team, quarter 4.</li>
+        <li>Create a filter <i>S{SEAT} - Backlog Readiness (observe FLY)</i> and share it with the HGR space:
+<pre data-jql data-label="Readiness filter (reads FLY)">project = FLY AND status in ("New Idea", "Product Refinement", "Team Refinement", "Ready") ORDER BY Rank ASC</pre></li>
+        <li>Create a <b>Kanban</b> board from that filter, location <b>HGR</b>. Map columns New Idea | Product Refinement | Team Refinement | Ready, and leave delivery statuses unmapped. <b>Never drag cards on this board.</b> They're real FLY items. With Browse-only access Jira will refuse; if a card ever moves, stop and tell the instructor.</li>
+        <li>Set WIP max limits: Product Refinement 10, Team Refinement 15. Add swimlanes by epic. Does the board now flag a column as over its limit?</li>
+        <li>Create a second filter <i>S{SEAT} - Sprint Execution</i>, then a <b>Scrum</b> board on it, location HGR:
+<pre data-jql data-label="Sprint board filter (your seat)">project = HGR AND labels = seat-{SEAT} ORDER BY Rank ASC</pre>
+        Map the Hangar's simplified flow: To Do | In Progress | Ready for Release | Done. Then write down how you'd map FLY's seven delivery statuses if your team adopted the full template.</li>
+        <li>Add quick filters: My items (<code>assignee = currentUser()</code>), Impediments (<code>Flagged = Impediment</code>), Blocked (<code>labels = Blocked</code>), Bugs (<code>type = Bug</code>) and Unestimated (<code>"Story Points" is EMPTY</code>). Add a "🚧 Blocked" swimlane by query.</li>
+        <li>Write down your team's next sprint name for quarter 4, but <b>don't create or start sprints on this practice board</b>. It shares items with your seat board, and sprints belong to the <a href="velocity.html">Velocity Lab</a>.</li>
       </ol>
       <details class="reveal"><summary>Debrief</summary><div>
-        <p>Checks: (1) Unmapped statuses are invisible on a board. If a Ready item disappears from sprint planning, Ready isn't mapped on the Scrum board. (2) The Kanban board must <i>not</i> include delivery statuses, or it becomes a second sprint board. (3) Sprint name example for initials VS: <code>VS-2026.q4.1</code>. (4) Boards inherit the filter's sharing. If a teammate sees "no work items", share the filter.</p>
-        <p>Bonus: why might a Team-field filter (<code>Team = "VS Team"</code>) be better than a component or label? It survives re-orgs, shows in Plans, and the standard uses it.</p>
+        <p>Checks: (1) Unmapped statuses are invisible on a board. If a Ready item disappears from sprint planning, Ready isn't mapped on the Scrum board. (2) The Kanban board must <i>not</i> include delivery statuses, or it becomes a second sprint board. (3) Sprint name example for seat 07: <code>S07-2026.q4.1</code>. (4) Boards inherit the filter's sharing. If a teammate sees "no work items", share the filter. (5) A board located in one space can show items from another, and dragging a card changes the <em>real</em> item. That's why FLY is Browse-only for students.</p>
+        <p>Bonus: why might a Team-field filter (<code>Team = "S{SEAT} Team"</code>) be better than a component or label? It survives re-orgs, shows in Plans, and the standard uses it.</p>
       </div></details>
     </div>
     <div class="mission-foot"><span class="miles-tag">+400 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
@@ -388,7 +397,7 @@ project = FLY AND assignee in membersOf("jira-software-users") AND statusCategor
         <li>Confirm your suspicions with JQL:
 <pre data-jql data-label="Ready but no estimate">project = FLY AND status = Ready AND "Story Points" is EMPTY</pre>
 <pre data-jql data-label="Ready items with an unresolved blocker">project = FLY AND status = Ready AND issueLinkType = "is blocked by"</pre></li>
-        <li>For each failing item, write the refinement action: who does what before it can be Ready again.</li>
+        <li>For each failing item, write the refinement action: who does what before it can be Ready again. Post your three actions as one comment on <b>your seat epic</b> (<em>S{SEAT} · Meal Pre-order</em>), not on the FLY items.</li>
       </ol>
       <details class="reveal"><summary>Debrief: the three suspects</summary><div>
         <p><b>FLY-42</b> (audit log of gate changes): 5 points, but <b>no acceptance criteria</b>. Text search can't reliably find a missing section, which is why the DoR is a human checklist. Action: PO adds AC, then it goes back through Team Refinement.</p>
@@ -408,7 +417,7 @@ project = FLY AND assignee in membersOf("jira-software-users") AND statusCategor
         <li>Check for urgent work outside the sprint:
 <pre data-jql data-label="Urgent work not planned in any sprint">project = FLY AND priority in (Highest, High) AND statusCategory != Done AND sprint is EMPTY ORDER BY priority DESC, duedate ASC</pre></li>
         <li>Note the dependency: <b>FLY-33</b> (spike) blocks <b>FLY-31</b>.</li>
-        <li>Write a one-sentence sprint goal, list your committed items with points, and list what you deferred and why.</li>
+        <li>Write a one-sentence sprint goal, list your committed items with points, and list what you deferred and why. Post it as a comment on your seat epic. <b>Don't move FLY items between sprints</b>: 19 classmates are planning the same sprint.</li>
       </ol>
       <details class="reveal"><summary>Debrief: one defensible plan (there are others)</summary><div>
         <p>The sprint holds FLY-31 (8), FLY-32 (5), FLY-33 (3), FLY-34 (5) and FLY-35 (2) = <b>23 points</b>. It fits, but two things should change the plan:</p>
@@ -427,7 +436,7 @@ project = FLY AND assignee in membersOf("jira-software-users") AND statusCategor
   <article class="mission" id="fo-m4" data-miles="400">
     <div class="mission-head"><div><span class="mcode">MISSION FO-M4</span><h3>Release readiness dashboard: Mobile 5.3</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
     <div class="mission-body">
-      <div class="brief"><b>Mission brief</b> Leadership wants one page answering "Can Mobile 5.3 ship on 15 Dec?" Build a dashboard with four gadgets. Each gadget needs a saved, shared filter.</div>
+      <div class="brief"><b>Mission brief</b> Leadership wants one page answering "Can Mobile 5.3 ship on 15 Dec?" Build a dashboard named <i>S{SEAT} · Mobile 5.3 readiness</i> with four gadgets. Each gadget needs a saved, shared filter whose name starts with <code>S{SEAT} ·</code>. Dashboards and filters only read FLY, so this is safe with 20 people.</div>
       <ol class="steps">
         <li><b>Scope by status</b>: Two-Dimensional Filter Statistics (Status × Type) on:
 <pre data-jql data-label="F1 · Mobile 5.3 scope">project = FLY AND fixVersion = "Mobile 5.3"</pre></li>
@@ -440,6 +449,7 @@ project = FLY AND assignee in membersOf("jira-software-users") AND statusCategor
         <li>Share the dashboard with the space, then view it in a private window, or ask a peer, to confirm the gadgets render.</li>
       </ol>
       <details class="reveal"><summary>Debrief</summary><div>
+        <p>Expected today: F1 = FLY-21, 24, 25, 26, 27, 34, 35, 50; F2 = FLY-21, 24, 25, 26, 34, 35, 50; F3 = FLY-25, 27, 50; F4 = FLY-21 (blocked by FLY-17). Notice what's <b>not</b> there: <b>FLY-23</b> was in Mobile 5.3 until the PO moved it to Gate Ops 1.0 (read its comment). A scope gadget can't show what left the release. You need history JQL for that (Simulator challenge S2: <code>fixVersion WAS "Mobile 5.3" AND (fixVersion != "Mobile 5.3" OR fixVersion is EMPTY)</code>). Also note that FLY-26 was escalated to Highest during the release.</p>
         <p>Ask whether anything that should be in the release is missing. <b>FLY-50</b> (crash) is tagged Mobile 5.3, but its duplicate <b>FLY-51</b> has no fix version. Release scope is only as good as the fix-version discipline. Second question: does F2 include sub-tasks? Sub-tasks don't inherit fix versions, so add <code>OR parent in (…)</code> logic or rely on parent status.</p>
       </div></details>
     </div>
@@ -451,13 +461,13 @@ project = FLY AND assignee in membersOf("jira-software-users") AND statusCategor
     <div class="mission-body">
       <div class="brief"><b>Mission brief</b> A director looks at the velocity chart (FO-4 screenshot): <b>q4.1 committed 5, completed 31; q4.2 committed 0, completed 29.</b> "Amazing! The team does 6× what it promises." Before anyone repeats that in a steering meeting, work out what the chart is really telling you.</div>
       <ol class="steps">
-        <li>Open Reports → Velocity for the Jetstream Sprint Board. Then open the <b>Sprint report</b> for each closed sprint and look for items marked as added after the sprint started.</li>
+        <li>Open Reports → Velocity for the Jetstream Sprint Board. Then open the <b>Sprint report</b> for each closed sprint and look for items marked with an asterisk (*), meaning added after the sprint started. Note the sprint's start time.</li>
         <li>List at least three things that could make <i>commitment</i> look this low.</li>
         <li>Write the two-sentence note you'd send the director.</li>
       </ol>
       <details class="reveal"><summary>Debrief</summary><div>
-        <p>Commitment = the estimate of work in the sprint <b>at the moment it started</b>. It looks tiny when: (1) items were added to the sprint <b>after</b> it started; (2) story points were filled in <b>after</b> start, so the at-start estimate was empty; (3) the board's estimation field differs from the field the team fills in; (4) sprints were started before planning was finished. In this sandbox, the data was loaded by script right around sprint start, which produces exactly this pattern.</p>
-        <p>Sample note: <i>"The 6× gap is a data artifact. Work and estimates were added after the sprints started, so commitment is understated. Completed is about 30 points per sprint, and that's the number to plan with."</i> The habit: finish planning, then start the sprint.</p>
+        <p>Commitment = the estimate of work in the sprint <b>at the moment it started</b>. It looks tiny when: (1) items were added to the sprint <b>after</b> it started; (2) story points were filled in <b>after</b> start, so the at-start estimate was empty; (3) the board's estimation field differs from the field the team fills in; (4) sprints were started before planning was finished. <b>Verified cause in this sandbox:</b> the sprint report for JET-2026.q4.1 shows a start of 18:20:00. Jira stores sprint start at minute precision, and the seed script added the items a few seconds <em>after</em> 18:20:00, in the same minute. Every item except FLY-7 got an asterisk (added after start), so commitment counted only FLY-7's 5 points. In q4.2, all of them did, so commitment was 0. The <a href="velocity.html">Velocity Lab</a> reproduces this on purpose (Scenario F, the backdated start) along with five other traps.</p>
+        <p>Sample note: <i>"The 6× gap is a data artifact. Work was added to the sprints seconds after they started, so Jira counts it as scope added and commitment is understated. Completed is about 30 points per sprint, and that's the number to plan with."</i> The habit: finish planning, then start the sprint.</p>
       </div></details>
     </div>
     <div class="mission-foot"><span class="miles-tag">+300 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
@@ -470,8 +480,9 @@ project = FLY AND assignee in membersOf("jira-software-users") AND statusCategor
       <ol class="steps">
         <li>Open FLY-21 and read the four acceptance criteria and the comments. The comments describe the Android failure.</li>
         <li>Write three test cases, each with a <b>name, precondition, steps, expected result</b>. At least one must target the bug that caused the bounce.</li>
-        <li>In Zephyr: link each test case to FLY-21, add them to a cycle "Mobile 5.3 – eQE", and execute one.</li>
-        <li>Fail one step on purpose and raise a <b>Bug</b> from the execution. Confirm it's linked to FLY-21.</li>
+        <li>FLY is read-only, so make a traceability target on your seat: create story <code>S{SEAT} · Push notification on gate change</code> in HGR with label <code>seat-{SEAT}</code>, and paste FLY-21's acceptance criteria into it (mention FLY-21 in the text, no link).</li>
+        <li>In Zephyr: link each test case to <em>your seat story</em>, add them to a cycle <code>S{SEAT} · Mobile 5.3 – eQE</code>, and execute one.</li>
+        <li>Fail one step on purpose and raise a <b>Bug</b> from the execution, in HGR, with label <code>seat-{SEAT}</code>. Confirm it's linked to your seat story, not to FLY-21.</li>
       </ol>
       <details class="reveal"><summary>Debrief: example test cases</summary><div>
         <div class="table-wrap"><table class="data">
@@ -556,6 +567,6 @@ project = FLY AND assignee in membersOf("jira-software-users") AND statusCategor
 
 </main>
 <div id="site-footer"></div>
-<script src="assets/js/site.js"></script>
+<script src="assets/js/site.js?v=2"></script>
 </body>
 </html>

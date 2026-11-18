@@ -236,8 +236,8 @@ section.tight { padding: 44px 0; }
 .callout.warn::before { content: "⚠️"; }
 .callout.danger { background: var(--alert-bg); border-color: #f2b7c0; }
 .callout.danger::before { content: "🛑"; }
-.callout.united { background: linear-gradient(90deg, #eaf0ff, #ffffff); border-color: #bcd0fb; }
-.callout.united::before { content: "🌐"; }
+.callout.standard { background: linear-gradient(90deg, #eaf0ff, #ffffff); border-color: #bcd0fb; }
+.callout.standard::before { content: "🌐"; }
 .callout.rovo { background: linear-gradient(90deg, #f3edff, #fff); border-color: #d9c8fb; }
 .callout.rovo::before { content: "✨"; }
 
@@ -367,3 +367,12 @@ footer.site .wrap { display: flex; justify-content: space-between; gap: 30px; fl
 
 .hero .wrap { position: relative; z-index: 2; }
 :not(pre) > code, .q button.opt { overflow-wrap: anywhere; }
+.seat-pick { display: inline-flex; align-items: center; gap: 4px; color: #c9d8f2; font-size: .85rem; white-space: nowrap; }
+.seat-pick select { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.25); border-radius: 8px; padding: 4px 6px; font: 600 .82rem var(--font-body); }
+.seat-pick select option { color: #0d1b33; }
+@media (max-width: 1100px) { .seat-pick { margin-left: auto; } .nav-toggle { margin-left: 8px; } }
+@media (max-width: 520px) {
+  .topbar .wrap { gap: 10px; padding: 0 14px; }
+  .topbar .brand span { display: none; }
+  .nav-toggle { padding: 6px 9px; }
+}

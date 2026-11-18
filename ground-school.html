@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/site.css?v=2">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <style>
   .hero .wrap { position: relative; z-index: 2; }
@@ -90,12 +90,17 @@
         <p>Good morning, and welcome aboard. Today's flight takes you from “What's a space?” to working with confidence in your team's board. There's no need to memorize anything. Know where things are, know what the words mean, and know when to ask Rovo for help. Seatbacks up, laptops open. Let's go.</p>
       </div>
 
+      <div class="callout captain">
+        <strong>20 pilots, one airspace</strong>
+        <p>Pick your seat in the top bar (you're on <b><span data-seat-label></span></b>). <b>FLY is read-only</b>: read it, search it, run JQL and Rovo on it, but never create, edit, move, link, flag or comment there. Everything you build goes in <b>your seat on the Hangar</b> (<a data-seat-board>open my seat board ↗</a>): summary prefix <code>S{SEAT} · </code>, label <code>seat-{SEAT}</code>. Never touch another seat.</p>
+      </div>
+
       <h4>Before you board</h4>
       <ul class="checklist" data-id="gs-preflight">
         <li><input type="checkbox" id="gs-pf1"><label for="gs-pf1">I can sign in to the training Jira site and see the space <strong>Flight Deck Digital (Training)</strong>, key <code>FLY</code>.</label></li>
-        <li><input type="checkbox" id="gs-pf2"><label for="gs-pf2">I know my two-letter initials for missions (for example <code>AK</code>). Everything I create in the sandbox starts with them.</label></li>
+        <li><input type="checkbox" id="gs-pf2"><label for="gs-pf2">I picked my seat in the top bar (01–20) and opened my <a data-seat-board>seat board ↗</a> in the <b>HGR</b> Hangar space. Everything I create starts with <code>S{SEAT} · </code> and carries the label <code>seat-{SEAT}</code>.</label></li>
         <li><input type="checkbox" id="gs-pf3"><label for="gs-pf3">I've bookmarked this page. My miles are saved in this browser.</label></li>
-        <li><input type="checkbox" id="gs-pf4"><label for="gs-pf4">I agree to sandbox etiquette: I only edit items I created or that a mission tells me to touch, and I never delete other people's work.</label></li>
+        <li><input type="checkbox" id="gs-pf4"><label for="gs-pf4">I agree to sandbox etiquette: FLY is look-don't-touch, I only change items on my own seat, and I never delete other people's work.</label></li>
       </ul>
 
       <!-- ================= GS-1 ================= -->
@@ -380,7 +385,7 @@ ORDER BY priority DESC</pre>
         </table></div>
         <p>See the full decision guide in the <a href="rovo.html#rv-2">Rovo Flight Manual</a>.</p>
 
-        <div class="callout united">
+        <div class="callout standard">
           <strong>How agents work at our organization</strong>
           <p>Anyone with Rovo can <em>use</em> available agents. <em>Creating</em> agents is limited to a small group of builders today. If you have an idea for an agent, write it up and send it through your team's agent request process. Mission <a href="rovo.html#rv-m4">RV-M4</a> shows you how to write a strong request.</p>
         </div>
@@ -464,7 +469,7 @@ ORDER BY priority DESC</pre>
 
       <hr>
       <h2 id="missions">Missions</h2>
-      <p class="lede">Time to fly the real thing. Each mission runs in the live sandbox. Mark it complete to earn miles. Several classmates work in the same space, so start anything you create with your initials, and only change items a mission tells you to.</p>
+      <p class="lede">Time to fly the real thing. Each mission runs in the live sandbox. Mark it complete to earn miles. Up to 20 classmates fly at once, so FLY stays read-only and everything you create goes on your own seat in the Hangar (<a data-seat-board>open my seat board ↗</a>).</p>
 
       <!-- ================= GS-M1 ================= -->
       <article class="mission" id="gs-m1" data-miles="250">
@@ -473,7 +478,7 @@ ORDER BY priority DESC</pre>
           <div class="brief"><b>Mission brief</b> · A navigation scavenger hunt. Find each answer in the sandbox using only the sidebar, the space tabs and search. Write down your answers before you open the debrief.</div>
           <ol class="steps">
             <li>Open the space <strong>Flight Deck Digital (Training)</strong>. What is its <strong>key</strong>?</li>
-            <li>Open <strong>Jetstream - Sprint Board</strong> and <strong>star</strong> it. Confirm it now appears under <em>Starred</em> in the sidebar.</li>
+            <li>Open <strong>Jetstream - Sprint Board</strong> and <strong>star</strong> it. Then open <a data-seat-board>your seat board ↗</a> (<em>Seat {SEAT} - Hangar Board</em>) and star that too. Confirm both appear under <em>Starred</em> in the sidebar.</li>
             <li>What's the name of the <strong>active sprint</strong>, and what's its <strong>sprint goal</strong>? (Hint: look in the Backlog.)</li>
             <li>Press <kbd>/</kbd> and search for <em>apostrophe</em>. Which bug is about passenger names crashing the boarding pass?</li>
             <li>Open <code>FLY-25</code>. Which <strong>epic</strong> is its parent, and which <strong>release</strong> (fix version) is it in?</li>
@@ -483,7 +488,7 @@ ORDER BY priority DESC</pre>
           <details class="reveal"><summary>Show debrief</summary><div>
             <ol>
               <li><code>FLY</code></li>
-              <li>The board should appear under <em>Starred</em>. Starred items are the fastest way back.</li>
+              <li>Both boards should appear under <em>Starred</em>. Starred items are the fastest way back, and your seat board is where all your practice work lives.</li>
               <li><code>JET-2026.q4.3</code>: “Gate change push alerts end-to-end in staging”.</li>
               <li><code>FLY-50</code>, “Boarding pass crashes when passenger name contains an apostrophe”. You may also have spotted <code>FLY-51</code>, which is a duplicate of it. Keep that in mind for Rovo later.</li>
               <li>Parent <code>FLY-2</code> Real-time Gate Change Alerts; fix version <em>Mobile 5.3</em>.</li>
@@ -500,26 +505,27 @@ ORDER BY priority DESC</pre>
       <article class="mission" id="gs-m2" data-miles="350">
         <div class="mission-head"><div><span class="mcode">MISSION GS-M2</span><h3>Write it right</h3></div><span class="turb">Turbulence <i class="on"></i><i class="on"></i><i></i></span></div>
         <div class="mission-body">
-          <div class="brief"><b>Mission brief</b> · The accessibility epic <code>FLY-6</code> needs another story. Create one that a developer and a tester could pick up tomorrow without asking you a single question.</div>
+          <div class="brief"><b>Mission brief</b> · The accessibility epic <code>FLY-6</code> needs another story. FLY is read-only, so you'll write it on your own seat in the Hangar, where a developer and a tester could pick it up tomorrow without asking you a single question.</div>
           <ol class="steps">
-            <li>Press <kbd>c</kbd>. Space: <strong>FLY</strong>. Work type: <strong>Story</strong>.</li>
-            <li>Summary: start with your initials in square brackets, then use the user-story format. Example: <code>[AK] As a keyboard-only user, I can select a seat using Tab and Enter</code>.</li>
-            <li>Description: one or two sentences of context, then an <strong>Acceptance criteria</strong> heading with at least three testable bullets.</li>
-            <li>Set <strong>Parent</strong> = <code>FLY-6</code> Seat Map Accessibility, <strong>Component</strong> = Mobile App, and add a <strong>label</strong> with your initials in lowercase (e.g. <code>ak</code>).</li>
+            <li>Read <code>FLY-6</code> and its child stories first, so you don't duplicate them. Don't edit anything there.</li>
+            <li>Press <kbd>c</kbd>. Space: <strong>Hangar (Student Practice)</strong>, key <code>HGR</code>. Work type: <strong>Story</strong>.</li>
+            <li>Summary: start with your seat prefix, then use the user-story format. Example: <code>S{SEAT} · As a keyboard-only user, I can select a seat using Tab and Enter</code>.</li>
+            <li>Description: one or two sentences of context (mention that it extends <code>FLY-6</code> in plain text, but don't add a link), then an <strong>Acceptance criteria</strong> heading with at least three testable bullets.</li>
+            <li>Set <strong>Parent</strong> = your seat epic <em>S{SEAT} · Meal Pre-order</em> (or create a new epic <em>S{SEAT} · Seat Map Accessibility</em> with the same label), and add the <strong>label</strong> <code>seat-{SEAT}</code>.</li>
             <li>Leave Story Points empty. Estimating is a team activity.</li>
-            <li>Create it. Then add a comment that @mentions a classmate and asks them to review the acceptance criteria.</li>
-            <li>Swap with that classmate. Score their story against INVEST, and reply in a comment with one improvement.</li>
+            <li>Create it, then check it appears in your <a data-seat-board>seat board ↗</a> backlog. Add a comment on <em>your own</em> story that @mentions your neighbor and asks them to review the acceptance criteria.</li>
+            <li>Swap with that neighbor. Score their story against INVEST and reply in a comment <em>on their story</em> with one improvement. Comments are the only thing you add to another seat.</li>
           </ol>
           <details class="reveal"><summary>Show debrief</summary><div>
             <p>A strong answer looks like this:</p>
             <ul>
-              <li><b>Summary:</b> [AK] As a keyboard-only user, I can select a seat using Tab and Enter</li>
+              <li><b>Summary:</b> S{SEAT} · As a keyboard-only user, I can select a seat using Tab and Enter</li>
               <li><b>Context:</b> Travelers who can't use a pointer currently can't choose seats (WCAG 2.1.1 Keyboard).</li>
               <li><b>AC:</b> Tab moves through seats row by row · Enter selects the focused seat · Focus is always visible · Unavailable seats are skipped or announced as unavailable</li>
             </ul>
             <p>Check your own: does every AC bullet describe something a tester can observe? “Works well” and “is fast” are not testable. “Selects within 1 second” is.</p>
             <p>Find your work later with this query:</p>
-            <pre data-jql data-label="Find my mission stories">project = FLY AND reporter = currentUser() ORDER BY created DESC</pre>
+            <pre data-jql data-label="Find my mission stories">project = HGR AND labels = seat-{SEAT} AND reporter = currentUser() ORDER BY created DESC</pre>
           </div></details>
         </div>
         <div class="mission-foot"><span class="miles-tag">+350 mi</span><button class="complete-btn" type="button">Mark mission complete</button></div>
@@ -544,7 +550,7 @@ ORDER BY priority DESC</pre>
               <li><code>FLY-25</code>, a <strong>Bug</strong> (duplicate gate change alerts).</li>
               <li><code>FLY-22</code>, blocked by <code>FLY-24</code> (push provider integration in staging). The comment explains that delivery receipts are needed first.</li>
               <li><code>FLY-27</code> Boarding pass brightness bug, for <em>Mobile 5.3</em>.</li>
-              <li>Several To Do and Development items are unassigned, for example <code>FLY-22</code>, <code>FLY-26</code> and <code>FLY-29</code>. A blocked, unassigned item is the one most at risk of being forgotten. Call it out at standup.</li>
+              <li>Several items are unassigned: <code>FLY-22</code>, <code>FLY-26</code>, <code>FLY-27</code>, <code>FLY-28</code> and <code>FLY-29</code> (plus sub-tasks <code>FLY-53</code> and <code>FLY-54</code>). Note <code>FLY-28</code>: it was Done, then reopened to Development after a regression, and nobody owns it. A blocked, unassigned item is the one most at risk of being forgotten. Call it out at standup.</li>
               <li><code>FLY-20</code> (pairing rest-rule warning) is in JET-2026.q4.2 and JET-2026.q4.3. Carry-over is a signal worth discussing at retro. In Level 2 you'll find these with one query.</li>
             </ol>
           </div></details>
@@ -561,7 +567,7 @@ ORDER BY priority DESC</pre>
             <li><b>Leg 1: Summarize.</b> Open <code>FLY-36</code> and click <em>Summarize work item</em>. Then read the three comments yourself. Did the summary catch the <strong>38% of IROPS calls</strong> figure from the product owner's comment? What did it leave out?</li>
             <li><b>Leg 2: Ask AI.</b> On the search page, click <em>Ask AI</em> and type: <em>stories in FLY that are in Ready status but have no story points</em>. Before you look at the results, read the JQL it generated. Is each condition what you asked for?</li>
             <li>Now ask: <em>FLY stories in Ready that have no acceptance criteria</em>. Can Rovo answer this one with JQL? Why or why not?</li>
-            <li><b>Leg 3: Improve.</b> Open the story you created in GS-M2 and click <em>Improve Story</em>. Accept only the suggestions you agree with, and edit the rest.</li>
+            <li><b>Leg 3: Improve.</b> Open the story you created in GS-M2 on your seat (never a FLY item) and click <em>Improve Story</em>. Accept only the suggestions you agree with, and edit the rest.</li>
             <li>Write one sentence in a comment on your story: “Rovo suggested X; I kept / changed it because Y.”</li>
           </ol>
           <details class="reveal"><summary>Show debrief</summary><div>
@@ -696,6 +702,6 @@ ORDER BY priority DESC</pre>
 
 </main>
 <div id="site-footer"></div>
-<script src="assets/js/site.js"></script>
+<script src="assets/js/site.js?v=2"></script>
 </body>
 </html>
